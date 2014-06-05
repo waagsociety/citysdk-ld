@@ -1,0 +1,98 @@
+#!/usr/bin/env ruby
+
+# Real-time information. Mechanism specific to the Dutch situation..
+
+
+
+require 'dalli'
+require 'csv'
+require 'zlib'
+require 'stringio'
+require 'ffi-rzmq'
+require 'dante'
+
+
+def unpack(gz)
+  a = gz.read.force_encoding("iso-8859-1").split("object\r\n\\L")
+  return if a[0] !~ /DATEDPASSTIME/
+  CSV.parse(a[1], :quote_char => '"', :col_sep =>'|',:headers => true, :row_sep =>:auto) do |row|
+    if row['ExpectedDepartureTime'] != row['TargetDepartureTime']
+      key = "#{row['TimingPointCode']}!!gtfs.line.#{row['DataOwnerCode']}|#{row['LinePlanningNumber']}-#{row['LineDirection'].to_i-1}!!#{row['TargetDepartureTime']}"
+      $memcache.set(key, row['ExpectedDepartureTime'])
+    end
+  end
+end
+
+
+def kv8_run
+
+  Signal.trap("TERM") do
+    $socket.close
+    $context.terminate
+    $stderr.puts "User Interrupt.."
+    exit!
+  end
+
+
+  $context = ZMQ::Context.new(1)
+
+  $socket = $context.socket(ZMQ::SUB);
+  $socket.connect("tcp://83.98.158.170:7817")
+  $socket.setsockopt(ZMQ::SUBSCRIBE, "/GOVI/KV8")
+
+  $memcache = Dalli::Client.new('localhost:11211', :failover => false, :expires_in => 300)
+
+  $size = 0.0
+  $lastT = Time.now
+
+  while true
+    key = ''
+    contents = ''
+    begin
+      rc = $socket.recv_string(key)
+      while $socket.more_parts?
+        part =''
+        rc = $socket.recv_string(part)
+        contents += part
+      end
+      unpack( Zlib::GzipReader.new( StringIO.new(contents) ) )
+      
+      $size += contents.length
+      if (Time.now - $lastT) > 30 
+        secs = (Time.now - $lastT)
+        $memcache.set('kv8daemon', sprintf("%0.2fk/s",$size/secs/1024.0))
+        $size = 0
+        $lastT = Time.now
+      end
+      
+    rescue Exception => e
+      $stderr.puts e.message
+    end
+  end
+  
+end
+
+
+Dante.run('kv8daemon') do |opts|
+  kv8_run
+end
+
+
+
+
+# 
+# trip_id = DataOwnerCode + LinePlanningNumber + LocalServiceLevelCode + JourneyNumber + FortifyOrderNumber
+# route_id = DataOwnerCode + LinePlanningNumber
+# service_id = DataOwnerCode + LinePlanningNumber
+# agency_id = DataOwnerCode
+# stop_id = TimingPointCode
+# 
+
+# "\\GKV8turbo_passtimes|KV8turbo_passtimes|openOV GVB|||UTF-8|0.1|2013-01-25T17:33:07+01:00|\xEF\xBB\xBF\r\n\\TDATEDPASSTIME|DATEDPASSTIME|start object\r\n\\L"
+# 
+# "DataOwnerCode|OperationDate|LinePlanningNumber|JourneyNumber|FortifyOrderNumber|UserStopOrderNumber|UserStopCode|LocalServiceLevelCode|JourneyPatternCode|LineDirection|LastUpdateTimeStamp|DestinationCode|IsTimingStop|ExpectedArrivalTime|ExpectedDepartureTime|TripStopStatus|MessageContent|MessageType|SideCode|NumberOfCoaches|WheelChairAccessible|OperatorCode|ReasonType|SubReasonType|ReasonContent|AdviceType|SubAdviceType|AdviceContent|TimingPointDataOwnerCode|TimingPointCode|JourneyStopType|TargetArrivalTime|TargetDepartureTime"
+# 
+# "GVB|2013-01-25|37|283|0|35|000052|301517|45897|1|2013-01-25T17:33:05+01:00|AMS|0|18:12:42|18:13:00|UNKNOWN|\\0|\\0|-|\\0|UNKNOWN|\\0|\\0|\\0|\\0|\\0|\\0|\\0|ALGEMEEN|000052|INTERMEDIATE|18:12:42|18:13:00"
+
+
+
