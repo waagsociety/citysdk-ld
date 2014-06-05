@@ -3,7 +3,7 @@
   },
   "db": {
     "host": "localhost",
-    "database": "citysdk",
+    "database": "citysdk-ld",
     "user": "postgres",
     "password": "postgres"
   }
