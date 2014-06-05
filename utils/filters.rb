@@ -52,8 +52,8 @@ module CitySDKLD
         url_params: [:lat, :lon],
         resources: [:objects, :layers]
       },
-      name: {
-        url_params: [:name],
+      title: {
+        url_params: [:title],
         resources: [:objects, :layers]
       },
       data: {
