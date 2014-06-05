@@ -1,0 +1,27 @@
+{
+  "name": "rutger.openingstijden",
+  "owner": "rutger",
+  "title": "Openingstijden",
+  "description": "Openingstijden van dierenwinkels en achtbanen",
+  "data_sources": ["http://www.openingstijden.nl/"],
+  "category": "commercial",
+  "fields": [
+    {
+      "name": "van",
+      "type": "xsd:date",
+      "equivalentProperty": "schema:startDate",
+      "lang": "nl",
+      "description": "Openingstijd op doordeweekse dag"
+    },
+    {
+      "name": "tot",
+      "type": "xsd:date",
+      "equivalentProperty": "schema:endDate",
+      "lang": "nl",
+      "description": "Sluitingstijd op doordeweekse dag"
+    }
+  ],
+  "context": {
+    "vis": "koek"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "endpoint": {
+  },
+  "db": {
+    "host": "localhost",
+    "database": "citysdk",
+    "user": "postgres",
+    "password": "postgres"
+  }
+}

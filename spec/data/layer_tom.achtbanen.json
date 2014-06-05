@@ -1,0 +1,27 @@
+{
+  "name": "tom.achtbanen",
+  "owner": "tom",
+  "title": "Nederlandse achtbanen",
+  "description": "Achtbanen in Nederland (met en zonder loopings)",
+  "data_sources": ["http://nl.wikipedia.org/wiki/Lijst_van_achtbanen_in_Nederland"],
+  "category": "tourism",
+  "fields": [
+    {
+      "name": "lengte",
+      "type": "xsd:integer",
+      "unit": "meters",
+      "lang": "nl",
+      "description": "Lengte van achtbaan in meters"
+    },
+    {
+      "name": "aantalloopings",
+      "type": "xsd:integer",
+      "unit": "count",
+      "lang": "nl",
+      "description": "Aantal loopings"
+    }
+  ],
+  "context": {
+    "vis": "koek"
+  }
+}

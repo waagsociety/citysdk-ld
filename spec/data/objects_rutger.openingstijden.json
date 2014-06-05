@@ -1,0 +1,65 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "cdk_id": "bert.dierenwinkels.1",
+        "data": {
+          "van": "🕑",
+          "tot": "🕙"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cdk_id": "bert.dierenwinkels.2",
+        "data": {
+          "van": "🕖",
+          "tot": "🕔"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cdk_id": "bert.dierenwinkels.3",
+        "data": {
+          "van": "🕘",
+          "tot": "🕕"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cdk_id": "tom.achtbanen.1",
+        "data": {
+          "van": "🕑",
+          "tot": "🕙"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cdk_id": "tom.achtbanen.2",
+        "data": {
+          "van": "🕖",
+          "tot": "🕔"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "cdk_id": "tom.achtbanen.3",
+        "data": {
+          "van": "🕘",
+          "tot": "🕕"
+        }
+      }
+    }
+  ]
+}

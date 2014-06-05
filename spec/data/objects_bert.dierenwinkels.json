@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "1",
+        "title": "Amfibieënspeciaalzaak Den Haag",
+        "data": {
+          "icon": "🐸",
+          "type": "amfibieën"
+        }
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.87930,
+          52.36469
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "2",
+        "title": "Het Grote Spinnen- en insectenimperium",
+        "data": {
+          "icon": "🐜",
+          "type": "geleedpotigen"
+        }
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.10177,
+          52.09132
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "3",
+        "title": "Vissenwinkel Zoet & Zout",
+        "data": {
+          "icon": "🐟",
+          "type": "vissen"
+        }
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.28741,
+          52.07106
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "bert.dierenwinkels",
+  "owner": "bert",
+  "title": "Dierenwinkels in Nederland",
+  "description": "Alle dierenwinkels met allemaal dieren en konijnen",
+  "data_sources": ["http://www.doggo.nl/overzicht-dierenspeciaalzaken.php"],
+  "category": "commercial",
+  "licence": "MIT License",
+  "fields": [
+    {
+      "name": "type",
+      "type": "xsd:string",
+      "description": "Pet shop category"
+    },
+    {
+      "name": "icon",
+      "type": "xsd:string",
+      "description": "Emoji depicting pet shop's category"
+    }
+  ],
+  "context": {
+    "type": "vcard:locality"
+  }
+}
