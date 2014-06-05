@@ -1,0 +1,343 @@
+﻿/*
+	99Lime.com HTML KickStart by Joshua Gatcke
+	style.css
+
+*/
+
+#logo, #logo:hover, #logo:visited,
+#logo a, #logo:hover a, #logo:visited a {
+  font-size: 40px;
+  text-decoration:none;
+  color: black;
+  margin-top: 80px;
+  margin-bottom: 0;
+  line-height: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+/*---------------------------------
+	HEADINGS
+-----------------------------------*/
+h1,h2,h3,h4,h5,h6{
+font-weight:bold;
+line-height:140%;
+}
+h2,h3,h4,h5,h6{
+color: #525252 !important;
+}
+
+.headertitle {
+font-size:3.0em;
+padding-top:55px !important;
+line-height:0% !important;
+}
+
+h1{
+font-size:2.0em;
+margin:10px 0 10px 0;
+}
+
+h2{
+font-size:1.7em;
+margin:15px 0 2px 0;
+}
+
+h3{
+font-size:1.5em;
+margin:15px 0 2px 0;
+line-height:130%;
+}
+
+h4{
+font-size:1.2em;
+margin:5px 0 0px 0;
+}
+
+h5{
+font-size:1.1em;
+margin:5px 0 0px 0;
+}
+
+h6{
+font-size:1.0em;
+margin:5px 0 0px 0;
+}
+
+pre {
+background-color: #e7f2d7;
+}
+.gridsmaller {
+font-size: 90%;
+}
+
+/*---------------------------------
+	OVERRIDES
+-----------------------------------*/
+
+h1,h2,h3,h4,h5,h6{
+font-family: 'Ubuntu', sans-serif;
+font-weight:bold;
+color:#000;
+}
+
+thead th,
+tbody th {
+  font-family: 'Ubuntu', sans-serif;
+}
+
+.green-table th, .green-table td {
+  border-bottom: 3px #fff solid;
+  background: #e7f2d7;
+  font-size: 1em;
+}
+
+.green-table table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+button,
+a.btn,
+input[type="submit"],
+input[type="reset"],
+input[type="button"]{
+font-family: 'Ubuntu', sans-serif;
+}
+
+.menu li.current span.arrow{border-color-top:#fff;border-color:#fff transparent transparent transparent;}
+
+ul.menu{
+font-family: 'Ubuntu', sans-serif;
+font-size: 120% !important;
+border: none;
+margin: 0.5em 0.833333%;
+border-bottom: 0px solid #fff;
+background: #cee8ff;
+background: #1076bd;
+}
+
+ul.menu  a {
+font-size: 110% !important;
+}
+
+.menu ul li{
+	background-color: #fff !important;
+	border:1px solid #fff;
+	text-align: left;
+}
+
+blockquote{
+font-family: 'Ubuntu', sans-serif;
+}
+
+.rhnav {
+background: #fff;
+width: 100%;
+padding: 0;
+margin: 0;
+text-align:left;
+}
+.rhnav h1 {
+width: 100%;
+padding: 0;
+margin: 30px 0 30px 0;
+}
+.rhnav .menu {
+width: 100%;
+padding: 0;
+margin: 10px 0 30px 0;
+}
+.rhnav .extramarge {
+margin-top: 30px !important;
+margin-top: 10px !important;
+}
+.rhnav .imgextramarge {
+margin-top: 10px !important;
+}
+
+.smcopy {
+font-size: 55%;
+position: relative;
+top: -0.3em;
+}
+
+.bgcsdblauw {
+background: #1076bd;
+}
+
+/*---------------------------------
+	GRID
+-----------------------------------*/
+
+.rhnav {
+margin-bottom: 25px;
+}
+
+.col_12 {
+margin-top:0em;
+margin-bottom:0em;
+
+}
+hr {
+display: none;
+}
+.homeklein {
+font-size: 80%;
+}
+
+.buttonblauw{
+background: #196cb8;
+border-color: #196cb8;
+font-weight: bold;
+color: #fff;
+padding-top: 5px ;
+padding-bottom: 5px ;
+text-shadow: none;
+}
+
+button.buttonblauw:hover {
+	background: rgb(206,232,255); /* Old browsers */
+	background: -moz-linear-gradient(top, rgba(206,232,255,1) 0%, rgba(249,181,9,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(2206,232,255,1)), color-stop(100%,rgba(206,232,255,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, rgba(206,232,255,1) 0%,rgba(206,232,255,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, rgba(206,232,255,1) 0%,rgba(206,232,255,1) 100%); /* Opera 11.10+ */
+	background: linear-gradient(top, rgba(206,232,255,1) 0%,rgba(206,232,255,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cee8ff', endColorstr='#f9b509',GradientType=0 ); /* IE6-9 */
+}
+
+.blokblauw {
+background: #016db6;
+border-color: #016db6;
+color: #fff;
+padding: 20px;
+text-shadow: none;
+word-wrap: break-word;
+}
+
+
+.grid ul {
+list-style-type: square;
+list-style-image: url('../img/blauw.gif');
+}
+
+.linkerblok {
+padding-left: 30px;
+}
+
+.help {
+cursor:help;
+}
+
+
+.bovenmarge {
+padding-top: 30px;
+}
+.bovenmargehalf {
+padding-top: 15px;
+}
+.kleinemarge {
+padding-left: 3px;
+}
+.kleinepadding {
+padding-left: 3px;
+}
+
+/* LISTS */
+
+
+li {
+padding:3px 0px 0px 0px;
+margin:0;
+}
+
+ul ul li {
+padding: 5px 0px 0px 0px;
+}
+
+ul {
+padding:0;
+margin:0 0 20px 15px;
+}
+
+
+/*---------------------------------
+	LAYOUT
+-----------------------------------*/
+body{
+margin:0;
+padding:0 0 0 0;
+color:#000;
+font:normal 90%/150% 'Ubuntu', sans-serif;
+text-shadow: 0px 0px 1px transparent; /* google font pixelation fix */
+}
+
+
+.ingelogd {
+margin-top: 15px !important;
+color:#666;
+font-size:0.8em;
+}
+
+.letop {
+margin-top: 20px;
+border: 2px solid #db9b12;
+padding: 10px 5px 10px 5px;
+}
+
+
+.divVisible {
+display:block;
+}
+.divHidden {display:none;}
+
+.footer {
+color:#fff;
+font-size:0.85em;
+}
+
+.footer a{
+color:#fff;
+}
+
+.footer .footertext {
+float: left;
+padding-left: 10px;
+padding-top: 3px;
+}
+
+.logos {
+line-height: 200% !important;
+}
+
+/* Data page */
+
+#layers {
+  list-style-type: none;
+  list-style-image: none;
+}
+
+#layers li {
+  margin-bottom: 2em;
+}
+
+#layers h4 {
+  float: left;
+}
+
+#layers .sample-url {
+  float: right;
+}
+
+#layers table {
+  width: 100%;
+}
+
+#layers table tr td:first-child {
+  width: 120px;
+  text-align: right;
+}
+
+

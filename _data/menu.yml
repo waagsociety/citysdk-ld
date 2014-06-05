@@ -1,0 +1,27 @@
+- title: Home
+  url :
+
+- title: Getting Started
+  menu :
+    - title: Documentation
+      url : /documentation
+
+    - title: App Gallery
+      url : /app-gallery
+
+    - title: API Key
+      url : /api-key
+
+- title: Data
+  menu:
+    - title: Map Viewer
+      url : /map
+
+    - title: Data
+      url : /data
+
+- title: FAQ
+  url : /faq
+
+- title: Contact
+  url : /contact
