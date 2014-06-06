@@ -20,6 +20,9 @@
     - title: Data
       url : /data
 
+    - title: Endpoints
+      url : /endpoints
+
 - title: FAQ
   url : /faq
 
