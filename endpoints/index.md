@@ -1,3 +1,8 @@
+---
+layout: single
+title: App Gallery
+---
+
 # Endpoints in other cities
 
 * [Amsterdam (NL)](http://dev.citysdk.waag.org)
