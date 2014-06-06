@@ -1,14 +1,14 @@
-# Cities
+# Endpoints in other cities
 
-* [Amsterdam CitySDK-LD endpoint] (http://dev.citysdk.waag.org)
+* [Amsterdam (NL)](http://dev.citysdk.waag.org)
 
-* [Istanbul CitySDK-LD endpoint](http://devcitysdk.ibb.gov.tr)
+* [Istanbul (TR)](http://devcitysdk.ibb.gov.tr)
 
 * [Manchester (UK)](http://dev.citysdk.futureeverything.org/data)
 
-* [Province of Rome CitySDK-LD endpoint](http://dev.citysdk-mobility.provincia.roma.it)
+* [Province of Rome (IT)](http://dev.citysdk-mobility.provincia.roma.it)
 
-* [Lamia CitySDK-LD endpoint](http://dev.citysdk.waag.org)
+* [Lamia GR)](http://dev.citysdk.waag.org)
 
 ## Endpoints other CitySDK API's 
 
