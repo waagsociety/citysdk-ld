@@ -14,9 +14,8 @@ set :scm, :none
 
 set :branch, "master"
 
-set :deploy_to, "/var/www/jekyll-test"
+set :deploy_to, "/var/www/dev.citysdk"
 # set :deploy_via, :remote_cache
-
 set :copy_exclude, ['.git', '_site']
 
 set :deploy_via, :copy

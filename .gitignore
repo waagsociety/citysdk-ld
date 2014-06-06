@@ -1,2 +1,3 @@
 _site
-
+config.development.json
+config.test.json
