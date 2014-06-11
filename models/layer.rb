@@ -147,12 +147,28 @@ class CDKLayer < Sequel::Model(:layers)
   end
 
   def self.execute_delete(query)
-    # TODO: Doe alle nodes van alle lagen van deze owner die wel data hebben op laag -1!
-
     layer_id = self.id_from_name query[:params][:layer]
     if layer_id == -1
       query[:api].error!("Layer 'none' cannot be deleted", 422)
     elsif layer_id
+      # Move objects on layer to be deleted which still have
+      # data on other layer to layer = -1
+      # Example:
+      #  - Object A (on layer 1) has data on both layers 1 and 2.
+      #  - Layer 1 is removed
+      #  - Object A is moved to layer -1, and has data on layer 2.
+      move_objects = <<-SQL
+        UPDATE objects SET layer_id = -1
+        WHERE id IN (
+          SELECT id FROM objects AS o2
+          WHERE o2.layer_id = ? AND EXISTS (
+            SELECT TRUE FROM object_data
+            WHERE o2.id = object_id
+            AND object_data.layer_id != o2.layer_id
+          )
+        );
+      SQL
+      Sequel::Model.db.fetch(move_objects, layer_id).all
       where(id: layer_id).delete
     else
       query[:api].error!("Layer not found: #{query[:params][:layer]}", 404)
