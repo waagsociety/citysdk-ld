@@ -122,7 +122,7 @@ class CDKOwner < Sequel::Model(:owners)
       website: o[:website],
       organization: o[:organization],
       admin: o[:admin]
-    }.delete_if{ |_, v| not v or v == '' }
+    }.delete_if {|_, v| not v or v == '' }
   end
 
 end
