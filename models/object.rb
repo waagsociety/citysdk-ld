@@ -140,6 +140,10 @@ class CDKObject < Sequel::Model(:objects)
       when :post
         CDKObject.multi_insert(objects.map { |o| o[:db_hash] })
         CDKObjectDatum.multi_insert(object_data.map { |o| o[:db_hash] })
+
+        # New objects are inserted, so new layer bounding box is computed by DB trigger
+        # New bounding boxs needs to be loaded in memcached cache:
+        CDKLayer.update_layer_hash layer_id
       when :patch
         object_data.each do |object_datum|
           count = CDKObjectDatum
@@ -148,7 +152,7 @@ class CDKObject < Sequel::Model(:objects)
 
           # if no records were updated, something went wrong
           if count == 0
-            cdk_id_exists = CDKObject.select(:cdk_id).where(id: object_datum[:db_hash][:object_id]).count
+            cdk_id_exists = CDKObject.select(:cdk_id).where(id: object_datum[:db_hash][:object_id]).count > 0
             query[:api].error!("Object not found: '#{object_datum[:cdk_id]}'", 404) unless cdk_id_exists
             query[:api].error!("No data found for on layer '#{query[:params][:layer]}' for object '#{object_datum[:cdk_id]}'", 404)
           end
@@ -160,7 +164,49 @@ class CDKObject < Sequel::Model(:objects)
   end
 
   def self.execute_delete(query)
+    # If object has data on other layers:
+    #   Delete data and move object itself to layer -1
+    # If object has only data on its own layer:
+    #   Delete object and data
+    #
+    # See layer.rb > execute_delete for example
+
     # TODO: with what API call does one delete one object?
+
+    cdk_id_exists = CDKObject.where(cdk_id: query[:params][:cdk_id]).count > 0
+    query[:api].error!("Object not found: '#{query[:params][:cdk_id]}'", 404) unless cdk_id_exists
+
+    # TODO: create SQL function in 003_functions migration
+    move_object = <<-SQL
+      UPDATE objects SET layer_id = -1
+      FROM object_data
+      WHERE object_id = objects.id AND
+        object_data.layer_id != objects.layer_id AND
+        objects.layer_id != -1 AND
+        objects.cdk_id = ?
+    SQL
+
+    Sequel::Model.db.transaction do
+      Sequel::Model.db.fetch(move_object, query[:params][:cdk_id]).all
+      count = where(id: owner_id).delete
+      CDKObject.delete_orphans
+      query[:api].error!("Database error while deleting object '#{query[:params][:cdk_id]}'", 422) if count == 0
+    end
+  end
+
+  def self.delete_orphans
+    # TODO: consider creating trigger on object_data delete.
+    sql = <<-SQL
+      DELETE FROM objects
+      WHERE layer_id = -1 AND
+        NOT EXISTS (
+          SELECT TRUE
+          FROM object_data
+          WHERE object_id = objects.id
+        );
+    SQL
+
+    Sequel::Model.db.fetch(sql).all
   end
 
   def self.db_hash_from_geojson(query, cdk_id, layer_id, feature)

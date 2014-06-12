@@ -48,12 +48,21 @@ class CDKLayer < Sequel::Model(:layers)
     end
 
     # If owner and category are provided, make sure
-    # owner and category exist
-    owner_id = nil
-    owner_id = CDKOwner.id_from_name(data['owner']) if data['owner']
+    # owner and category exist, and
+    # replace named values in data hash
+    if data['owner']
+      owner_id = CDKOwner.id_from_name(data['owner']) if data['owner']
+      query[:api].error!("Owner does not exist: '#{data['owner']}'", 422) unless owner_id
+      data.delete('owner')
+      data['owner_id'] = owner_id
+    end
 
-    category_id = nil
-    category_id = CDKCategory.id_from_name(data['category']) if data['category']
+    if data['category']
+      category_id = CDKCategory.id_from_name(data['category']) if data['category']
+      query[:api].error!("Category does not exist: '#{data['category']}'", 422) unless category_id
+      data.delete('category')
+      data['category_id'] = category_id
+    end
 
     case query[:method]
     when :post
@@ -62,24 +71,10 @@ class CDKLayer < Sequel::Model(:layers)
       layer_id = id_from_name(data['name'])
       query[:api].error!("Layer already exists: #{data['name']}", 422) if layer_id
 
+      required_keys = required_keys - ['owner', 'category'] + ['owner_id', 'category_id']
+
       unless (data.keys & required_keys).sort == required_keys.sort
         query[:api].error!("Cannot create layer, keys are missing in POST data: #{(required_keys - data.keys).join(', ')}", 422)
-      end
-
-      # owner_id and category_id must be valid;
-      # and replace named values in data hash
-      if owner_id
-        data.delete('owner')
-        data['owner_id'] = owner_id
-      else
-        query[:api].error!("Owner does not exist: #{data['owner']}", 422)
-      end
-
-      if category_id
-        data.delete('category')
-        data['category_id'] = category_id
-      else
-        query[:api].error!("Category does not exist: #{data['category']}", 422)
       end
 
       Sequel::Model.db.transaction do
@@ -98,18 +93,6 @@ class CDKLayer < Sequel::Model(:layers)
       # update
 
       query[:api].error!('Layer name cannot be changed', 422) if data['name']
-
-      # owner_id and category_id must be valid;
-      # and replace named values in data hash
-      if owner_id
-        data.delete('owner')
-        data['owner_id'] = owner_id
-      end
-
-      if category_id
-        data.delete('category')
-        data['category_id'] = category_id
-      end
 
       layer_id = self.id_from_name query[:params][:layer]
       if layer_id
@@ -157,6 +140,8 @@ class CDKLayer < Sequel::Model(:layers)
       #  - Object A (on layer 1) has data on both layers 1 and 2.
       #  - Layer 1 is removed
       #  - Object A is moved to layer -1, and has data on layer 2.
+
+      # TODO: create SQL function in 003_functions migration
       move_objects = <<-SQL
         UPDATE objects SET layer_id = -1
         WHERE id IN (
@@ -165,11 +150,17 @@ class CDKLayer < Sequel::Model(:layers)
             SELECT TRUE FROM object_data
             WHERE o2.id = object_id
             AND object_data.layer_id != o2.layer_id
+            AND o2.layer_id != -1
           )
         );
       SQL
-      Sequel::Model.db.fetch(move_objects, layer_id).all
-      where(id: layer_id).delete
+
+      Sequel::Model.db.transaction do
+        Sequel::Model.db.fetch(move_objects, layer_id).all
+        count = where(id: layer_id).delete
+        CDKObject.delete_orphans
+        query[:api].error!("Database error while deleting layer '#{query[:params][:layer]}'", 422) if count == 0
+      end
     else
       query[:api].error!("Layer not found: #{query[:params][:layer]}", 404)
     end
@@ -309,6 +300,25 @@ class CDKLayer < Sequel::Model(:layers)
   # Initialize layers hash:
   ##########################################################################################
 
+  def self.update_layer_hash(layer_id)
+    # TODO: combine update_layer_hash and update_layer_hashes!
+
+    columns = (CDKLayer.dataset.columns - [:geom])
+    CDKLayer.select{columns}.select_append(
+      Sequel.function(:ST_AsGeoJSON, :geom).as(:geojson),
+      Sequel.function(:ST_AsText, :geom).as(:wkt)
+    ).where(id: layer_id).all.each do |l|
+      l.values[:owner] = CDKOwner.make_hash(CDKOwner.where(id: l.values[:owner_id]).first)
+      l.values[:fields] = CDKField.where(layer_id: l.values[:id]).all.map { |l| CDKField.make_hash(l.values) }
+
+      layer = make_hash(l.values)
+
+      # Save layer data in memcache without expiration
+      key = self.memcached_key(layer[:id].to_s)
+      CitySDKLD.memcached_set(key, layer, 0)
+    end
+  end
+
   # TODO: use associations!?
   def self.update_layer_hashes
     names = {}
@@ -319,8 +329,8 @@ class CDKLayer < Sequel::Model(:layers)
       Sequel.function(:ST_AsGeoJSON, :geom).as(:geojson),
       Sequel.function(:ST_AsText, :geom).as(:wkt)
     ).all.each do |l|
-      l.values[:owner] = CDKOwner.make_hash(CDKOwner.where(:id => l.values[:owner_id]).first)
-      l.values[:fields] = CDKField.where(:layer_id => l.values[:id]).all.map { |l| CDKField.make_hash(l.values) }
+      l.values[:owner] = CDKOwner.make_hash(CDKOwner.where(id: l.values[:owner_id]).first)
+      l.values[:fields] = CDKField.where(layer_id: l.values[:id]).all.map { |l| CDKField.make_hash(l.values) }
 
       layer = make_hash(l.values)
       deps[layer[:id]] = layer[:depends_on_layer_id] if (layer[:depends_on_layer_id] && layer[:depends_on_layer_id] != 0)
