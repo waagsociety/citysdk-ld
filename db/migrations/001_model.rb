@@ -27,7 +27,7 @@ Sequel.migration do
     def add_alphanumeric_name_constraint(table, column = :name)
       sql = <<-SQL
         ALTER TABLE %s ADD CONSTRAINT constraint_name_alphanumeric
-          CHECK (%s SIMILAR TO '([_A-Za-z0-9]+)|([_A-Za-z0-9]+)(\.[_A-Za-z0-9]+)*');
+          CHECK (%s SIMILAR TO '\\w+(\\.\\w+)*');
       SQL
 
       run sql % [table.to_s, column.to_s]
