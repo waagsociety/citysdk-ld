@@ -1,5 +1,7 @@
 # encoding: UTF-8
 
+require_relative '../app/api_helpers.rb'
+
 module CitySDKLD
   class Owners < Grape::API
 
@@ -15,7 +17,7 @@ module CitySDKLD
         do_query :owners, single: true
       end
 
-      resource '/:owner', requirements: { owner: /\w+(\.\w+)*/ } do
+      resource '/:owner', requirements: { owner: ::Helpers.alphanumeric_regex } do
 
         desc 'Get a single owner'
         get '/' do
@@ -27,7 +29,6 @@ module CitySDKLD
           do_query :owners, single: true
         end
 
-        # TODO: deze nog maken!
         desc 'Delete owner - and all layers and data belonging to this owner'
         delete '/' do
           do_query :owners
