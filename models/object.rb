@@ -188,7 +188,7 @@ class CDKObject < Sequel::Model(:objects)
 
     Sequel::Model.db.transaction do
       Sequel::Model.db.fetch(move_object, query[:params][:cdk_id]).all
-      count = where(id: owner_id).delete
+      count = where(cdk_id: query[:params][:cdk_id]).delete
       CDKObject.delete_orphans
       query[:api].error!("Database error while deleting object '#{query[:params][:cdk_id]}'", 422) if count == 0
     end
