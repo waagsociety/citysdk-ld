@@ -42,7 +42,7 @@ Sequel.migration do
       String :name, null: false, unique: true
       String :fullname, null: false
       String :email, null: false, unique: true
-      bool :admin, default: false
+        bool :admin, default: false
       String :website
       String :organization
       column :domains, 'text[]'
@@ -81,10 +81,11 @@ Sequel.migration do
       String :description
       column :data_sources, 'text[]'
       String :licence
-      bool :authoritative, default: false
+        bool :authoritative, default: false
       column :context, 'json'
       integer :update_rate
       String :webservice_url
+      String :sample_url
       timestamptz :imported_at
       timestamptz :created_at, null: false, :default => :now.sql_function
 

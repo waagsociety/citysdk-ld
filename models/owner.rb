@@ -9,7 +9,6 @@ class CDKOwner < Sequel::Model(:owners)
 
   def self.execute_write(query)
     data = query[:data]
-
     written_owner_id = nil
 
     keys = [
@@ -21,6 +20,8 @@ class CDKOwner < Sequel::Model(:owners)
       'organization',
       'password'
     ]
+ 
+    # curl --data '{ "name" : "tom", "email": "tom@waag.org", "website": "waag.org", "fullname": "Tom Demeyer",    "domains": "test", "organization": "Waag Society", "passwd": "nix" }' http://api1.dev/owners    
 
     # Make sure POST data contains only valid keys
     unless (data.keys - keys).empty?
@@ -89,6 +90,8 @@ class CDKOwner < Sequel::Model(:owners)
     end
 
     dataset.where(id: written_owner_id)
+
+
   end
 
   def self.execute_delete(query)
@@ -138,13 +141,13 @@ class CDKOwner < Sequel::Model(:owners)
 
   def self.make_hash(o)
     {
-      name: o[:name],
-      fullname: o[:fullname],
-      email: o[:email],
-      website: o[:website],
+      name:         o[:name],
+      fullname:     o[:fullname],
+      email:        o[:email],
+      website:      o[:website],
       organization: o[:organization],
-      admin: o[:admin]
-    }.delete_if {|_, v| not v or v == '' }
+      admin:        o[:admin]
+    }.delete_if{ |_, v| not v or v == '' }
   end
 
 end

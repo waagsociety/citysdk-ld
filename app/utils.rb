@@ -53,11 +53,19 @@ module CitySDKLD
   ##########################################################################################
 
   def self.password_secure?(password)
-    # TODO: better password security check! Tom!
-    if password.length >= 8 and password =~ /\d/ and password =~ /[A-Z]/
+    c = 0
+    c+=1 if password =~ /\d/ 
+    c+=1 if password =~ /[A-Z]/
+    c+=1 if password =~ /\!\@\#\$\%\^\&\*\(\)\[\}\{\]/
+
+    if( (password.length >= 15) || 
+        (password.length >= 10 && c > 0) ||
+        (password.length >=  8 && c > 1) ||
+        (password.length >=  4 && c > 2) 
+      )
       [true, nil]
     else
-      [false, 'Password needs to be 8 or more characters long, and contain numbers and capitals']
+      [false, 'Password needs to be longer, or contain numbers, capitals or symbols']
     end
   end
 
