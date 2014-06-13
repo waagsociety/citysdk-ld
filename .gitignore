@@ -1,3 +1,6 @@
 _site
 config.development.json
 config.test.json
+config.json
+log
+tmp/restart.txt
