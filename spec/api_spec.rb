@@ -51,6 +51,12 @@ describe CitySDKLD::API do
         body_json(last_response).should == {error: "Owner already exists: bert"}
       end
 
+      it "creates owner 'tom' with too simple password" do
+        post "/owners", read_test_data('owner_tom.json').gsub('ABCabc456','nix')
+        last_response.status.should == 422
+        body_json(last_response).should == {error: 'Password needs to be longer, or contain numbers, capitals or symbols'}
+      end
+
       it "creates owner 'tom' " do
         post "/owners", read_test_data('owner_tom.json')
         last_response.status.should == 201
