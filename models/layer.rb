@@ -88,7 +88,7 @@ class CDKLayer < Sequel::Model(:layers)
           CDKField.multi_insert(fields.map {|field| field[:layer_id] = written_layer_id; field })
         end
       end
-      update_layer_hashes
+      update_layer_hash
     when :patch
       # update
 
@@ -104,7 +104,7 @@ class CDKLayer < Sequel::Model(:layers)
           end
           where(id: layer_id).update(data)
         end
-        update_layer_hashes
+        update_layer_hash
       else
         query[:api].error!("Layer not found: #{query[:params][:layer]}", 404)
       end
@@ -119,7 +119,7 @@ class CDKLayer < Sequel::Model(:layers)
       layer_id = self.id_from_name query[:params][:layer]
       if layer_id
         where(id: layer_id).update(data)
-        update_layer_hashes
+        update_layer_hash
       else
         query[:api].error!("Layer not found: #{query[:params][:layer]}", 404)
       end
@@ -188,7 +188,7 @@ class CDKLayer < Sequel::Model(:layers)
 
   def self.ensure_layer_cache
     unless CitySDKLD.memcached_get(KEY_LAYER_NAMES)
-      update_layer_hashes
+      update_layer_hash
     end
   end
 
@@ -300,35 +300,19 @@ class CDKLayer < Sequel::Model(:layers)
   # Initialize layers hash:
   ##########################################################################################
 
-  def self.update_layer_hash(layer_id)
-    # TODO: combine update_layer_hash and update_layer_hashes!
-
-    columns = (CDKLayer.dataset.columns - [:geom])
-    CDKLayer.select{columns}.select_append(
-      Sequel.function(:ST_AsGeoJSON, :geom).as(:geojson),
-      Sequel.function(:ST_AsText, :geom).as(:wkt)
-    ).where(id: layer_id).all.each do |l|
-      l.values[:owner] = CDKOwner.make_hash(CDKOwner.where(id: l.values[:owner_id]).first)
-      l.values[:fields] = CDKField.where(layer_id: l.values[:id]).all.map { |l| CDKField.make_hash(l.values) }
-
-      layer = make_hash(l.values)
-
-      # Save layer data in memcache without expiration
-      key = self.memcached_key(layer[:id].to_s)
-      CitySDKLD.memcached_set(key, layer, 0)
-    end
-  end
-
-  # TODO: use associations!?
-  def self.update_layer_hashes
+  def self.update_layer_hash(layer_id = nil)
     names = {}
     deps = {}
 
     columns = (CDKLayer.dataset.columns - [:geom])
-    CDKLayer.select{columns}.select_append(
+    dataset = CDKLayer.select{columns}.select_append(
       Sequel.function(:ST_AsGeoJSON, :geom).as(:geojson),
       Sequel.function(:ST_AsText, :geom).as(:wkt)
-    ).all.each do |l|
+    )
+
+    dataset = dataset.where(id: layer_id) if layer_id
+
+    dataset.all.each do |l|
       l.values[:owner] = CDKOwner.make_hash(CDKOwner.where(id: l.values[:owner_id]).first)
       l.values[:fields] = CDKField.where(layer_id: l.values[:id]).all.map { |l| CDKField.make_hash(l.values) }
 
@@ -340,9 +324,11 @@ class CDKLayer < Sequel::Model(:layers)
       names[layer[:name]] = layer[:id]
     end
 
-    CitySDKLD.memcached_set(KEY_LAYER_NAMES, names, 3600)
-    CitySDKLD.memcached_set(KEY_LAYER_DEPENDENCIES, deps, 3600)
-
+    # Only if ALL layers were reloaded, update memcached names and deps
+    unless layer_id
+      CitySDKLD.memcached_set(KEY_LAYER_NAMES, names, 3600)
+      CitySDKLD.memcached_set(KEY_LAYER_DEPENDENCIES, deps, 3600)
+    end
   end
 
 end

@@ -34,7 +34,7 @@ module CitySDKLD
       Dir[File.expand_path('../../models/*.rb', __FILE__)].each { |file| require file }
       Dir[File.expand_path('../../utils/*.rb', __FILE__)].each { |file| require file }
 
-      CDKLayer.update_layer_hashes
+      CDKLayer.update_layer_hash
     end
 
     def self.add_serializer(serializer)
