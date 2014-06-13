@@ -545,8 +545,9 @@ describe CitySDKLD::API do
         get "/layers/tom.achtbanen/objects?in=tom.steden.utrecht"
         last_response.status.should == 200
         last_response.header["X-Result-Count"].to_i.should == 2
-        body_json(last_response)[:features][0][:properties][:cdk_id].should == 'tom.achtbanen.4'
-        body_json(last_response)[:features][1][:properties][:cdk_id].should == 'tom.achtbanen.5'
+        body_json(last_response)[:features].map {|f|
+          f[:properties][:cdk_id]
+        }.sort.should == ['tom.achtbanen.4', 'tom.achtbanen.5']
       end
     end
 
@@ -673,7 +674,8 @@ describe CitySDKLD::API do
       it "gets owners of layer 'tom.achtbanen'" do
         get "/layers/tom.achtbanen/owners"
         last_response.status.should == 200
-        # TODO: check content
+        body_json(last_response).length.should == 1
+        body_json(last_response)[0][:name].should == 'tom'
       end
     end
 
@@ -681,7 +683,7 @@ describe CitySDKLD::API do
       it "gets layers of owner 'tom'" do
         get "/owners/tom/layers"
         last_response.status.should == 200
-        # TODO: check content
+        body_json(last_response)[:features].length.should == 2
       end
     end
 
@@ -711,14 +713,14 @@ describe CitySDKLD::API do
       it "checks if 'bert.dierenwinkels.1' is moved to layer 'none' and still has data on 'rutger.openingstijden" do
         get "/objects/bert.dierenwinkels.1"
         last_response.status.should == 200
-        body_json(last_response)[:features][0][:layer].should == 'none'
+        body_json(last_response)[:features][0][:properties][:layer].should == 'none'
         tot = body_json(last_response)[:features][0][:properties][:layers][:'rutger.openingstijden'][:data][:tot]
         tot.should == '🕙'
       end
     end
 
     describe "DELETE /objects/bert.dierenwinkels.1/layers/rutger.openingstijden" do
-      it "deletes single object 'bert.dierenwinkels.1'" do
+      it "deletes data on layer 'rutger.openingstijden' on single object 'bert.dierenwinkels.1'" do
         delete "/objects/bert.dierenwinkels.1/layers/rutger.openingstijden"
         last_response.status.should == 204
         last_response.body.should == ''
@@ -729,22 +731,25 @@ describe CitySDKLD::API do
       it "checks if object 'bert.dierenwinkels.1' is deleted" do
         get "/objects/bert.dierenwinkels.1"
         last_response.status.should == 404
-        last_response.body.should == ''
+        body_json(last_response).should == {error: "Object not found: 'bert.dierenwinkels.1'"}
       end
     end
-
-
-
-
 
     describe "DELETE /layers/bert.dierenwinkels" do
       it "deletes layer 'bert.dierenwinkels'" do
         delete "/layers/bert.dierenwinkels"
         last_response.status.should == 204
         last_response.body.should == ''
+      end
+    end
 
-        # Rutgers dingen moeten er nog zijn, en objecten op laag 'none'
-        # Tel rutgers objecten
+    describe "GET /layers/rutger.openingstijden/objects" do
+      it "checks if all objects with data on 'rutger.openingstijden' are on layer 'none' and 'tom.achtbanen'" do
+        get "/layers/rutger.openingstijden/objects"
+        last_response.status.should == 200
+        last_response.header["X-Result-Count"].to_i.should == 5
+        body_json(last_response)[:features].map {|f| f[:properties][:layer] }.sort.should ==
+          ['none', 'none', 'tom.achtbanen', 'tom.achtbanen', 'tom.achtbanen']
       end
     end
 
@@ -753,8 +758,14 @@ describe CitySDKLD::API do
         delete "/owners/rutger"
         last_response.status.should == 204
         last_response.body.should == ''
+      end
+    end
 
-        # ook objecten die op laag none zitten moeten nu weg zijn
+    describe "DELETE /objects/bert.dierenwinkels.3" do
+      it "checks if orphaned objects are correctly deleted" do
+        delete "/objects/bert.dierenwinkels.3"
+        last_response.status.should == 404
+        body_json(last_response).should == {error: "Object not found: 'bert.dierenwinkels.3'"}
       end
     end
 
@@ -771,6 +782,15 @@ describe CitySDKLD::API do
         delete "/owners/tom"
         last_response.status.should == 204
         last_response.body.should == ''
+      end
+    end
+
+    describe "GET /objects" do
+      it "checks whether all objects are deleted" do
+        get "/objects"
+        last_response.status.should == 200
+        last_response.header["X-Result-Count"].to_i.should == 0
+        body_json(last_response)[:features].length.should == 0
       end
     end
 
