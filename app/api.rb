@@ -1,11 +1,15 @@
 # encoding: UTF-8
 
 module CitySDKLD
+
   class API < Grape::API
 
     default_format :json
-    format :json
+    default_error_formatter :json
     version 'v1', using: :header, vendor: 'citysdk-ld'
+
+    # TODO: swagger should specify possible output formats!
+    add_swagger_documentation api_version: 'v1'
 
     def initialize
       super
@@ -87,9 +91,5 @@ module CitySDKLD
     mount ::CitySDKLD::Objects
     mount ::CitySDKLD::Owners
     mount ::CitySDKLD::Endpoints
-
-    # TODO: swagger should specify possible output formats!
-    add_swagger_documentation api_version: 'v1'
-
   end
 end

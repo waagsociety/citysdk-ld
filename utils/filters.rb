@@ -52,12 +52,12 @@ module CitySDKLD
         url_params: [:lat, :lon],
         resources: [:objects, :layers]
       },
-      name: {
-        url_params: [:name],
+      title: {
+        url_params: [:title],
         resources: [:objects, :layers]
       },
       data: {
-        url_params: [/(?<layer>[\w\.]+)::(?<field>.+)/],
+        url_params: [/(?<layer>[\w_\.]+)::(?<field>.+)/],
         resources: [:objects]
       }
     }
@@ -158,12 +158,14 @@ module CitySDKLD
 
     def self.layer(dataset, params, query)
       layer_ids = []
-      params[:layer].split(',').each do |layer_name|
-        layer_id = CDKLayer.id_from_name(layer_name)
-        if layer_id
-          layer_ids << layer_id
-        else
-          query[:api].error!("Layer not found: '#{layer_name}'", 404)
+      unless params[:layer] == '*' and query[:resource] == :objects
+        params[:layer].split(',').each do |layer_name|
+          layer_id = CDKLayer.id_from_name(layer_name)
+          if layer_id
+            layer_ids << layer_id
+          else
+            query[:api].error!("Layer not found: '#{layer_name}'", 404)
+          end
         end
       end
 
@@ -207,7 +209,10 @@ module CitySDKLD
     end
 
     def self.bbox(dataset, params, query)
-      coordinates = params[:bbox].scan(/-?\d+(?:\.\d+)?/)
+      coordinates = params[:bbox].split(',')
+      unless coordinates.length == 4 and coordinates.map {|c| c.is_number? }.inject(:&)
+        query[:api].error!("bbox parameter needs to be of form: 'lat1,lon1,lat2,lon2'", 422)
+      end
       contains = 'ST_Contains(ST_SetSRID(ST_MakeBox2D(ST_Point(?,?), ST_Point(?, ?)), 4326), geom)'
       dataset.where(contains, coordinates[1], coordinates[0], coordinates[3], coordinates[2])
     end

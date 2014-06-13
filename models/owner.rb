@@ -95,14 +95,36 @@ class CDKOwner < Sequel::Model(:owners)
   end
 
   def self.execute_delete(query)
-    # TODO: Doe alle nodes van alle lagen van deze owner die wel data hebben op laag -1!
-
     owner_id = id_from_name query[:params][:owner]
     if owner_id == 0
       query[:api].error!("Owner 'citysdk' cannot be deleted", 422)
     elsif owner_id
-      count = where(id: owner_id).delete
-      query[:api].error!("Database error while deleting owner '#{query[:params][:owner]}'", 422) if count == 0
+      # Move all objects on layers belonging to this owner that still
+      # have data on other layers to layer = -1. See layer.rb > execute_delete
+      # for example
+
+      # TODO: create SQL function in 003_functions migration
+      move_objects = <<-SQL
+        UPDATE objects SET layer_id = -1
+        WHERE id IN (
+          SELECT id FROM objects AS o2
+          WHERE layer_id IN (
+            SELECT id FROM layers WHERE owner_id = ?
+          ) AND EXISTS (
+            SELECT TRUE FROM object_data
+            WHERE o2.id = object_id
+            AND object_data.layer_id != o2.layer_id
+            AND o2.layer_id != -1
+          )
+        );
+      SQL
+
+      Sequel::Model.db.transaction do
+        Sequel::Model.db.fetch(move_objects, owner_id).all
+        count = where(id: owner_id).delete
+        CDKObject.delete_orphans
+        query[:api].error!("Database error while deleting owner '#{query[:params][:owner]}'", 422) if count == 0
+      end
     else
       query[:api].error!("Owner not found: #{query[:params][:owner]}", 404)
     end

@@ -34,6 +34,9 @@ describe CitySDKLD::API do
 
   describe CitySDKLD::API do
 
+    # TODO: refactor tests - combine multiple decribe/it blocks which
+    # belong to one single 'task'.
+
     ######################################################################
     # owners:
     ######################################################################
@@ -168,6 +171,39 @@ describe CitySDKLD::API do
       end
     end
 
+    describe "PATCH /layers/bert.dierenwinkels" do
+      it "set owner of 'bert.dierenwinkels' to 'rutger'" do
+        owner = 'rutger'
+        patch "/layers/bert.dierenwinkels", {owner: owner}.to_json
+        last_response.status.should == 200
+      end
+    end
+
+    describe "GET /layers/bert.dierenwinkels/owners" do
+      it "set owner of 'bert.dierenwinkels' to 'rutger'" do
+        get '/layers/bert.dierenwinkels/owners'
+        last_response.status.should == 200
+        body_json(last_response)[0][:name].should == 'rutger'
+      end
+    end
+
+    describe "PATCH /layers/bert.dierenwinkels" do
+      it "sets owner of 'bert.dierenwinkels' to owner that does not exist" do
+        owner = 'jos'
+        patch "/layers/bert.dierenwinkels", {owner: owner}.to_json
+        last_response.status.should == 422
+        body_json(last_response).should == {error: "Owner does not exist: 'jos'"}
+      end
+    end
+
+    describe "PATCH /layers/bert.dierenwinkels" do
+      it "sets owner of layer 'bert.dierenwinkels' back to 'bert'" do
+        owner = 'bert'
+        patch "/layers/bert.dierenwinkels", {owner: owner}.to_json
+        last_response.status.should == 200
+      end
+    end
+
     describe "GET /layers" do
       it "gets all layers" do
         expected_layers = [
@@ -177,6 +213,7 @@ describe CitySDKLD::API do
         get "/layers"
         last_response.status.should == 200
         data = body_json(last_response)
+        last_response.header["X-Result-Count"].to_i.should == 4
         data[:features].length.should == expected_layers.length
         (data[:features].map { |layer| layer[:properties][:name] } - expected_layers).blank?.should == true
       end
@@ -377,8 +414,43 @@ describe CitySDKLD::API do
         body_json(last_response).should == {error: "Geometry has Z dimension but column does not"}
       end
 
-      # TODO: zonder id
-      # TODO: met cdk_id
+      it "creates single object with duplicate id" do
+        data = read_test_data_json 'objects_bert.dierenwinkels.json'
+        data = data[:features][-1]
+        post "/layers/bert.dierenwinkels/objects", data.to_json
+        last_response.status.should == 422
+        body_json(last_response).should == {error: "cdk_id must be unique: 'bert.dierenwinkels.3'"}
+      end
+
+      it "creates single object without id" do
+        data = read_test_data_json 'objects_bert.dierenwinkels.json'
+        data = data[:features][-1]
+        data[:properties].delete(:id)
+        post "/layers/bert.dierenwinkels/objects", data.to_json
+        last_response.status.should == 422
+        body_json(last_response).should == {error: "All objects must either have 'id' or 'cdk_id' property"}
+      end
+
+      it "adds data to cdk_id that doesn't exist" do
+        data = read_test_data_json 'objects_bert.dierenwinkels.json'
+        data = data[:features][-1]
+        data.delete(:geometry)
+        data[:properties].delete(:title)
+        data[:properties].delete(:id)
+        data[:properties][:cdk_id] = '12345'
+        post "/layers/bert.dierenwinkels/objects", data.to_json
+        last_response.status.should == 422
+        body_json(last_response).should == {error: "Object not found: '#{data[:properties][:cdk_id]}'"}
+      end
+
+      it "creates single object without data" do
+        data = read_test_data_json 'objects_bert.dierenwinkels.json'
+        data = data[:features][-1]
+        data[:properties].delete(:data)
+        post "/layers/bert.dierenwinkels/objects", data.to_json
+        last_response.status.should == 422
+        body_json(last_response).should == {error: "Object without data encountered"}
+      end
     end
 
     describe "POST /layers/bert.bioscopen/objects" do
@@ -415,55 +487,156 @@ describe CitySDKLD::API do
         body_json(last_response).length.should == data[:features].length
       end
 
-      # TODO: Voeg data toe aan cdk_id dat niet bestaat!
+      it "adds duplicate data on layer 'rutger.openingstijden' to existing objects" do
+        data = read_test_data_json 'objects_rutger.openingstijden.json'
+        post "/layers/rutger.openingstijden/objects", data.to_json
+        last_response.status.should == 422
+        body_json(last_response).should == {error: "Object already has data on this layer"}
+      end
+
       # TODO: voeg data toe aan bestaand cdk_id met ook geometry/titel
     end
 
     # Edit data
     # Edit objects (geom/title)
-    # check layer bounding box
+
     # check serializations
     # bekijk losse objecten
     # bekijk velden
     # bekijk alle serialisaties
     # bekijk metadata
+    #  http://localhost:9292/layers/rutger.openingstijden/objects/bert.dierenwinkels.1
+    # http://localhost:9292/objects/bert.dierenwinkels.1?layer=*
+
+    # curl --data "{\"url\": \"http://vis.com/hond\"}" http://localhost:9292/objects/n46127914/layers/artsholland
+    # curl -X PUT --data "{\"chips\": \"nee\"}" http://localhost:9292/objects/n46127914/layers/artsholland
+    # curl --request PATCH --data "{\"url\": \"http://bertspaan.nl/\"}" http://localhost:9292/objects/n46127914/layers/artsholland
+    # curl -X DELETE http://localhost:9292/objects/n46127914/layers/artsholland
+
 
     ######################################################################
     # filters:
     ######################################################################
 
     # All filters:
-    # [cdk_id:, layer:, owner:, field:, in:, contains:, bbox:, nearby:, name:, data:]
-
+    # [cdk_id, layer, owner, field, in, contains, bbox, nearby, title, data]
 
     # nearby
-    # http://localhost:9292/objects?lat=52.37277&lon=4.90033
-    # http://localhost:9292/objects?lat=52.37277&lon=4.90033&radius=10000
+    describe "GET /objects?lat=52.37277&lon=4.90033" do
+      it "gets 10 objects closest to location" do
+        get "/objects?lat=52.37277&lon=4.90033"
+        last_response.status.should == 200
+        body_json(last_response)[:features][0][:properties][:cdk_id].should == 'tom.achtbanen.2'
+        body_json(last_response)[:features][1][:properties][:cdk_id].should == 'bert.dierenwinkels.1'
+        # TODO: check whether results are really closest to location?
+      end
+    end
 
+    describe "GET /layers/bert.dierenwinkels/objects?lat=52.37277&lon=4.90033&radius=1692" do
+      it "gets objects within 1692 m. of location" do
+        get "/layers/bert.dierenwinkels/objects?lat=52.37277&lon=4.90033&radius=1692"
+        last_response.status.should == 200
+        last_response.header["X-Result-Count"].to_i.should == 1
+        # TODO: check whether results are really within 1692 m. of location?
+        # Executing
+        #   SELECT ST_Distance(Geography(ST_SetSRID(ST_MakePoint(4.90033, 52.37277), 4326)),
+        #   Geography(ST_SetSRID(ST_MakePoint(4.8793, 52.36469), 4326)))
+        # returns: 1691.197905984
+      end
+    end
 
     # in
-    #http://localhost:9292/layers/tom.achtbanen/objects?in=tom.steden.utrecht
-    # moet zijn cdk_id tom.achtbanen.4
+    describe "GET /layers/tom.achtbanen/objects?in=tom.steden.utrecht" do
+      it "gets objects on layer 'tom.achtbanen' contained by 'tom.steden.utrecht'" do
+        get "/layers/tom.achtbanen/objects?in=tom.steden.utrecht"
+        last_response.status.should == 200
+        last_response.header["X-Result-Count"].to_i.should == 2
+        body_json(last_response)[:features][0][:properties][:cdk_id].should == 'tom.achtbanen.4'
+        body_json(last_response)[:features][1][:properties][:cdk_id].should == 'tom.achtbanen.5'
+      end
+    end
 
-    # contains:
-    # http://localhost:9292/objects?contains=tom.achtbanen.4
-    # http://localhost:9292/layers/tom.steden/objects?contains=tom.achtbanen.4
-    # MOET ZIJN tom.steden.utrecht
+    # contains
+    describe "GET /layers/tom.steden/objects?contains=tom.achtbanen.4" do
+      it "gets objects on layer 'tom.steden' containing 'tom.achtbanen.4'" do
+        get "/layers/tom.steden/objects?contains=tom.achtbanen.4"
+        last_response.status.should == 200
+        last_response.header["X-Result-Count"].to_i.should == 1
+        body_json(last_response)[:features][0][:properties][:cdk_id].should == 'tom.steden.utrecht'
+      end
+    end
 
-    # name
+    # title
+    describe "GET /objects?title=spinnen" do
+      it "gets one page of objects and object count" do
+        get "/objects?title=spinnen"
+        last_response.status.should == 200
+        last_response.header["X-Result-Count"].to_i.should == 1
+        body_json(last_response)[:features][0][:properties][:title].should ==
+            'Het Grote Spinnen- en insectenimperium'
+      end
+    end
 
     # bbox
+    describe "GET /objects?bbox=52.38901,4.79519,52.35191,5.01135" do
+      it "gets objects within bounding box" do
+        get "/objects?bbox=52.38901,4.79519,52.35191,5.01135"
+        last_response.status.should == 200
+        last_response.header["X-Result-Count"].to_i.should == 2
+        body_json(last_response)[:features][0][:properties][:cdk_id].should == 'bert.dierenwinkels.1'
+        body_json(last_response)[:features][1][:properties][:cdk_id].should == 'tom.achtbanen.2'
+      end
+    end
 
-    #filter: icon": "🐟",
-    # http://localhost:9292/objects?bert.dierenwinkels::icon=🐟
-    # wordt geoede gevonden, en komt data ook mee?
-    # http://localhost:9292/objects?bert.dierenwinkels::type=geleedpotigen
+    # data
+    describe "GET /objects?bert.dierenwinkels::icon=🐟" do
+      it "gets one object with icon = 🐟" do
+        get URI::encode("/objects?bert.dierenwinkels::icon=🐟")
+        last_response.status.should == 200
+        last_response.header["X-Result-Count"].to_i.should == 1
+        icon = body_json(last_response)[:features][0][:properties][:layers][:'bert.dierenwinkels'][:data][:icon]
+        icon.should == '🐟'
+      end
+    end
+
+    # http://localhost:9292/objects?bert.dierenwinkels::type
+    # http://localhost:9292/objects?bert.dierenwinkels::type&layer=rutger.openingstijden
+    # http://localhost:9292/objects?bert.dierenwinkels::type&rutger.openingstijden::tot=%F0%9F%95%94
+
+    # layer
+    # http://localhost:9292/objects?layer=tom.steden
 
     # layer = *
+    # http://localhost:9292/objects/tom.achtbanen.3?layer=* MOET STANDAARD AL
+    #http://localhost:9292/objects?layer=bert.dierenwinkels,rutger.openingstijden
+    # http://localhost:9292/layers/rutger.openingstijden/objects?layer=*
 
-    # pagination headers - layers, objects!
-    # count!
+    # pagination/count
+    object_count = 0
+    describe "GET /objects?count&per_page=250" do
+      it "gets all objects and object count" do
+        get "/objects?count&per_page=250"
+        last_response.status.should == 200
+        object_count = body_json(last_response)[:features].length
+        last_response.header["X-Result-Count"].to_i.should == object_count
 
+        # Apparently, rspec sets hostname to 'example.org'
+        last_response.header["Link"].should ==
+            '<http://example.org/objects?count&page=1&per_page=250>; rel="last"'
+      end
+    end
+
+    describe "GET /objects?count" do
+      it "gets one page of objects and object count" do
+        get "/objects?count"
+        last_response.status.should == 200
+        last_response.header["X-Result-Count"].to_i.should == object_count
+        last_response.header["Link"].should == [
+          '<http://example.org/objects?count&page=3&per_page=10>; rel="last"',
+          '<http://example.org/objects?count&page=2&per_page=10>; rel="next"'
+        ].join(', ')
+      end
+    end
 
     ######################################################################
     # endpoint:
@@ -474,6 +647,27 @@ describe CitySDKLD::API do
         get "/"
         last_response.status.should == 200
         # TODO: check endpoint content
+      end
+    end
+
+    ######################################################################
+    # Accept header:
+    ######################################################################
+
+    describe "GET /objects" do
+      it "uses Accept header to get RDF/Turtle of /objects" do
+        get "/objects", nil, {'HTTP_ACCEPT' => "text/turtle"}
+        last_response.status.should == 200
+        last_response.header['Content-Type'].should == 'text/turtle'
+      end
+    end
+
+    describe "GET /objects" do
+      it "uses Accept header to get JSON-LD of /objects" do
+        get "/objects", nil, {'HTTP_ACCEPT' => "application/ld+json"}
+        last_response.status.should == 200
+        last_response.header['Content-Type'].should == 'application/json'
+        body_json(last_response).has_key?(:@context).should == true
       end
     end
 
@@ -497,11 +691,57 @@ describe CitySDKLD::API do
       end
     end
 
+    describe "GET /layers" do
+      it "gets bounding boxes of all layers" do
+        get "/layers"
+        last_response.status.should == 200
+        all_polygons = body_json(last_response)[:features].map {|f| f[:geometry][:type] == 'Polygon' }.inject(:&)
+        all_polygons.should == true
+        # TODO: check if bounding box of all objects equals layer's bounding box
+      end
+    end
+
     ######################################################################
     # and now... delete everything:
     ######################################################################
 
-    # TODO: verwijder single object
+    describe "DELETE /objects/bert.dierenwinkels.1" do
+      it "deletes single object 'bert.dierenwinkels.1'" do
+        delete "/objects/bert.dierenwinkels.1"
+        last_response.status.should == 204
+        last_response.body.should == ''
+      end
+    end
+
+    describe "GET /objects/bert.dierenwinkels.1" do
+      it "checks if 'bert.dierenwinkels.1' is moved to layer 'none' and still has data on 'rutger.openingstijden" do
+        get "/objects/bert.dierenwinkels.1"
+        last_response.status.should == 200
+        body_json(last_response)[:features][0][:layer].should == 'none'
+        tot = body_json(last_response)[:features][0][:properties][:layers][:'rutger.openingstijden'][:data][:tot]
+        tot.should == '🕙'
+      end
+    end
+
+    describe "DELETE /objects/bert.dierenwinkels.1/layers/rutger.openingstijden" do
+      it "deletes single object 'bert.dierenwinkels.1'" do
+        delete "/objects/bert.dierenwinkels.1/layers/rutger.openingstijden"
+        last_response.status.should == 204
+        last_response.body.should == ''
+      end
+    end
+
+    describe "GET /objects/bert.dierenwinkels.1" do
+      it "checks if object 'bert.dierenwinkels.1' is deleted" do
+        get "/objects/bert.dierenwinkels.1"
+        last_response.status.should == 404
+        last_response.body.should == ''
+      end
+    end
+
+
+
+
 
     describe "DELETE /layers/bert.dierenwinkels" do
       it "deletes layer 'bert.dierenwinkels'" do

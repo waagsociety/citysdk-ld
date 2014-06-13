@@ -114,7 +114,18 @@ module CitySDKLD
   def self.format_sequel_error(e, query)
     msg = case e.wrapped_exception
       when PG::UniqueViolation
-        "cdk_id must be unique: #{e.message[(e.message.index('DETAIL:') + 7)..-1].strip}"
+        if e.message.include? 'Key (layer_id, object_id)'
+          # TODO: specify which object/layer. e.message:
+          # DETAIL: Key (layer_id, object_id)=(458, 1133) already exists.
+          'Object already has data on this layer'
+        else
+          cdk_id = e.message.match(/\(cdk_id\)=\((.*)\)/).captures.first rescue nil
+          if cdk_id
+            "cdk_id must be unique: '#{cdk_id}'"
+          else
+            e.message
+          end
+        end
       when PG::RaiseException, PG::InvalidParameterValue
         # Custom error raised from CitySDK LD PL/pgSQL function - message is of form:
         # "ERROR:  <error message>".
