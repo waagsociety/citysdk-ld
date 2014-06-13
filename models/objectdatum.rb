@@ -98,12 +98,10 @@ class CDKObjectDatum < Sequel::Model(:object_data)
     query[:api].error!("No data found on layer '#{query[:params][:layer]}' for object: '#{query[:params][:cdk_id]}'", 404) unless object_datum[:id]
 
     object_id = object_datum[:object_id]
-    CDKObjectDatum.where(id: object_datum[:id]).delete
 
-    # TODO: gooi alleen weg als er geen objects zijn met object_id in members EN if:
-    if CDKObjectDatum.where(object_id: object_id).count == 0
-      # Also remove associated object, if object does no longer have data on any layer
-      CDKObject.where(id: object_id).delete
+    Sequel::Model.db.transaction do
+      CDKObjectDatum.where(id: object_datum[:id]).delete
+      CDKObject.delete_orphans
     end
   end
 

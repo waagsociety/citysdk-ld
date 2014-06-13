@@ -187,9 +187,25 @@ class CDKObject < Sequel::Model(:objects)
     SQL
 
     Sequel::Model.db.transaction do
+      # First, get object_id of object data to be deleted:
+      object_datum = CDKObjectDatum
+          .where(object_id: CDKObject.select(:id).where(cdk_id: query[:params][:cdk_id]))
+          .where(layer_id: CDKObject.select(:layer_id).where(cdk_id: query[:params][:cdk_id]))
+          .select(:id)
+          .first
+
+      query[:api].error!(
+        "Object can only be deleted using this API call when object has data on" +
+      " same layer as object is on. Use '/objects/:cdk_id/layers/:layer' instead.", 422
+      ) unless object_datum
+
+      # Then, move object to layer 'none' if object has data on other layers:
       Sequel::Model.db.fetch(move_object, query[:params][:cdk_id]).all
-      count = where(cdk_id: query[:params][:cdk_id]).delete
+
+      # Finally, delete object data and delete possible orphans:
+      count = CDKObjectDatum.where(id: object_datum[:id]).delete
       CDKObject.delete_orphans
+
       query[:api].error!("Database error while deleting object '#{query[:params][:cdk_id]}'", 422) if count == 0
     end
   end
