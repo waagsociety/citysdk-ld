@@ -17,7 +17,6 @@ module CitySDKLD
         do_query :layers, single: true
       end
 
-      # TODO: get regex from Layer model class
       resource '/:layer', requirements: { layer: ::Helpers.alphanumeric_regex } do
 
         desc 'Return single layer'
@@ -68,8 +67,6 @@ module CitySDKLD
           end
 
           resource '/:cdk_id', requirements: { cdk_id: ::Helpers.alphanumeric_regex } do
-            # TODO: layer_on_object vertelt ook of :layer de laag is van object zelf.??
-            # dus het vertelt alles over –relatie_ van object met laag, is er data, dit en dat.??
             desc 'Return metadata of single layer about single object, e.g. the date the data was added/modified, etc.'
             get '/' do
               do_query :layer_on_object, single: true
