@@ -5,7 +5,7 @@ module CitySDKLD
   module Filters
     # TODO: support filters without url_params
 
-    # url_params can be symbol or regex.
+    # url_params can be array of symbols or single regex.
     # regex capture groups are converted to filter
     # parameters
     #
@@ -57,7 +57,7 @@ module CitySDKLD
         resources: [:objects, :layers]
       },
       data: {
-        url_params: [/(?<layer>[\w_\.]+)::(?<field>.+)/],
+        url_params: /(?<layer>[\w_\.]+)::(?<field>.+)/,
         resources: [:objects]
       }
     }
@@ -293,7 +293,7 @@ module CitySDKLD
 
       # Always add layers queried by data filters to final output,
       # keep list of layers, serializer uses this list and adds layers
-      unless query[:internal].key? :data_layers
+      unless query[:internal].key? :data_layer_ids
         query[:internal][:data_layer_ids] = []
       end
       query[:internal][:data_layer_ids] << layer_id

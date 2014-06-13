@@ -53,11 +53,11 @@ module CitySDKLD
       # 3.
       if params[:query]
         begin
-          query = JSON.parse(params[:query], {symbolize_names: true})
+          query = JSON.parse(params[:query], symbolize_names: true)
           if query.kind_of? Array
             filters += query
           else
-            # TODO: error!
+            api.error!("query parameter should be array of filters", 422)
           end
         rescue JSON::ParserError
           api.error!("Error parsing JSON in query parameter", 422)
@@ -103,43 +103,41 @@ module CitySDKLD
     end
 
     def filters_from_params(resource, method, params)
-      filters = Filters.filters.map do |name, filter|
+      filters = []
+      Filters.filters.each do |name, filter|
 
         # Only use filters that apply to current resource and method
         if filter[:resources].include?(resource) and not (method != :get and not filter[:write])
-
-          # See if all filter's url_params are in params
-          all_url_params = true
-          filter_params = {}
-          filter[:url_params].map do |url_param|
-            case url_param
-            when Symbol
+          case filter[:url_params]
+          when Array
+            # See if all filter's url_params are in params
+            all_url_params = true
+            filter_params = {}
+            filter[:url_params].each do |url_param|
               if params.keys.include? url_param
                 filter_params[url_param] = params[url_param]
               else
                 all_url_params = false
               end
-            when Regexp
-              matched = false
-              params.each do |param, value|
-                match = url_param.match(param)
-                if match
-                  filter_params.merge!({
-                    layer: match[:layer],
-                    field: match[:field],
-                    value: value
-                  })
-                  matched = true
-                  break
-                end
+            end
+            filters << CitySDKLD::Filters.create_filter(name, filter_params) if all_url_params
+          when Regexp
+            regex = filter[:url_params]
+            params.each do |param, value|
+              match = regex.match(param)
+              if match
+                filter_params = {
+                  value: value
+                }
+                regex.names.each {|name| filter_params[name.to_sym] = match[name] }
+                filters << CitySDKLD::Filters.create_filter(name, filter_params)
               end
-              all_url_params = false unless matched
             end
           end
-          CitySDKLD::Filters.create_filter name, filter_params if all_url_params
         end
       end
-      filters.delete_if { |filter| not filter }
+      #filters.delete_if { |filter| not filter }
+      filters
     end
 
     # TODO: move to separate module/class?
