@@ -644,8 +644,8 @@ describe CitySDKLD::API do
 
     #http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&per_page=3&page=2
     #
-    #Link:	<http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=1&per_page=3>; rel="first", <http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=1&per_page=3>; rel="prev", <http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=2&per_page=3>; rel="last"
-    #X-Result-Count	3
+    #Link: <http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=1&per_page=3>; rel="first", <http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=1&per_page=3>; rel="prev", <http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=2&per_page=3>; rel="last"
+    #X-Result-Count 3
 
     ######################################################################
     # endpoint:
