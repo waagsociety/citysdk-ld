@@ -327,7 +327,7 @@ describe CitySDKLD::API do
       it "gets 'lengte' field of layer 'tom.achtbanen'" do
         get "/layers/tom.achtbanen/fields/lengte"
         last_response.status.should == 200
-        # TODO serializaties
+        # TODO serializations
       end
     end
 
@@ -500,7 +500,6 @@ describe CitySDKLD::API do
     # bekijk alle serialisaties
     # bekijk metadata
     #  http://localhost:9292/layers/rutger.openingstijden/objects/bert.dierenwinkels.1
-    # http://localhost:9292/objects/bert.dierenwinkels.1?layer=*
 
     # curl --data "{\"url\": \"http://vis.com/hond\"}" http://localhost:9292/objects/n46127914/layers/artsholland
     # curl -X PUT --data "{\"chips\": \"nee\"}" http://localhost:9292/objects/n46127914/layers/artsholland
@@ -531,7 +530,6 @@ describe CitySDKLD::API do
         get "/layers/bert.dierenwinkels/objects?lat=52.37277&lon=4.90033&radius=1692"
         last_response.status.should == 200
         last_response.header["X-Result-Count"].to_i.should == 1
-        # TODO: check whether results are really within 1692 m. of location?
         # Executing
         #   SELECT ST_Distance(Geography(ST_SetSRID(ST_MakePoint(4.90033, 52.37277), 4326)),
         #   Geography(ST_SetSRID(ST_MakePoint(4.8793, 52.36469), 4326)))
@@ -594,17 +592,21 @@ describe CitySDKLD::API do
       end
     end
 
-    # http://localhost:9292/objects?bert.dierenwinkels::type
-    # http://localhost:9292/objects?bert.dierenwinkels::type&layer=rutger.openingstijden
-    # http://localhost:9292/objects?bert.dierenwinkels::type&rutger.openingstijden::tot=%F0%9F%95%94
+
 
     # layer
-    # http://localhost:9292/objects?layer=tom.steden
 
-    # layer = *
-    # http://localhost:9292/objects/tom.achtbanen.3?layer=* MOET STANDAARD AL
-    #http://localhost:9292/objects?layer=bert.dierenwinkels,rutger.openingstijden
+    # TODO: create tests for:
+    # http://localhost:9292/objects?layer=tom.steden
     # http://localhost:9292/layers/rutger.openingstijden/objects?layer=*
+    # http://localhost:9292/objects/bert.dierenwinkels.1?layer=*
+    #http://localhost:9292/objects?rutger.openingstijden::tot=🕕&layer=*
+    # http://localhost:9292/objects?bert.dierenwinkels::type&layer=rutger.openingstijden
+    #http://localhost:9292/objects?rutger.openingstijden::tot=🕕&tom.achtbanen::lengte=241
+    #http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels
+
+
+
 
     # pagination/count
     object_count = 0
@@ -632,6 +634,12 @@ describe CitySDKLD::API do
         ].join(', ')
       end
     end
+
+
+    #http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&per_page=3&page=2
+    #
+    #Link:	<http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=1&per_page=3>; rel="first", <http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=1&per_page=3>; rel="prev", <http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=2&per_page=3>; rel="last"
+    #X-Result-Count	3
 
     ######################################################################
     # endpoint:
