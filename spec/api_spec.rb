@@ -291,7 +291,7 @@ describe CitySDKLD::API do
       it "creates single field for layer 'bert.dierenwinkels'" do
         field = {
           name: "field",
-          description: "Dit is een nepveld!"
+          description: "1, 2, 3, 4, 5!"
         }
         post "/layers/bert.dierenwinkels/fields", field.to_json
         last_response.status.should == 201
@@ -303,7 +303,7 @@ describe CitySDKLD::API do
       it "edits single field 'field' for layer 'bert.dierenwinkels'" do
         field = {
           name: "field",
-          description: "Dit is een nepveld!",
+          description: "1, 2, 3, 4, 5!",
           lang: "nl"
         }
         patch "/layers/bert.dierenwinkels/fields/field", {lang: field[:lang]}.to_json
