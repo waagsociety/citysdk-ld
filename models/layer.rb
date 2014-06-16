@@ -157,9 +157,9 @@ class CDKLayer < Sequel::Model(:layers)
 
       Sequel::Model.db.transaction do
         Sequel::Model.db.fetch(move_objects, layer_id).all
-        count = where(id: layer_id).delete
+        where(id: layer_id).delete
         CDKObject.delete_orphans
-        query[:api].error!("Database error while deleting layer '#{query[:params][:layer]}'", 422) if count == 0
+        update_layer_hash
       end
     else
       query[:api].error!("Layer not found: #{query[:params][:layer]}", 404)
