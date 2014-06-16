@@ -6,6 +6,7 @@ Sequel.migration do
 
     # Default categories
     self[:categories].insert(id: 0, name: 'none')
+    self[:categories].insert(name: 'geography')
     self[:categories].insert(name: 'natural')
     self[:categories].insert(name: 'cultural')
     self[:categories].insert(name: 'civic')
