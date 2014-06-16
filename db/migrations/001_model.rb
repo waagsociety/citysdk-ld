@@ -60,7 +60,6 @@ Sequel.migration do
     create_table! :categories do
       column :id, 'serial', primary_key: true, unique: true
       String :name, null: false
-      String :title, null: false
     end
 
     add_alphanumeric_name_constraint :categories
