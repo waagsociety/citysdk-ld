@@ -1,14 +1,42 @@
+#!/usr/bin/ruby
+
 require 'json'
 require 'sequel'
 require 'faraday'
+require 'optparse'
 
-unless ARGV.length == 2
-  puts 'Usage: osm_importer.rb <osm_file> <owner>'
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: osm_importer.rb [options]"
+
+  opts.on("-f", "--filename FILENAME", String, "OpenStreetMap file") do |f|
+    options[:osm_filename] = f
+  end
+
+  opts.on("-o", "--owner OWNER", String, "CitySDK LD API owner") do |o|
+    options[:owner] = o
+  end
+
+  options[:keep] = false
+  opts.on("-k", "--keep_tables", "Keep OpenStreetMap data in DB after import") do |k|
+    options[:keep] = k
+  end
+
+end.parse!
+
+if options[:owner].nil?
+  puts 'Owner not specified - use -o argument'
+  exit
+end
+
+if options[:osm_filename].nil?
+  puts 'OpenStreetMap file not specified - use -f argument'
   exit
 end
 
 env = 'development'
 config = JSON.parse(File.read("../../config.#{env}.json"), symbolize_names: true)
+
 database = Sequel.connect "postgres://#{config[:db][:user]}:#{config[:db][:password]}@#{config[:db][:host]}/#{config[:db][:database]}"
 database.extension :pg_hstore
 
@@ -25,18 +53,18 @@ if response.status != 200
 end
 
 # Check if OSM file exists and is valid
-unless File.file? osm_filename
-  puts "OSM file does not exist: '#{osm_filename}'"
+unless File.file? options[:osm_filename]
+  puts "OSM file does not exist: '#{options[:osm_filename]}'"
   exit
 end
 accepted_formats = ['.osm', '.pbf', '.bz2']
-unless accepted_formats.include? File.extname(osm_filename)
+unless accepted_formats.include? File.extname(options[:osm_filename])
   puts "OSM file is not valid. Extension must be one of the following: #{accepted_formats.join(', ')}"
   exit
 end
 
 osm_layer = JSON.parse(File.read("./osm_layer.json"), symbolize_names: true)
-osm_layer[:owner] = owner
+osm_layer[:owner] = options[:owner]
 
 # Delete osm layer in API
 conn.delete "/layers/#{osm_layer[:name]}"
@@ -56,10 +84,18 @@ if response.status != 201
   exit
 end
 
-# Use osm2pgsql to read data from osm file into database
-# osm2pgsql = "osm2pgsql --slim -j -d #{config[:db][:database]} -H #{config[:db][:host]} -l -C6000 -U postgres #{osm_filename}"
-# system osm2pgsql
-# database.run File.read('./osm_schema.sql')
+osm_schema_exists = database["SELECT TRUE FROM information_schema.schemata WHERE schema_name = 'osm'"].count > 0
+
+unless osm_schema_exists and options[:keep]
+  database.run <<-SQL
+    DROP SCHEMA IF EXISTS osm CASCADE;
+  SQL
+
+  # Use osm2pgsql to read data from osm file into database
+  osm2pgsql = "osm2pgsql --slim -j -d #{config[:db][:database]} -H #{config[:db][:host]} -l -C6000 -U postgres #{options[:osm_filename]}"
+  system osm2pgsql
+  database.run File.read('./osm_schema.sql')
+end
 
 osm_tables = [
   {table: 'planet_osm_point', id_prefix: 'n'},
@@ -119,8 +155,8 @@ osm_tables.each do |osm_table|
   write_objects conn, osm_layer[:name], objects if objects.length > 0
 end
 
-
-# database.run <<-SQL
-#   DROP SCHEMA IF EXISTS osm CASCADE;
-# SQL
-
+unless options[:keep]
+  database.run <<-SQL
+    DROP SCHEMA IF EXISTS osm CASCADE;
+  SQL
+end
