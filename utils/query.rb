@@ -66,13 +66,10 @@ module CitySDKLD
 
       # 4.
       post = {}
-      if env["rack.request.form_vars"] and env["rack.request.form_vars"].strip.length > 0
-        begin
-          post = JSON.parse(env["rack.request.form_vars"])
-        rescue
-          api.error!("Error parsing JSON in POST data", 422)
-        end
+      if env['api.request.body']
+        post = env['api.request.body']
       end
+
       # TODO: see if method is GET, and if so, if post contains :query
       # Use filters from post query as well.
 
