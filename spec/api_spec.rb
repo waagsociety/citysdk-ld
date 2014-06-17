@@ -534,24 +534,19 @@ describe CitySDKLD::API do
         body_json(last_response).should == {error: "Object already has data on this layer"}
       end
 
-      # TODO: voeg data toe aan bestaand cdk_id met ook geometry/titel
+      # TODO: add test to make sure adding data to existing object (with cdk_id) while also
+      # specifying geometry/title is not allowed
     end
 
-    # Edit data
-    # Edit objects (geom/title)
-
-    # check serializations
-    # bekijk losse objecten
-    # bekijk velden
-    # bekijk alle serialisaties
-    # bekijk metadata
-    #  http://localhost:9292/layers/rutger.openingstijden/objects/bert.dierenwinkels.1
-
-    # curl --data "{\"url\": \"http://vis.com/hond\"}" http://localhost:9292/objects/n46127914/layers/artsholland
-    # curl -X PUT --data "{\"chips\": \"nee\"}" http://localhost:9292/objects/n46127914/layers/artsholland
-    # curl --request PATCH --data "{\"url\": \"http://bertspaan.nl/\"}" http://localhost:9292/objects/n46127914/layers/artsholland
-    # curl -X DELETE http://localhost:9292/objects/n46127914/layers/artsholland
-
+    # TODO: add tests:
+    #   - edit data of single object
+    #       curl --data "{\"url\": \"http://vis.com/hond\"}" http://localhost:9292/objects/n46127914/layers/artsholland
+    #       curl -X PUT --data "{\"chips\": \"nee\"}" http://localhost:9292/objects/n46127914/layers/artsholland
+    #       curl --request PATCH --data "{\"url\": \"http://bertspaan.nl/\"}" http://localhost:9292/objects/n46127914/layers/artsholland
+    #   - edit single object's geometry/title
+    #   - edit multiple object's geometry/title (should this even be possible?)
+    #   - check JSON-LD and Turtle serializations of multiple objects
+    #   - check object-on-layer meta-data: /layers/rutger.openingstijden/objects/bert.dierenwinkels.1
 
     ######################################################################
     # filters:
@@ -676,11 +671,18 @@ describe CitySDKLD::API do
       end
     end
 
-
-    #http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&per_page=3&page=2
-    #
-    #Link: <http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=1&per_page=3>; rel="first", <http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=1&per_page=3>; rel="prev", <http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=2&per_page=3>; rel="last"
-    #X-Result-Count 3
+    describe "GET /objects?layer=rutger.openingstijden,bert.dierenwinkels&per_page=3&page=2" do
+      it "checks if pagination Link headers are set for query on multiple layers" do
+        get "/objects?layer=rutger.openingstijden,bert.dierenwinkels&per_page=3&page=2"
+        last_response.status.should == 200
+        last_response.header["X-Result-Count"].to_i.should == 3
+        last_response.header["Link"].should == [
+          '<http://example.org/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=1&per_page=3>; rel="first"',
+          '<http://example.org/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=1&per_page=3>; rel="prev"',
+          '<http://example.org/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=2&per_page=3>; rel="last"'
+        ].join(', ')
+      end
+    end
 
     ######################################################################
     # endpoint:
@@ -742,7 +744,6 @@ describe CitySDKLD::API do
         last_response.status.should == 200
         all_polygons = body_json(last_response)[:features].map {|f| f[:geometry][:type] == 'Polygon' }.inject(:&)
         all_polygons.should == true
-        # TODO: check if bounding box of all objects equals layer's bounding box
       end
     end
 
