@@ -46,7 +46,11 @@ if response.status != 200
 end
 
 # Create new, empty osm layer
-response = conn.post '/layers', osm_layer.to_json
+response = conn.post do |req|
+  req.url '/layers'
+  req.headers['Content-Type'] = 'application/json'
+  req.body = osm_layer.to_json
+end
 if response.status != 201
   puts "Error creating layer '#{osm_layer[:name]}'"
   exit
@@ -66,11 +70,12 @@ osm_tables = [
 
 select = <<-SQL
   SELECT
-    abs(osm_id)::text AS id,
+    osm_id::text AS id,
     name AS title,
     ST_AsGeoJSON(way) AS geometry,
     tags AS data
   FROM %s
+  WHERE osm_id > 0
 SQL
 
 def write_objects(conn, osm_layer, objects)
@@ -78,17 +83,22 @@ def write_objects(conn, osm_layer, objects)
     type: 'FeatureCollection',
     features: objects
   }
-  response = conn.post "/layers/#{osm_layer}/objects", geojson.to_json
-  puts response.status
-  if response.status != 201
-    puts objects.map {|o| o[:properties][:id] }.inspect
+  response = conn.post do |req|
+    req.url "/layers/#{osm_layer}/objects"
+    req.headers['Content-Type'] = 'application/json'
+    req.body = geojson.to_json
   end
-  #sleep 0.5
+  if response.status != 201
+    puts response.inspect
+  end
+  response
 end
 
-batch_size = 100
-objects = []
+batch_size = 50
 osm_tables.each do |osm_table|
+  objects = []
+  count = 0
+  total = database["osm__#{osm_table[:table]}".to_sym].count
   database.fetch(select % ["osm.#{osm_table[:table]}"]).all do |row|
     objects << {
       type: "Feature",
@@ -100,12 +110,15 @@ osm_tables.each do |osm_table|
       geometry: JSON.parse(row[:geometry])
     }
     if objects.length >= batch_size
-      write_objects conn, osm_layer[:name], objects
+      response = write_objects conn, osm_layer[:name], objects
+      count += batch_size
+      puts "Table: #{osm_table[:table]}, objects: #{count}/#{total}, status: #{response.status}"
       objects = []
     end
   end
+  write_objects conn, osm_layer[:name], objects if objects.length > 0
 end
-write_objects objects
+
 
 # database.run <<-SQL
 #   DROP SCHEMA IF EXISTS osm CASCADE;
