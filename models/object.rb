@@ -18,7 +18,7 @@ class CDKObject < Sequel::Model(:objects)
 
   def self.get_dataset(query)
     geom = true
-    if query[:params][:geom] and query[:params][:geom] == 'false'
+    if query[:params][:geom] and query[:params][:geom].to_bool == false
       geom = false
     end
 
