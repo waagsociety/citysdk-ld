@@ -27,7 +27,7 @@ Sequel.migration do
     def add_alphanumeric_name_constraint(table, column = :name)
       sql = <<-SQL
         ALTER TABLE %s ADD CONSTRAINT constraint_name_alphanumeric
-          CHECK (%s SIMILAR TO '\\w+(\\.\\w+)*');
+          CHECK (%s SIMILAR TO '\\w+[\\w-]*(\\.[\\w-]+)*');
       SQL
 
       run sql % [table.to_s, column.to_s]
@@ -42,7 +42,7 @@ Sequel.migration do
       String :name, null: false, unique: true
       String :fullname, null: false
       String :email, null: false, unique: true
-      bool :admin, default: false
+        bool :admin, default: false
       String :website
       String :organization
       column :domains, 'text[]'
@@ -60,7 +60,6 @@ Sequel.migration do
     create_table! :categories do
       column :id, 'serial', primary_key: true, unique: true
       String :name, null: false
-      String :title, null: false
     end
 
     add_alphanumeric_name_constraint :categories
