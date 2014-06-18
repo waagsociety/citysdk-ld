@@ -21,7 +21,7 @@
       "description": "Sluitingstijd op doordeweekse dag"
     }
   ],
-  "context": {
+  "@context": {
     "vis": "koek"
   }
 }

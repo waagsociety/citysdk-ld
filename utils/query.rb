@@ -66,13 +66,10 @@ module CitySDKLD
 
       # 4.
       post = {}
-      if env["rack.request.form_vars"] and env["rack.request.form_vars"].strip.length > 0
-        begin
-          post = JSON.parse(env["rack.request.form_vars"])
-        rescue
-          api.error!("Error parsing JSON in POST data", 422)
-        end
+      if env['api.request.body']
+        post = env['api.request.body']
       end
+
       # TODO: see if method is GET, and if so, if post contains :query
       # Use filters from post query as well.
 
@@ -172,12 +169,12 @@ module CitySDKLD
       when :context
         # CDKLayer expects string keys in POST data - not symbols
         # TODO: convert ALL input data from request and filters with symbolize_names?
-        @q[:data] = {"context" => @q[:data]}
+        @q[:data] = {"@context" => @q[:data]}
         CDKLayer.execute_write @q
 
         # TODO: move to Layer model!
         layer_id = CDKLayer.id_from_name(@q[:params][:layer])
-        context = CDKLayer.get_layer(layer_id)[:context] rescue {}
+        context = CDKLayer.get_layer(layer_id)[:@context] rescue {}
         data = {
           resource: @q[:resource],
           data: context ? context : {},
@@ -240,7 +237,7 @@ module CitySDKLD
         unless layer_id
           @q[:api].error!("Layer not found: #{@q[:params][:layer]}", 404)
         end
-        context = CDKLayer.get_layer(layer_id)[:context] rescue {}
+        context = CDKLayer.get_layer(layer_id)[:@context] rescue {}
         data = {
           resource: @q[:resource],
           data: context ? context : {},

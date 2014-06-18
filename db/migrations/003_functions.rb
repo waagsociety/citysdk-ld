@@ -5,8 +5,6 @@ Sequel.migration do
 
     $stderr.puts('Creating functions...')
 
-    # TODO: maak triggers die zorgen dat layer geom wordt bijgewerkt!
-
     # Returns object id from cdk_id
     run <<-SQL
     CREATE OR REPLACE FUNCTION cdk_id_to_internal(_cdk_id text)

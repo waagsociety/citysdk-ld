@@ -1,0 +1,11 @@
+{
+  "name": "osm",
+  "title": "OpenStreetMap",
+  "description": "OpenStreetMap",
+  "category": "geography",
+  "data_sources":  [
+    "http://www.openstreetmap.org/"
+  ],
+  "licence": "http://www.openstreetmap.org/copyright",
+  "@context": {}
+}

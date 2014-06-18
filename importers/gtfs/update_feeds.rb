@@ -9,7 +9,7 @@ require './gtfs_util.rb'
 
 Feeds = [
   ['ovapi.','http://gtfs.ovapi.nl/new/gtfs-nl.zip', '2010-01-01']
-] 
+]
 
 def do_one_feed(feed)
   $stderr.puts "Updating: #{feed[0]}\n\n"
@@ -26,7 +26,7 @@ def do_one_feed(feed)
   false
 end
 
-GTFS_Import::do_log('Checking for updates..')        
+GTFS_Import::do_log('Checking for updates..')
 
 @feeds = YAML.load_file(@yamlFile) if File.exists?(@yamlFile)
 @feeds = Feeds if(@feeds.nil?)

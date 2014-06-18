@@ -20,8 +20,6 @@ class CDKOwner < Sequel::Model(:owners)
       'organization',
       'password'
     ]
- 
-    # curl --data '{ "name" : "tom", "email": "tom@waag.org", "website": "waag.org", "fullname": "Tom Demeyer",    "domains": "test", "organization": "Waag Society", "passwd": "nix" }' http://api1.dev/owners    
 
     # Make sure POST data contains only valid keys
     unless (data.keys - keys).empty?
@@ -121,9 +119,8 @@ class CDKOwner < Sequel::Model(:owners)
 
       Sequel::Model.db.transaction do
         Sequel::Model.db.fetch(move_objects, owner_id).all
-        count = where(id: owner_id).delete
+        where(id: owner_id).delete
         CDKObject.delete_orphans
-        query[:api].error!("Database error while deleting owner '#{query[:params][:owner]}'", 422) if count == 0
       end
     else
       query[:api].error!("Owner not found: #{query[:params][:owner]}", 404)

@@ -27,7 +27,7 @@
       "description": ""
     }
   ],
-  "context": {
+  "@context": {
     "vis": "koek"
   }
 }

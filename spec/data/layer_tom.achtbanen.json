@@ -21,7 +21,7 @@
       "description": "Aantal loopings"
     }
   ],
-  "context": {
+  "@context": {
     "vis": "koek"
   }
 }

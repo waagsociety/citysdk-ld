@@ -17,14 +17,22 @@ class CDKObject < Sequel::Model(:objects)
   end
 
   def self.get_dataset(query)
-    # TODO: check geom param, and don't include geometry when geom=false
-    geom_function = query[:format] == :turtle ? :ST_AsText : :ST_AsGeoJSON
-    columns = (self.dataset.columns - [:geom]).map { |column| "objects__#{column}".to_sym }
-    geom_columns = Sequel.function(geom_function, :geom).as(:geom)
+    geom = true
+    if query[:params][:geom] and query[:params][:geom] == 'false'
+      geom = false
+    end
 
-    self.dataset
-        .select{columns}
-        .select_append(geom_columns)
+    columns = (self.dataset.columns - [:geom]).map { |column| "objects__#{column}".to_sym }
+    if geom
+      geom_function = query[:format] == :turtle ? :ST_AsText : :ST_AsGeoJSON
+      geom_columns = Sequel.function(geom_function, :geom).as(:geom)
+      self.dataset
+          .select{columns}
+          .select_append(geom_columns)
+    else
+      self.dataset
+          .select{columns}
+    end
   end
 
   def self.execute_write(query)
@@ -203,10 +211,8 @@ class CDKObject < Sequel::Model(:objects)
       Sequel::Model.db.fetch(move_object, query[:params][:cdk_id]).all
 
       # Finally, delete object data and delete possible orphans:
-      count = CDKObjectDatum.where(id: object_datum[:id]).delete
+      CDKObjectDatum.where(id: object_datum[:id]).delete
       CDKObject.delete_orphans
-
-      query[:api].error!("Database error while deleting object '#{query[:params][:cdk_id]}'", 422) if count == 0
     end
   end
 

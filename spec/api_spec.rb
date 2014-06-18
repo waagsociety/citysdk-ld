@@ -37,44 +37,54 @@ describe CitySDKLD::API do
     # TODO: refactor tests - combine multiple decribe/it blocks which
     # belong to one single 'task'.
 
+    # Currently, the CitySDK LD API only accects POST, PUT and PATCH
+    # requests with a JSON body if the request's Content-Type header
+    # is set to header "application/json"!
+
     ######################################################################
     # owners:
     ######################################################################
 
     describe "POST /owners" do
       it "creates owner 'bert'" do
+        header "CONTENT_TYPE", "application/json"
         post "/owners", read_test_data('owner_bert.json')
         last_response.status.should == 201
         body_json(last_response)[:name].should == 'bert'
       end
 
       it "creates another owner 'bert' " do
+        header "CONTENT_TYPE", "application/json"
         post "/owners", read_test_data('owner_bert.json')
         last_response.status.should == 422
         body_json(last_response).should == {error: "Owner already exists: bert"}
       end
 
-      it "creates owner 'tom' with too simple password" do
+      it "creates owner 'tom' with a too simple password" do
+        header "CONTENT_TYPE", "application/json"
         post "/owners", read_test_data('owner_tom.json').gsub('ABCabc456','nix')
         last_response.status.should == 422
         body_json(last_response).should == {error: 'Password needs to be longer, or contain numbers, capitals or symbols'}
       end
 
-      it "creates owner 'tom' " do
+      it "creates owner 'tom'" do
+        header "CONTENT_TYPE", "application/json"
         post "/owners", read_test_data('owner_tom.json')
         last_response.status.should == 201
         body_json(last_response)[:name].should == 'tom'
       end
 
-      it "creates owner 'rutger' " do
+      it "creates owner 'rutger'" do
+        header "CONTENT_TYPE", "application/json"
         post "/owners", read_test_data('owner_rutger.json')
         last_response.status.should == 201
         body_json(last_response)[:name].should == 'rutger'
       end
 
-      it "creates owner '[tom]' " do
+      it "creates owner '[tom] " do
         data = read_test_data_json 'owner_tom.json'
         data[:name] = '[tom]'
+        header "CONTENT_TYPE", "application/json"
         post "/owners", data.to_json
         last_response.status.should == 422
         body_json(last_response).should == {error: "'name' can only contain alphanumeric characters, underscores and periods"}
@@ -84,6 +94,7 @@ describe CitySDKLD::API do
     describe "PATCH /owners/bert" do
       it "edits owner 'bert' " do
         fullname = 'Bert “😩” Spaan'
+        header "CONTENT_TYPE", "application/json"
         patch "/owners/bert", {fullname: fullname}.to_json
         last_response.status.should == 200
         body_json(last_response)[:fullname].should == fullname
@@ -93,6 +104,7 @@ describe CitySDKLD::API do
     describe "PATCH /owners/tom" do
       it "edits owner 'tom' " do
         website = 'http://demeyer.nl/Lembeh-2014'
+        header "CONTENT_TYPE", "application/json"
         patch "/owners/tom", {website: website}.to_json
         last_response.status.should == 200
         body_json(last_response)[:website].should == website
@@ -101,6 +113,7 @@ describe CitySDKLD::API do
       it "edits name of owner 'tom''" do
         data = read_test_data_json 'owner_tom.json'
         data[:name] = 'tommie'
+        header "CONTENT_TYPE", "application/json"
         patch "/owners/tom", data.to_json
         last_response.status.should == 422
         body_json(last_response).should == {error: "Owner name cannot be changed"}
@@ -137,25 +150,29 @@ describe CitySDKLD::API do
       it "creates layer 'bert.dierenwinkels'" do
         data = read_test_data_json 'layer_bert.dierenwinkels.json'
         data.delete(:fields)
-        data.delete(:context)
+        data.delete(:@context)
+        header "CONTENT_TYPE", "application/json"
         post "/layers", data.to_json
         last_response.status.should == 201
         body_json(last_response)[:features][0][:properties][:name].should == 'bert.dierenwinkels'
       end
 
       it "creates layer 'tom.achtbanen'" do
+        header "CONTENT_TYPE", "application/json"
         post "/layers", read_test_data('layer_tom.achtbanen.json')
         last_response.status.should == 201
         body_json(last_response)[:features][0][:properties][:name].should == 'tom.achtbanen'
       end
 
       it "creates layer 'tom.steden'" do
+        header "CONTENT_TYPE", "application/json"
         post "/layers", read_test_data('layer_tom.steden.json')
         last_response.status.should == 201
         body_json(last_response)[:features][0][:properties][:name].should == 'tom.steden'
       end
 
       it "creates layer 'rutger.openingstijden'" do
+        header "CONTENT_TYPE", "application/json"
         post "/layers", read_test_data('layer_rutger.openingstijden.json')
         last_response.status.should == 201
         body_json(last_response)[:features][0][:properties][:name].should == 'rutger.openingstijden'
@@ -165,6 +182,7 @@ describe CitySDKLD::API do
     describe "PATCH /layers/bert.dierenwinkels" do
       it "edits layer 'bert.dierenwinkels' " do
         title = 'Alle dierenwinkels in Nederland - 🐢🐭🐴'
+        header "CONTENT_TYPE", "application/json"
         patch "/layers/bert.dierenwinkels", {title: title}.to_json
         last_response.status.should == 200
         body_json(last_response)[:features][0][:properties][:title].should == title
@@ -174,6 +192,7 @@ describe CitySDKLD::API do
     describe "PATCH /layers/bert.dierenwinkels" do
       it "set owner of 'bert.dierenwinkels' to 'rutger'" do
         owner = 'rutger'
+        header "CONTENT_TYPE", "application/json"
         patch "/layers/bert.dierenwinkels", {owner: owner}.to_json
         last_response.status.should == 200
       end
@@ -190,6 +209,7 @@ describe CitySDKLD::API do
     describe "PATCH /layers/bert.dierenwinkels" do
       it "sets owner of 'bert.dierenwinkels' to owner that does not exist" do
         owner = 'jos'
+        header "CONTENT_TYPE", "application/json"
         patch "/layers/bert.dierenwinkels", {owner: owner}.to_json
         last_response.status.should == 422
         body_json(last_response).should == {error: "Owner does not exist: 'jos'"}
@@ -199,6 +219,7 @@ describe CitySDKLD::API do
     describe "PATCH /layers/bert.dierenwinkels" do
       it "sets owner of layer 'bert.dierenwinkels' back to 'bert'" do
         owner = 'bert'
+        header "CONTENT_TYPE", "application/json"
         patch "/layers/bert.dierenwinkels", {owner: owner}.to_json
         last_response.status.should == 200
       end
@@ -234,33 +255,34 @@ describe CitySDKLD::API do
     # context:
     ######################################################################
 
-    describe "GET /layers/tom.achtbanen/context" do
+    describe "GET /layers/tom.achtbanen/@context" do
       it "gets JSON-LD context of layer 'tom.achtbanen'" do
         data = read_test_data_json 'layer_tom.achtbanen.json'
-        get "/layers/tom.achtbanen/context"
+        get "/layers/tom.achtbanen/@context"
         last_response.status.should == 200
-        body_json(last_response).should == data[:context]
+        body_json(last_response).should == data[:@context]
       end
     end
 
-    describe "GET /layers/bert.dierenwinkels/context" do
+    describe "GET /layers/bert.dierenwinkels/@context" do
       it "gets JSON-LD context of layer 'bert.dierenwinkels'" do
-        get "/layers/bert.dierenwinkels/context"
+        get "/layers/bert.dierenwinkels/@context"
         last_response.status.should == 200
         body_json(last_response).should == {}
       end
     end
 
-    describe "PUT /layers/bert.dierenwinkels/context" do
+    describe "PUT /layers/bert.dierenwinkels/@context" do
       it "sets JSON-LD context of layer 'bert.dierenwinkels'" do
         data = read_test_data_json 'layer_bert.dierenwinkels.json'
-        put "/layers/bert.dierenwinkels/context", data[:context].to_json
+        header "CONTENT_TYPE", "application/json"
+        put "/layers/bert.dierenwinkels/@context", data[:@context].to_json
         last_response.status.should == 200
-        body_json(last_response).should == data[:context]
+        body_json(last_response).should == data[:@context]
       end
     end
 
-    describe "GET /layer/bert.dierenwinkels/context" do
+    describe "GET /layer/bert.dierenwinkels/@context" do
       # TODO: get single context: turtle, json, etc.
       # TODO: Not accepted for Turtle!
     end
@@ -282,6 +304,7 @@ describe CitySDKLD::API do
       it "creates multiple fields for layer 'bert.dierenwinkels'" do
         data = read_test_data_json 'layer_bert.dierenwinkels.json'
         data[:fields].each do |field|
+          header "CONTENT_TYPE", "application/json"
           post "/layers/bert.dierenwinkels/fields", field.to_json
           last_response.status.should == 201
           compare_hash(body_json(last_response), field).should == true
@@ -293,6 +316,7 @@ describe CitySDKLD::API do
           name: "field",
           description: "1, 2, 3, 4, 5!"
         }
+        header "CONTENT_TYPE", "application/json"
         post "/layers/bert.dierenwinkels/fields", field.to_json
         last_response.status.should == 201
         body_json(last_response).should == field
@@ -306,6 +330,7 @@ describe CitySDKLD::API do
           description: "1, 2, 3, 4, 5!",
           lang: "nl"
         }
+        header "CONTENT_TYPE", "application/json"
         patch "/layers/bert.dierenwinkels/fields/field", {lang: field[:lang]}.to_json
         last_response.status.should == 200
         body_json(last_response).should == field
@@ -348,6 +373,7 @@ describe CitySDKLD::API do
           type: "FeatureCollection",
           features: data[:features][0..-2]
         }
+        header "CONTENT_TYPE", "application/json"
         post "/layers/bert.dierenwinkels/objects", data.to_json
         last_response.status.should == 201
         body_json(last_response).length.should == data[:features].length
@@ -356,6 +382,7 @@ describe CitySDKLD::API do
       it "creates single object with data on layer 'bert.dierenwinkels'" do
         data = read_test_data_json 'objects_bert.dierenwinkels.json'
         data = data[:features][-1]
+        header "CONTENT_TYPE", "application/json"
         post "/layers/bert.dierenwinkels/objects", data.to_json
         last_response.status.should == 201
         body_json(last_response).length.should == 1
@@ -365,6 +392,7 @@ describe CitySDKLD::API do
         data = read_test_data_json 'objects_bert.dierenwinkels.json'
         data = data[:features][-1]
         data.delete(:geometry)
+        header "CONTENT_TYPE", "application/json"
         post "/layers/bert.dierenwinkels/objects", data.to_json
         last_response.status.should == 422
         body_json(last_response).should == {error: "New object without geometry encountered"}
@@ -388,6 +416,7 @@ describe CitySDKLD::API do
             }
           ]
         }
+        header "CONTENT_TYPE", "application/json"
         post "/layers/bert.dierenwinkels/objects", data.to_json
         body_json(last_response).should == {error: "GeoJSON GeometryCollections are not allowed as object geometry"}
       end
@@ -399,6 +428,7 @@ describe CitySDKLD::API do
           type: "SuperPoint",
           coordinates: [5.16521, 52.22154]
         }
+        header "CONTENT_TYPE", "application/json"
         post "/layers/bert.dierenwinkels/objects", data.to_json
         body_json(last_response).should == {error: "Invalid GeoJSON geometry encountered"}
       end
@@ -410,6 +440,7 @@ describe CitySDKLD::API do
           type: "Point",
           coordinates: [5.16521, 52.22154, -1]
         }
+        header "CONTENT_TYPE", "application/json"
         post "/layers/bert.dierenwinkels/objects", data.to_json
         body_json(last_response).should == {error: "Geometry has Z dimension but column does not"}
       end
@@ -417,6 +448,7 @@ describe CitySDKLD::API do
       it "creates single object with duplicate id" do
         data = read_test_data_json 'objects_bert.dierenwinkels.json'
         data = data[:features][-1]
+        header "CONTENT_TYPE", "application/json"
         post "/layers/bert.dierenwinkels/objects", data.to_json
         last_response.status.should == 422
         body_json(last_response).should == {error: "cdk_id must be unique: 'bert.dierenwinkels.3'"}
@@ -426,6 +458,7 @@ describe CitySDKLD::API do
         data = read_test_data_json 'objects_bert.dierenwinkels.json'
         data = data[:features][-1]
         data[:properties].delete(:id)
+        header "CONTENT_TYPE", "application/json"
         post "/layers/bert.dierenwinkels/objects", data.to_json
         last_response.status.should == 422
         body_json(last_response).should == {error: "All objects must either have 'id' or 'cdk_id' property"}
@@ -438,6 +471,7 @@ describe CitySDKLD::API do
         data[:properties].delete(:title)
         data[:properties].delete(:id)
         data[:properties][:cdk_id] = '12345'
+        header "CONTENT_TYPE", "application/json"
         post "/layers/bert.dierenwinkels/objects", data.to_json
         last_response.status.should == 422
         body_json(last_response).should == {error: "Object not found: '#{data[:properties][:cdk_id]}'"}
@@ -447,6 +481,7 @@ describe CitySDKLD::API do
         data = read_test_data_json 'objects_bert.dierenwinkels.json'
         data = data[:features][-1]
         data[:properties].delete(:data)
+        header "CONTENT_TYPE", "application/json"
         post "/layers/bert.dierenwinkels/objects", data.to_json
         last_response.status.should == 422
         body_json(last_response).should == {error: "Object without data encountered"}
@@ -455,6 +490,7 @@ describe CitySDKLD::API do
 
     describe "POST /layers/bert.bioscopen/objects" do
       it "creates objects and data on layer that doesn't exist" do
+        header "CONTENT_TYPE", "application/json"
         post "/layers/bert.bioscopen/objects", read_test_data('objects_bert.dierenwinkels.json')
         last_response.status.should == 404
         body_json(last_response).should == {error: "Layer not found: 'bert.bioscopen'"}
@@ -464,6 +500,7 @@ describe CitySDKLD::API do
     describe "POST /layers/tom.achtbanen/objects" do
       it "creates objects and data on layer 'tom.achtbanen'" do
         data = read_test_data_json 'objects_tom.achtbanen.json'
+        header "CONTENT_TYPE", "application/json"
         post "/layers/tom.achtbanen/objects", data.to_json
         last_response.status.should == 201
         body_json(last_response).length.should == data[:features].length
@@ -473,6 +510,7 @@ describe CitySDKLD::API do
     describe "POST /layers/tom.steden/objects" do
       it "creates objects and data on layer 'tom.steden'" do
         data = read_test_data_json 'objects_tom.steden.json'
+        header "CONTENT_TYPE", "application/json"
         post "/layers/tom.steden/objects", data.to_json
         last_response.status.should == 201
         body_json(last_response).length.should == data[:features].length
@@ -482,6 +520,7 @@ describe CitySDKLD::API do
     describe "POST /layers/rutger.openingstijden/objects" do
       it "adds data on layer 'rutger.openingstijden' to existing objects" do
         data = read_test_data_json 'objects_rutger.openingstijden.json'
+        header "CONTENT_TYPE", "application/json"
         post "/layers/rutger.openingstijden/objects", data.to_json
         last_response.status.should == 201
         body_json(last_response).length.should == data[:features].length
@@ -489,29 +528,25 @@ describe CitySDKLD::API do
 
       it "adds duplicate data on layer 'rutger.openingstijden' to existing objects" do
         data = read_test_data_json 'objects_rutger.openingstijden.json'
+        header "CONTENT_TYPE", "application/json"
         post "/layers/rutger.openingstijden/objects", data.to_json
         last_response.status.should == 422
         body_json(last_response).should == {error: "Object already has data on this layer"}
       end
 
-      # TODO: voeg data toe aan bestaand cdk_id met ook geometry/titel
+      # TODO: add test to make sure adding data to existing object (with cdk_id) while also
+      # specifying geometry/title is not allowed
     end
 
-    # Edit data
-    # Edit objects (geom/title)
-
-    # check serializations
-    # bekijk losse objecten
-    # bekijk velden
-    # bekijk alle serialisaties
-    # bekijk metadata
-    #  http://localhost:9292/layers/rutger.openingstijden/objects/bert.dierenwinkels.1
-
-    # curl --data "{\"url\": \"http://vis.com/hond\"}" http://localhost:9292/objects/n46127914/layers/artsholland
-    # curl -X PUT --data "{\"chips\": \"nee\"}" http://localhost:9292/objects/n46127914/layers/artsholland
-    # curl --request PATCH --data "{\"url\": \"http://bertspaan.nl/\"}" http://localhost:9292/objects/n46127914/layers/artsholland
-    # curl -X DELETE http://localhost:9292/objects/n46127914/layers/artsholland
-
+    # TODO: add tests:
+    #   - edit data of single object
+    #       curl --data "{\"url\": \"http://vis.com/hond\"}" http://localhost:9292/objects/n46127914/layers/artsholland
+    #       curl -X PUT --data "{\"chips\": \"nee\"}" http://localhost:9292/objects/n46127914/layers/artsholland
+    #       curl --request PATCH --data "{\"url\": \"http://bertspaan.nl/\"}" http://localhost:9292/objects/n46127914/layers/artsholland
+    #   - edit single object's geometry/title
+    #   - edit multiple object's geometry/title (should this even be possible?)
+    #   - check JSON-LD and Turtle serializations of multiple objects
+    #   - check object-on-layer meta-data: /layers/rutger.openingstijden/objects/bert.dierenwinkels.1
 
     ######################################################################
     # filters:
@@ -598,21 +633,16 @@ describe CitySDKLD::API do
       end
     end
 
-
-
     # layer
 
     # TODO: create tests for:
-    # http://localhost:9292/objects?layer=tom.steden
-    # http://localhost:9292/layers/rutger.openingstijden/objects?layer=*
-    # http://localhost:9292/objects/bert.dierenwinkels.1?layer=*
-    #http://localhost:9292/objects?rutger.openingstijden::tot=🕕&layer=*
-    # http://localhost:9292/objects?bert.dierenwinkels::type&layer=rutger.openingstijden
-    #http://localhost:9292/objects?rutger.openingstijden::tot=🕕&tom.achtbanen::lengte=241
-    #http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels
-
-
-
+    #   http://localhost:9292/objects?layer=tom.steden
+    #   http://localhost:9292/layers/rutger.openingstijden/objects?layer=*
+    #   http://localhost:9292/objects/bert.dierenwinkels.1?layer=*
+    #   http://localhost:9292/objects?rutger.openingstijden::tot=🕕&layer=*
+    #   http://localhost:9292/objects?bert.dierenwinkels::type&layer=rutger.openingstijden
+    #   http://localhost:9292/objects?rutger.openingstijden::tot=🕕&tom.achtbanen::lengte=241
+    #   http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels
 
     # pagination/count
     object_count = 0
@@ -641,11 +671,18 @@ describe CitySDKLD::API do
       end
     end
 
-
-    #http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&per_page=3&page=2
-    #
-    #Link: <http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=1&per_page=3>; rel="first", <http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=1&per_page=3>; rel="prev", <http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=2&per_page=3>; rel="last"
-    #X-Result-Count 3
+    describe "GET /objects?layer=rutger.openingstijden,bert.dierenwinkels&per_page=3&page=2" do
+      it "checks if pagination Link headers are set for query on multiple layers" do
+        get "/objects?layer=rutger.openingstijden,bert.dierenwinkels&per_page=3&page=2"
+        last_response.status.should == 200
+        last_response.header["X-Result-Count"].to_i.should == 3
+        last_response.header["Link"].should == [
+          '<http://example.org/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=1&per_page=3>; rel="first"',
+          '<http://example.org/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=1&per_page=3>; rel="prev"',
+          '<http://example.org/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=2&per_page=3>; rel="last"'
+        ].join(', ')
+      end
+    end
 
     ######################################################################
     # endpoint:
@@ -707,7 +744,6 @@ describe CitySDKLD::API do
         last_response.status.should == 200
         all_polygons = body_json(last_response)[:features].map {|f| f[:geometry][:type] == 'Polygon' }.inject(:&)
         all_polygons.should == true
-        # TODO: check if bounding box of all objects equals layer's bounding box
       end
     end
 

@@ -11,6 +11,8 @@ module CitySDKLD
   # set:
   I18n.enforce_available_locales = false
 
+  MEMCACHED_NAMESPACE = 'citysdk_ld'
+
   ##########################################################################################
   # memcached utilities
   ##########################################################################################
@@ -19,7 +21,7 @@ module CitySDKLD
   #   echo 'flush_all' | nc localhost 11211
 
   def self.memcached_new
-    @@memcache = Dalli::Client.new('127.0.0.1:11211', {expires_in: 300, compress: true, namespace: 'citysdk_ld'})
+    @@memcache = Dalli::Client.new('127.0.0.1:11211', { expires_in: 300, compress: true, namespace: "#{MEMCACHED_NAMESPACE},#{ENV["RACK_ENV"]}" })
   end
 
   def self.memcached_get(key)
@@ -27,7 +29,7 @@ module CitySDKLD
       return @@memcache.get(key)
     rescue
       begin
-        @@memcache = Dalli::Client.new('127.0.0.1:11211', {expires_in: 300, compress: true, namespace: 'citysdk_ld'})
+        @@memcache = Dalli::Client.new('127.0.0.1:11211', { expires_in: 300, compress: true, namespace: "#{MEMCACHED_NAMESPACE},#{ENV["RACK_ENV"]}" })
       rescue
         $stderr.puts "Failed connecting to memcache: #{e.message}\n\n"
         @@memcache = nil
@@ -54,14 +56,14 @@ module CitySDKLD
 
   def self.password_secure?(password)
     c = 0
-    c+=1 if password =~ /\d/ 
+    c+=1 if password =~ /\d/
     c+=1 if password =~ /[A-Z]/
     c+=1 if password =~ /\!\@\#\$\%\^\&\*\(\)\[\}\{\]/
 
-    if( (password.length >= 15) || 
+    if( (password.length >= 15) ||
         (password.length >= 10 && c > 0) ||
         (password.length >=  8 && c > 1) ||
-        (password.length >=  4 && c > 2) 
+        (password.length >=  4 && c > 2)
       )
       [true, nil]
     else

@@ -8,8 +8,11 @@ module CitySDKLD
     default_error_formatter :json
     version 'v1', using: :header, vendor: 'citysdk-ld'
 
-    # TODO: swagger should specify possible output formats!
-    add_swagger_documentation api_version: 'v1'
+    # Currently, the CitySDK LD API only accects POST, PUT and PATCH
+    # requests with a JSON body if the request's Content-Type header
+    # is set to header 'application/json'.
+    # TODO: configure Grape/Rack, and assume that requests with
+    # Content-Type 'application/x-www-form-urlencoded' are also JSON.
 
     def initialize
       super
@@ -91,5 +94,9 @@ module CitySDKLD
     mount ::CitySDKLD::Objects
     mount ::CitySDKLD::Owners
     mount ::CitySDKLD::Endpoints
+
+    # Swagger must be called _after_ endpoints are mounted
+    # TODO: swagger should specify possible output formats!
+    add_swagger_documentation api_version: 'v1'
   end
 end
