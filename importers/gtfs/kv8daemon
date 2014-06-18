@@ -56,20 +56,20 @@ def kv8_run
         contents += part
       end
       unpack( Zlib::GzipReader.new( StringIO.new(contents) ) )
-      
+
       $size += contents.length
-      if (Time.now - $lastT) > 30 
+      if (Time.now - $lastT) > 30
         secs = (Time.now - $lastT)
         $memcache.set('kv8daemon', sprintf("%0.2fk/s",$size/secs/1024.0))
         $size = 0
         $lastT = Time.now
       end
-      
+
     rescue Exception => e
       $stderr.puts e.message
     end
   end
-  
+
 end
 
 
@@ -80,18 +80,18 @@ end
 
 
 
-# 
+#
 # trip_id = DataOwnerCode + LinePlanningNumber + LocalServiceLevelCode + JourneyNumber + FortifyOrderNumber
 # route_id = DataOwnerCode + LinePlanningNumber
 # service_id = DataOwnerCode + LinePlanningNumber
 # agency_id = DataOwnerCode
 # stop_id = TimingPointCode
-# 
+#
 
 # "\\GKV8turbo_passtimes|KV8turbo_passtimes|openOV GVB|||UTF-8|0.1|2013-01-25T17:33:07+01:00|\xEF\xBB\xBF\r\n\\TDATEDPASSTIME|DATEDPASSTIME|start object\r\n\\L"
-# 
+#
 # "DataOwnerCode|OperationDate|LinePlanningNumber|JourneyNumber|FortifyOrderNumber|UserStopOrderNumber|UserStopCode|LocalServiceLevelCode|JourneyPatternCode|LineDirection|LastUpdateTimeStamp|DestinationCode|IsTimingStop|ExpectedArrivalTime|ExpectedDepartureTime|TripStopStatus|MessageContent|MessageType|SideCode|NumberOfCoaches|WheelChairAccessible|OperatorCode|ReasonType|SubReasonType|ReasonContent|AdviceType|SubAdviceType|AdviceContent|TimingPointDataOwnerCode|TimingPointCode|JourneyStopType|TargetArrivalTime|TargetDepartureTime"
-# 
+#
 # "GVB|2013-01-25|37|283|0|35|000052|301517|45897|1|2013-01-25T17:33:05+01:00|AMS|0|18:12:42|18:13:00|UNKNOWN|\\0|\\0|-|\\0|UNKNOWN|\\0|\\0|\\0|\\0|\\0|\\0|\\0|ALGEMEEN|000052|INTERMEDIATE|18:12:42|18:13:00"
 
 
