@@ -97,6 +97,6 @@ module CitySDKLD
 
     # Swagger must be called _after_ endpoints are mounted
     # TODO: swagger should specify possible output formats!
-    add_swagger_documentation api_version: 'v1'
+    add_swagger_documentation api_version: 'v1', mount_path: '/swagger'
   end
 end
