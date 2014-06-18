@@ -37,12 +37,14 @@ module CitySDKLD
     end
   end
 
-  def self.memcached_set(key, value, ttl=300)
+  # TODO: rethink!
+  def self.memcached_set(key, value, ttl=300, try=0)
     begin
       return @@memcache.set(key, value, ttl)
     rescue
       begin
         memcached_new
+        memcached_set(key, value, ttl, try + 1) if try == 0
       rescue
         $stderr.puts "Failed connecting to memcache: #{e.message}\n\n"
         @@memcache = nil
@@ -164,10 +166,19 @@ class String
   def round_coordinates(precision)
     self.gsub(/(\d+)\.(\d{#{precision}})\d+/, '\1.\2')
   end
-end
 
-class String
   def is_number?
     true if Float(self) rescue false
+  end
+
+  def to_bool
+    case self.downcase
+    when 'true'
+      true
+    when 'false'
+      false
+    else
+      nil
+    end
   end
 end
