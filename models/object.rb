@@ -60,8 +60,11 @@ class CDKObject < Sequel::Model(:objects)
     # [layer][:layer] object, the same as API GeoJSON output.
 
     # Layer must exist
-    layer_id = CDKLayer.id_from_name(query[:params][:layer])
-    query[:api].error!("Layer not found: '#{query[:params][:layer]}'", 404) unless layer_id
+    layer_id = nil
+    if query[:params][:layer]
+      layer_id = CDKLayer.id_from_name(query[:params][:layer])
+      query[:api].error!("Layer not found: '#{query[:params][:layer]}'", 404) unless layer_id
+    end
 
     unless ["Feature", "FeatureCollection"].include? query[:data]["type"]
       query[:api].error!("POST data must be GeoJSON Feature or FeatureCollection", 422)
@@ -89,7 +92,11 @@ class CDKObject < Sequel::Model(:objects)
         query[:api].error!("Object without data encountered", 422)
       elsif properties['data'] && properties['layers']
         query[:api].error!("Object data must be in 'data' object, or in nested 'layers' object - not both", 422)
+      elsif properties['layer']
+        query[:api].error!("Object's layer cannot be set or changed with POST data", 422)
       elsif not (properties.keys - ['cdk_id', 'id', 'data', 'layers', 'title']).empty?
+        puts properties.inspect
+        puts (properties.keys - ['cdk_id', 'id', 'data', 'layers', 'title']).inspect
         msg = properties['cdk_id'] ? "cdk_id = '#{properties['cdk_id']}'" : "id = '#{properties['id']}'"
         query[:api].error!("Incorrect keys found for object with #{msg}", 422)
       end
@@ -105,6 +112,7 @@ class CDKObject < Sequel::Model(:objects)
         end
 
         cdk_id = CitySDKLD.cdk_id_from_id query[:params][:layer], properties['id']
+
         objects << {
           id: properties['id'],
           cdk_id: cdk_id,
@@ -118,17 +126,16 @@ class CDKObject < Sequel::Model(:objects)
       elsif properties['cdk_id']
         cdk_id = properties['cdk_id']
 
+        if query[:method] == :patch
+          objects << {
+            cdk_id: cdk_id,
+            db_hash: db_hash_from_geojson(query, cdk_id, layer_id, feature)
+          }
+        end
+
         results << {
           cdk_id: cdk_id
         }
-
-        # TODO: ook aanpassen van geom/title
-
-        # feature['properties'] may only contain 'cdk_id' and 'data' or 'layers' fields,
-        # batch edit of objects (title, geom) is not yet supported.
-        if properties['title'] or feature['geometry']
-          query[:api].error!("Use HTTP PATCH to edit title/geometry of existing objects", 422)
-        end
       else
         case query[:method]
         when :post
@@ -153,6 +160,12 @@ class CDKObject < Sequel::Model(:objects)
         # New bounding boxs needs to be loaded in memcached cache:
         CDKLayer.update_layer_hash layer_id
       when :patch
+        objects.each do |object|
+          count = CDKObject
+              .where(cdk_id: object[:cdk_id])
+              .update(title: object[:db_hash][:title], geom: object[:db_hash][:geom])
+        end
+
         object_data.each do |object_datum|
           count = CDKObjectDatum
               .where(object_id: object_datum[:db_hash][:object_id], layer_id: object_datum[:db_hash][:layer_id])

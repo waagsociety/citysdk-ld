@@ -117,9 +117,13 @@ class CDKObjectDatum < Sequel::Model(:object_data)
     if feature['properties'] and feature['properties']['data']
       data = feature['properties']['data']
     else
-      layer = CDKLayer.name_from_id(layer_id)
-      if feature['properties'] and feature['properties']['layers'] and feature['properties']['layers'][layer]
-        data = feature['properties']['layers'][layer]
+      if layer_id
+        layer = CDKLayer.name_from_id(layer_id)
+        if feature['properties'] and feature['properties']['layers'] and feature['properties']['layers'][layer]
+          data = feature['properties']['layers'][layer]
+        else
+          query[:api].error!("No object data found for object", 422)
+        end
       else
         query[:api].error!("No object data found for object", 422)
       end
@@ -127,7 +131,7 @@ class CDKObjectDatum < Sequel::Model(:object_data)
     query[:api].error!("Object data cannot contain arrays or objects", 422) unless data_valid? data
     {
       object_id: Sequel.function(:cdk_id_to_internal, cdk_id),
-      layer_id: layer_id,
+      layer_id: layer_id ? layer_id : Sequel.function(:object_layer_id_from_cdk_id, cdk_id),
       data: Sequel.hstore(data)
     }
   end

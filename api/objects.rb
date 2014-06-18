@@ -20,12 +20,10 @@ module CitySDKLD
           do_query :objects, single: true
         end
 
-        # # TODO: deze nog maken!
-        # desc 'Edit a single object'
-        # patch '/' do
-        #   do_query :objects
-        # end
-        #
+        desc 'Edit a single object'
+        patch '/' do
+          do_query :objects
+        end
 
         desc 'Delete a single object'
         delete '/' do

@@ -22,6 +22,23 @@ Sequel.migration do
       END $$ LANGUAGE plpgsql IMMUTABLE;
     SQL
 
+    # Returns layer id of an object from cdk_id
+    run <<-SQL
+    CREATE OR REPLACE FUNCTION object_layer_id_from_cdk_id(_cdk_id text)
+      RETURNS bigint
+      AS $$
+        DECLARE
+          _layer_id bigint;
+        BEGIN
+          SELECT layer_id INTO _layer_id FROM objects
+          WHERE _cdk_id = cdk_id;
+          IF _layer_id IS NULL THEN
+            RAISE EXCEPTION 'Object not found: ''%''', _cdk_id;
+          END IF;
+          RETURN _layer_id;
+      END $$ LANGUAGE plpgsql IMMUTABLE;
+    SQL
+
     run <<-SQL
     CREATE FUNCTION update_layer_bounds(layer_id integer) RETURNS void
     AS $$
@@ -82,6 +99,7 @@ Sequel.migration do
 
     run <<-SQL
       DROP FUNCTION IF EXISTS cdk_id_to_internal(_cdk_id text) CASCADE;
+      DROP FUNCTION IF EXISTS object_layer_id_from_cdk_id(_cdk_id text) CASCADE;
       DROP FUNCTION IF EXISTS update_layer_bounds(layer integer) CASCADE;
       DROP FUNCTION IF EXISTS update_layer_bounds_from_object() CASCADE;
       DROP FUNCTION IF EXISTS update_layer_bounds_from_object_data() CASCADE;
