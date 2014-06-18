@@ -43,12 +43,11 @@ module CitySDKLD
           @layers = object[:layers]
           @result = {}
           begin
-            # TODO: not all types need start/end
             start
             send @resource
             finish
           rescue NoMethodError
-            env['api.endpoint'].error!("Serialization error - #{@resource} not implemented", 500)
+            query[:api].error!("Serialization error - #{@resource} not implemented", 500)
           end
         end
       end
