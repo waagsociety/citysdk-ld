@@ -747,6 +747,13 @@ describe CitySDKLD::API do
       end
     end
 
+    describe "DELETE /layers" do
+      it "calls DELETE /layers and checks if response is 405 Method Now Allowed" do
+        delete "/layers"
+        last_response.status.should == 405
+      end
+    end
+
     ######################################################################
     # and now... delete everything:
     ######################################################################
