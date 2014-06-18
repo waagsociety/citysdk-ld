@@ -14,7 +14,7 @@ module CitySDKLD
       def start
         @env["api.format"] = "json"
 
-        unless [:context, :data].include? @resource
+        unless [:@context, :data].include? @resource
           @result = {
             type: "FeatureCollection",
             features: []
@@ -58,7 +58,7 @@ module CitySDKLD
               imported_at: layer[:imported_at],
               owner: layer[:owner].delete_if { |k, v| v.nil? },
               fields: layer[:fields],
-              :context => layer[:context]
+              :@context => layer[:@context]
             },
             geometry: layer[:geojson] ? layer[:geojson] : {}
           }

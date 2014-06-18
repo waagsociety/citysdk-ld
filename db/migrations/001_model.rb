@@ -81,7 +81,7 @@ Sequel.migration do
       column :data_sources, 'text[]'
       String :licence
       bool :authoritative, default: false
-      column :context, 'json'
+      column :@context, 'json'
       integer :update_rate
       String :webservice_url
       String :sample_url

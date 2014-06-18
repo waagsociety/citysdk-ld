@@ -26,7 +26,7 @@ class CDKLayer < Sequel::Model(:layers)
     optional_keys = [
       'update_rate',
       'webservice_url',
-      'context',
+      '@context',
       'licence',
       'fields'
     ]
@@ -42,9 +42,9 @@ class CDKLayer < Sequel::Model(:layers)
     end
 
     # Convert context to JSON
-    if data['context']
-      query[:api].error!('JSON-LD context for layer should be JSON object', 422) unless data['context'].class == Hash
-      data['context'] = data['context'].to_json
+    if data['@context']
+      query[:api].error!('JSON-LD context for layer should be JSON object', 422) unless data['@context'].class == Hash
+      data['@context'] = data['@context'].to_json
     end
 
     # If owner and category are provided, make sure
@@ -111,10 +111,10 @@ class CDKLayer < Sequel::Model(:layers)
       written_layer_id = layer_id
     when :put
       # Only used for:
-      # PUT /layers/:layer/context
+      # PUT /layers/:layer/@context
 
-      # POST data should only contain one key: 'context
-      query[:api].error!('Incorrect keys found in POST data', 422) unless data.keys == ['context']
+      # POST data should only contain one key: '@context
+      query[:api].error!('Incorrect keys found in POST data', 422) unless data.keys == ['@context']
 
       layer_id = self.id_from_name query[:params][:layer]
       if layer_id
@@ -197,7 +197,7 @@ class CDKLayer < Sequel::Model(:layers)
   end
 
   def self.make_hash(l)
-    l[:context] = JSON.parse(l[:context], {symbolize_names: true}) if l[:context]
+    l[:@context] = JSON.parse(l[:@context], symbolize_names: true) if l[:@context]
 
     l[:wkt] = l[:wkt].round_coordinates(CitySDKLD::Serializers::COORDINATE_PRECISION) if l[:wkt]
     l[:geojson] = JSON.parse(l[:geojson].round_coordinates(CitySDKLD::Serializers::COORDINATE_PRECISION), symbolize_names: true) if l[:geojson]

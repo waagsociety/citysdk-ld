@@ -83,9 +83,9 @@ module CitySDKLD
               @result << "    :createdOnLayer <layers/#{layer}> ."
               #@result << "    dc:created \"<object datum created date>\"^^xsd:date ."
 
-              if @layers[layer][:context]
+              if @layers[layer][:@context]
                 jsonld = {
-                  :@context => @layers[layer][:context],
+                  :@context => @layers[layer][:@context],
                   :@id => ":objects/#{object[:cdk_id]}/layers/#{layer}",
                   :@type => ":LayerData"
                 }.merge object[:layers][layer][:data]
@@ -96,7 +96,7 @@ module CitySDKLD
                 # start with http and end with either # or /
                 # Afterwards, merge layer prefixes with global
                 # PREFIXES
-                prefixes = @layers[layer][:context].select { |prefix,iri|
+                prefixes = @layers[layer][:@context].select { |prefix,iri|
                   prefix != :"@base" and iri.is_a? String and
                   iri.index("http") == 0 and ["/", "#"].include? iri[-1]
                 }.merge PREFIXES

@@ -150,7 +150,7 @@ describe CitySDKLD::API do
       it "creates layer 'bert.dierenwinkels'" do
         data = read_test_data_json 'layer_bert.dierenwinkels.json'
         data.delete(:fields)
-        data.delete(:context)
+        data.delete(:@context)
         header "CONTENT_TYPE", "application/json"
         post "/layers", data.to_json
         last_response.status.should == 201
@@ -255,34 +255,34 @@ describe CitySDKLD::API do
     # context:
     ######################################################################
 
-    describe "GET /layers/tom.achtbanen/context" do
+    describe "GET /layers/tom.achtbanen/@context" do
       it "gets JSON-LD context of layer 'tom.achtbanen'" do
         data = read_test_data_json 'layer_tom.achtbanen.json'
-        get "/layers/tom.achtbanen/context"
+        get "/layers/tom.achtbanen/@context"
         last_response.status.should == 200
-        body_json(last_response).should == data[:context]
+        body_json(last_response).should == data[:@context]
       end
     end
 
-    describe "GET /layers/bert.dierenwinkels/context" do
+    describe "GET /layers/bert.dierenwinkels/@context" do
       it "gets JSON-LD context of layer 'bert.dierenwinkels'" do
-        get "/layers/bert.dierenwinkels/context"
+        get "/layers/bert.dierenwinkels/@context"
         last_response.status.should == 200
         body_json(last_response).should == {}
       end
     end
 
-    describe "PUT /layers/bert.dierenwinkels/context" do
+    describe "PUT /layers/bert.dierenwinkels/@context" do
       it "sets JSON-LD context of layer 'bert.dierenwinkels'" do
         data = read_test_data_json 'layer_bert.dierenwinkels.json'
         header "CONTENT_TYPE", "application/json"
-        put "/layers/bert.dierenwinkels/context", data[:context].to_json
+        put "/layers/bert.dierenwinkels/@context", data[:@context].to_json
         last_response.status.should == 200
-        body_json(last_response).should == data[:context]
+        body_json(last_response).should == data[:@context]
       end
     end
 
-    describe "GET /layer/bert.dierenwinkels/context" do
+    describe "GET /layer/bert.dierenwinkels/@context" do
       # TODO: get single context: turtle, json, etc.
       # TODO: Not accepted for Turtle!
     end

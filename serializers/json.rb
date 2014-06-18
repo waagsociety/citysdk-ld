@@ -46,7 +46,7 @@ module CitySDKLD
             update_rate: layer[:update_rate],
             webservice_url: layer[:webservice_url],
             imported_at: layer[:imported_at],
-            context: layer[:context],
+            :@context => layer[:@context],
             geom: layer[:geojson] ? layer[:geojson] : nil
           }
           result.delete_if { |k, v| v.nil? }
