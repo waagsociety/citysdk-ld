@@ -14,9 +14,6 @@ module CitySDKLD
     # TODO: configure Grape/Rack, and assume that requests with
     # Content-Type 'application/x-www-form-urlencoded' are also JSON.
 
-    # TODO: swagger should specify possible output formats!
-    add_swagger_documentation api_version: 'v1'
-
     def initialize
       super
 
@@ -97,5 +94,9 @@ module CitySDKLD
     mount ::CitySDKLD::Objects
     mount ::CitySDKLD::Owners
     mount ::CitySDKLD::Endpoints
+
+    # Swagger must be called _after_ endpoints are mounted
+    # TODO: swagger should specify possible output formats!
+    add_swagger_documentation api_version: 'v1'
   end
 end
