@@ -15,10 +15,13 @@
 - title: Data
   menu:
     - title: Map Viewer
-      url : /map
+      url : /map-viewer
 
     - title: Data
       url : /data
+
+    - title: Endpoints
+      url : /endpoints
 
 - title: FAQ
   url : /faq

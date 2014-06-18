@@ -1,8 +1,8 @@
 ### Quick links
 
-|[**APP GALLERY**]({{ site.baseurl }}/appgallery)|
+|[**APP GALLERY**]({{ site.baseurl }}/app-gallery)|
 |[**AVAILABLE DATA**]({{ site.baseurl }}/data)|
-|[**MAP VIEWER**]({{ site.baseurl }}/mapviewer)|
+|[**MAP VIEWER**]({{ site.baseurl }}/map-viewer)|
 |[**PROJECT WEBSITE**](http://www.citysdk.eu/)|
 
 ### Supported by
