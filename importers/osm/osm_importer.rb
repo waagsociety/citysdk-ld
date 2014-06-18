@@ -103,6 +103,7 @@ osm_tables = [
   {table: 'planet_osm_polygon', id_prefix: 'w'}
 ]
 # TODO: support 'planet_osm_rels': {table: 'planet_osm_rels', id_prefix: 'r'}
+# Finish members support first!
 
 select = <<-SQL
   SELECT

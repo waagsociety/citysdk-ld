@@ -103,7 +103,6 @@ Sequel.migration do
       # Columns:
       column :id, 'serial', primary_key: true, unique: true
 
-      # TODO: on_update, on_delete
       foreign_key :layer_id, :layers, type: 'integer', null: false, on_delete: :cascade
 
       String :cdk_id, null: false, unique: true
