@@ -36,18 +36,20 @@ module CitySDKLD
         if swagger
           object.to_json
         else
-          @env = env
-          @resource = object[:resource]
-          @data = object[:data ]
-          @query = object[:query]
-          @layers = object[:layers]
-          @result = {}
-          begin
-            start
-            send @resource
-            finish
-          rescue NoMethodError
-            query[:api].error!("Serialization error - #{@resource} not implemented", 500)
+          if object.class == Hash
+            @env = env
+            @resource = object[:resource]
+            @data = object[:data ]
+            @query = object[:query]
+            @layers = object[:layers]
+            @result = {}
+            begin
+              start
+              send @resource
+              finish
+            rescue NoMethodError
+              query[:api].error!("Serialization error - #{@resource} not implemented", 500)
+            end
           end
         end
       end
