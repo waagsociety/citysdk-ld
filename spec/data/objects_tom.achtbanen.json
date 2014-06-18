@@ -5,7 +5,7 @@
       "type": "Feature",
       "properties": {
         "id": "1",
-        "title": "Achtbaan 1",
+        "title": "Achtbaan 1 🎢",
         "data": {
           "lengte": 81,
           "loopings": 3
@@ -23,7 +23,7 @@
       "type": "Feature",
       "properties": {
         "id": "2",
-        "title": "Achtbaan 2",
+        "title": "Achtbaan 2 🎡",
         "data": {
           "lengte": 125,
           "loopings": 3
@@ -41,7 +41,7 @@
       "type": "Feature",
       "properties": {
         "id": "3",
-        "title": "Achtbaan 3",
+        "title": "Achtbaan 3 🎠",
         "data": {
           "lengte": 241,
           "loopings": 0
@@ -59,7 +59,7 @@
       "type": "Feature",
       "properties": {
         "id": "4",
-        "title": "Achtbaan 4",
+        "title": "Achtbaan 4 🎑",
         "data": {
           "lengte": 89,
           "loopings": 0
@@ -77,7 +77,7 @@
       "type": "Feature",
       "properties": {
         "id": "5",
-        "title": "Achtbaan 5",
+        "title": "Achtbaan 5 🎪",
         "data": {
           "lengte": 263,
           "loopings": 5
@@ -95,7 +95,7 @@
       "type": "Feature",
       "properties": {
         "id": "6",
-        "title": "Achtbaan 6",
+        "title": "Achtbaan 6 🎣",
         "data": {
           "lengte": 86,
           "loopings": 2
@@ -113,7 +113,7 @@
       "type": "Feature",
       "properties": {
         "id": "7",
-        "title": "Achtbaan 7",
+        "title": "Achtbaan 7 🎂",
         "data": {
           "lengte": 198,
           "loopings": 2
@@ -131,7 +131,7 @@
       "type": "Feature",
       "properties": {
         "id": "8",
-        "title": "Achtbaan 8",
+        "title": "Achtbaan 8 🍕",
         "data": {
           "lengte": 112,
           "loopings": 1
@@ -149,7 +149,7 @@
       "type": "Feature",
       "properties": {
         "id": "9",
-        "title": "Achtbaan 9",
+        "title": "Achtbaan 9 🌰",
         "data": {
           "lengte": 232,
           "loopings": 6
@@ -167,7 +167,7 @@
       "type": "Feature",
       "properties": {
         "id": "10",
-        "title": "Achtbaan 10",
+        "title": "Achtbaan 10 🙇",
         "data": {
           "lengte": 75,
           "loopings": 0
@@ -185,7 +185,7 @@
       "type": "Feature",
       "properties": {
         "id": "11",
-        "title": "Achtbaan 11",
+        "title": "Achtbaan 11 🙅",
         "data": {
           "lengte": 235,
           "loopings": 0
@@ -203,7 +203,7 @@
       "type": "Feature",
       "properties": {
         "id": "12",
-        "title": "Achtbaan 12",
+        "title": "Achtbaan 12 🚤",
         "data": {
           "lengte": 142,
           "loopings": 1
@@ -221,7 +221,7 @@
       "type": "Feature",
       "properties": {
         "id": "13",
-        "title": "Achtbaan 13",
+        "title": "Achtbaan 13 🛀",
         "data": {
           "lengte": 110,
           "loopings": 1
@@ -239,7 +239,7 @@
       "type": "Feature",
       "properties": {
         "id": "14",
-        "title": "Achtbaan 14",
+        "title": "Achtbaan 14 🚶",
         "data": {
           "lengte": 275,
           "loopings": 3
@@ -257,7 +257,7 @@
       "type": "Feature",
       "properties": {
         "id": "15",
-        "title": "Achtbaan 15",
+        "title": "Achtbaan 15 🚚",
         "data": {
           "lengte": 132,
           "loopings": 1
@@ -275,7 +275,7 @@
       "type": "Feature",
       "properties": {
         "id": "16",
-        "title": "Achtbaan 16",
+        "title": "Achtbaan 16 🚒",
         "data": {
           "lengte": 144,
           "loopings": 1
@@ -293,7 +293,7 @@
       "type": "Feature",
       "properties": {
         "id": "17",
-        "title": "Achtbaan 17",
+        "title": "Achtbaan 17 😅",
         "data": {
           "lengte": 166,
           "loopings": 0
@@ -311,7 +311,7 @@
       "type": "Feature",
       "properties": {
         "id": "18",
-        "title": "Achtbaan 18",
+        "title": "Achtbaan 18 🚏",
         "data": {
           "lengte": 120,
           "loopings": 0
@@ -329,7 +329,7 @@
       "type": "Feature",
       "properties": {
         "id": "19",
-        "title": "Achtbaan 19",
+        "title": "Achtbaan 19 🚃",
         "data": {
           "lengte": 96,
           "loopings": 0
@@ -347,7 +347,7 @@
       "type": "Feature",
       "properties": {
         "id": "20",
-        "title": "Achtbaan 21",
+        "title": "Achtbaan 21 🚀",
         "data": {
           "lengte": 119,
           "loopings": 1
@@ -365,7 +365,7 @@
       "type": "Feature",
       "properties": {
         "id": "21",
-        "title": "Achtbaan 21",
+        "title": "Achtbaan 21 🇫🇷",
         "data": {
           "lengte": 143,
           "loopings": 1
@@ -383,7 +383,7 @@
       "type": "Feature",
       "properties": {
         "id": "22",
-        "title": "Achtbaan 22",
+        "title": "Achtbaan 22 ⛺",
         "data": {
           "lengte": 118,
           "loopings": 0
@@ -401,7 +401,7 @@
       "type": "Feature",
       "properties": {
         "id": "23",
-        "title": "Achtbaan 23",
+        "title": "Achtbaan 23 ⛵",
         "data": {
           "lengte": 101,
           "loopings": 0
