@@ -67,7 +67,12 @@ module CitySDKLD
       authoritative: {
         url_params: [:authoritative],
         resources: [:layers]
+      },
+      category: {
+        url_params: [:category],
+        resources: [:layers]
       }
+      
     }
 
     ###########################################################################
@@ -333,6 +338,9 @@ module CitySDKLD
       end
     end
 
+    def self.category(dataset, params, query)      
+      dataset.where(category_id: CDKCategory.select(:id).where(name: params[:category]))
+    end
 
     # def self.in_set
     #   .where(:objects__id => Sequel.function(:ANY, Sequel.function(:get_members, cdk_id)))
