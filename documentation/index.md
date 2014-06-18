@@ -9,8 +9,8 @@ This unified REST API gives access to data from different sources available on a
 
 **This website contains endpoint specific information only**, mainly regarding the datasets available here. All general documentation on the API can be found on the wiki at the corresponding [GitHub Wiki]({{ site.data.endpoint.wiki }}).
 
-Here's the docs! [swagger]({{ site.baseurl }}/swagger)
-*To help you get started a Swagger implementation will be available soon.*
+Here's the very, very preliminary swagger documents: [swagger]({{ site.baseurl }}/swagger)
+
 
 ## Datasets in this endpoint
 
