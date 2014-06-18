@@ -59,6 +59,14 @@ module CitySDKLD
       data: {
         url_params: /(?<layer>[\w_\.]+)::(?<field>.+)/,
         resources: [:objects]
+      },
+      admin: {
+        url_params: [:admin],
+        resources: [:owners]
+      },
+      authoritative: {
+        url_params: [:authoritative],
+        resources: [:layers]
       }
     }
 
@@ -306,6 +314,25 @@ module CitySDKLD
       end
       dataset.where(expr)
     end
+
+    def self.admin(dataset, params, query)
+      a = params[:admin].to_bool
+      if a == nil
+        dataset
+      else
+        dataset.where(admin: a)
+      end
+    end
+
+    def self.authoritative(dataset, params, query)
+      a = params[:authoritative].to_bool
+      if a == nil
+        dataset
+      else
+        dataset.where(authoritative: a)
+      end
+    end
+
 
     # def self.in_set
     #   .where(:objects__id => Sequel.function(:ANY, Sequel.function(:get_members, cdk_id)))
