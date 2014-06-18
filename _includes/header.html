@@ -24,6 +24,9 @@
 
     <script src="{{ site.baseurl }}/js/spin.min.js"></script>
     {% endif %}
+    {% if page.layout == "swagger" %}
+      {% include swagger.html %}    
+    {% endif %}
 
 	  <link href="//fonts.googleapis.com/css?family=Ubuntu:300italic,300,400italic,400,500italic,500,700italic,700" rel="stylesheet" type="text/css">
 
