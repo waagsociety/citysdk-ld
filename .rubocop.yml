@@ -1,0 +1,14 @@
+MethodLength:
+  Enabled: false
+
+LineLength:
+  Max: 119
+
+Documentation:
+  Enabled: false
+
+CaseIndentation:
+  Enabled: false
+
+CyclomaticComplexity:
+  Enabled: false
