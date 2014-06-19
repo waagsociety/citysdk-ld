@@ -4,6 +4,7 @@
   "website": "http://demeyer.nl/",
   "fullname": "Tom Demeyer 🙋",
   "domains": "tom,test",
+  "admin": true,
   "organization": "Waag Society",
   "password": "ABCabc456"
 }

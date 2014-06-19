@@ -11,7 +11,7 @@ class CDKOwner < Sequel::Model(:owners)
     data = query[:data]
     written_owner_id = nil
 
-    keys = [
+    required_keys = [
       'name',
       'email',
       'website',
@@ -21,9 +21,13 @@ class CDKOwner < Sequel::Model(:owners)
       'password'
     ]
 
+    optional_keys = [
+      'admin'
+    ]
+
     # Make sure POST data contains only valid keys
-    unless (data.keys - keys).empty?
-      query[:api].error!("Incorrect keys found in POST data: #{(data.keys - keys).join(', ')}", 422)
+    unless (data.keys - (required_keys + optional_keys)).empty?
+      query[:api].error!("Incorrect keys found in POST data: #{(data.keys - (required_keys + optional_keys)).join(', ')}", 422)
     end
 
     salt = nil
@@ -55,8 +59,8 @@ class CDKOwner < Sequel::Model(:owners)
         query[:api].error!("Owner already exists: #{data['name']}", 422)
       end
 
-      unless data.keys.sort == keys.sort
-        query[:api].error!("Cannot create owner, keys are missing in POST data: #{(keys - data.keys).join(', ')}", 422)
+      if data.keys.length < required_keys.length
+        query[:api].error!("Cannot create owner, keys are missing in POST data: #{(required_keys - data.keys).join(', ')}", 422)
       end
 
       if salt

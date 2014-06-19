@@ -8,6 +8,7 @@
     "http://nl.wikipedia.org/wiki/Utrecht_(stad)",
     "http://nl.wikipedia.org/wiki/Amsterdam"
   ],
+  "authoritative": true,
   "category": "administrative",
   "fields": [
     {

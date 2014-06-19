@@ -24,6 +24,7 @@ class CDKLayer < Sequel::Model(:layers)
     ]
 
     optional_keys = [
+      'authoritative',
       'subcategory',
       'update_rate',
       'webservice_url',

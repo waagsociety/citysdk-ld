@@ -645,6 +645,43 @@ describe CitySDKLD::API do
     #   http://localhost:9292/objects?rutger.openingstijden::tot=🕕&tom.achtbanen::lengte=241
     #   http://localhost:9292/objects?layer=rutger.openingstijden,bert.dierenwinkels
 
+
+    # admin
+
+    describe "GET /owners?admin=true" do
+      it "gets all admin owners" do
+        get "/owners?admin=true"
+        last_response.status.should == 200
+        last_response.header["X-Result-Count"].to_i.should == 2
+      end
+    end
+
+    describe "GET /owners?admin=false" do
+      it "gets all non-admin owners" do
+        get "/owners?admin=false"
+        last_response.status.should == 200
+        last_response.header["X-Result-Count"].to_i.should == 2
+      end
+    end
+
+    # authoritative
+
+    describe "GET /layers?authoritative=true" do
+      it "gets all authoritative layers" do
+        get "/layers?authoritative=true"
+        last_response.status.should == 200
+        last_response.header["X-Result-Count"].to_i.should == 1
+      end
+    end
+
+    describe "GET /layers?authoritative=false" do
+      it "gets all non-authoritative layers" do
+        get "/layers?authoritative=false"
+        last_response.status.should == 200
+        last_response.header["X-Result-Count"].to_i.should == 3
+      end
+    end
+
     # pagination/count
     object_count = 0
     describe "GET /objects?count&per_page=250" do

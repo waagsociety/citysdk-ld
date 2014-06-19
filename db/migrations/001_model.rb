@@ -42,7 +42,7 @@ Sequel.migration do
       String :name, null: false, unique: true
       String :fullname, null: false
       String :email, null: false, unique: true
-        bool :admin, default: false
+      bool :admin, default: false
       String :website
       String :organization
       column :domains, 'text[]'
