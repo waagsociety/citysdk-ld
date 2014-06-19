@@ -32,14 +32,14 @@ module CitySDKLD
       end
 
       def serialize(object, env)
-        swagger = env['PATH_INFO'].index('/swagger_doc') == 0
+        swagger = env['PATH_INFO'].index('/swagger') == 0
         if swagger
           object.to_json
         else
           if object.class == Hash
             @env = env
             @resource = object[:resource]
-            @data = object[:data ]
+            @data = object[:data]
             @query = object[:query]
             @layers = object[:layers]
             @result = {}
