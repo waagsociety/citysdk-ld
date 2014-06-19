@@ -18,6 +18,8 @@ module CitySDKLD
     end
 
     def call(env)
+      # Set request's content type to JSON, no matter what
+      env['CONTENT_TYPE'] = 'application/json'
       CitySDKLD::API.call(env)
     end
   end

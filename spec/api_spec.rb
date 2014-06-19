@@ -37,9 +37,11 @@ describe CitySDKLD::API do
     # TODO: refactor tests - combine multiple decribe/it blocks which
     # belong to one single 'task'.
 
-    # Currently, the CitySDK LD API only accects POST, PUT and PATCH
-    # requests with a JSON body if the request's Content-Type header
-    # is set to header "application/json"!
+    # The CitySDK LD API only sets the Content-Type header of all requests
+    # to 'application/json' before invoking any API code, in the API's call function.
+    # This does not seem to work for rspec's API calls, setting
+    #   header "CONTENT_TYPE", "application/json"
+    # is still needed in the tests.
 
     ######################################################################
     # owners:
