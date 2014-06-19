@@ -564,7 +564,6 @@ describe CitySDKLD::API do
         last_response.status.should == 200
         body_json(last_response)[:features][0][:properties][:cdk_id].should == 'tom.achtbanen.2'
         body_json(last_response)[:features][1][:properties][:cdk_id].should == 'bert.dierenwinkels.1'
-        # TODO: check whether results are really closest to location?
       end
     end
 

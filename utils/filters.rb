@@ -3,8 +3,6 @@
 module CitySDKLD
 
   module Filters
-    # TODO: support filters without url_params
-
     # url_params can be array of symbols or single regex.
     # regex capture groups are converted to filter
     # parameters
@@ -72,7 +70,7 @@ module CitySDKLD
         url_params: [:category],
         resources: [:layers]
       }
-      
+
     }
 
     ###########################################################################
@@ -338,7 +336,7 @@ module CitySDKLD
       end
     end
 
-    def self.category(dataset, params, query)      
+    def self.category(dataset, params, query)
       dataset.where(category_id: CDKCategory.select(:id).where(name: params[:category]))
     end
 

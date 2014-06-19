@@ -82,8 +82,6 @@ class CDKObject < Sequel::Model(:objects)
         end
 
     features.each do |feature|
-      # TODO: make sure ids in input are unique, and cdk_ids generated from those ids too!?
-
       properties = feature['properties']
 
       if !properties
@@ -191,8 +189,6 @@ class CDKObject < Sequel::Model(:objects)
     #   Delete object and data
     #
     # See layer.rb > execute_delete for example
-
-    # TODO: with what API call does one delete one object?
 
     cdk_id_exists = CDKObject.where(cdk_id: query[:params][:cdk_id]).count > 0
     query[:api].error!("Object not found: '#{query[:params][:cdk_id]}'", 404) unless cdk_id_exists

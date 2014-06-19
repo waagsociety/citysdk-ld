@@ -92,7 +92,7 @@ begin
       create_table(f)
       createIndexes(f)
     end
-    addUtilityFunctions()
+    add_utility_functions()
   end
   GTFS_Import::do_log('Cleared GTFS layer..')
   $stderr.puts "\nCOMMIT"

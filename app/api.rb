@@ -8,19 +8,13 @@ module CitySDKLD
     default_error_formatter :json
     version 'v1', using: :header, vendor: 'citysdk-ld'
 
-    # Currently, the CitySDK LD API only accects POST, PUT and PATCH
-    # requests with a JSON body if the request's Content-Type header
-    # is set to header 'application/json'.
-    # TODO: configure Grape/Rack, and assume that requests with
-    # Content-Type 'application/x-www-form-urlencoded' are also JSON.
-
     def initialize
       super
 
-      # TODO: is this the right place to connect do DB?
-      # how does this work on server with nginx + spawning?
       @config = JSON.parse(File.read("./config.#{ENV["RACK_ENV"]}.json"), symbolize_names: true)
 
+      # TODO: is this the right place to connect to the database?
+      # how does this work on server with nginx + spawning + multiple database connections?
       @database = Sequel.connect "postgres://#{@config[:db][:user]}:#{@config[:db][:password]}@#{@config[:db][:host]}/#{@config[:db][:database]}"
 
       #@database.logger = Logger.new(STDOUT)
@@ -50,7 +44,7 @@ module CitySDKLD
     end
 
     def self.set_link_header(api, object)
-      # Use GitHub style pagination headers
+      # The API uses GitHub style pagination headers
       # https://developer.github.com/v3/#pagination
       pagination = object[:query][:internal][:pagination] rescue nil
       if pagination
@@ -88,15 +82,15 @@ module CitySDKLD
     add_serializer ::CitySDKLD::Serializers::TurtleSerializer
     add_serializer ::CitySDKLD::Serializers::JSONLDSerializer
 
-    # URI structure uses HTTP verbs for resources:
+    # THe API's URI structure uses HTTP verbs for resources:
     # https://developer.github.com/v3/#http-verbs
     mount ::CitySDKLD::Layers
     mount ::CitySDKLD::Objects
     mount ::CitySDKLD::Owners
     mount ::CitySDKLD::Endpoints
 
-    # Swagger must be called _after_ endpoints are mounted
-    # TODO: swagger should specify possible output formats!
+    # Notice: Swagger _must_ be called _after_ all endpoints are mounted
+    # TODO: swagger should specify possible output formats (JSON, JSON-LD, Turtle, ...)
     add_swagger_documentation api_version: 'v1', mount_path: '/swagger'
   end
 end

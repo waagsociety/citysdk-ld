@@ -37,7 +37,7 @@ module CitySDKLD
     end
   end
 
-  # TODO: rethink!
+  # TODO: memcached layers cache and connection still might be error-prone!
   def self.memcached_set(key, value, ttl=300, try=0)
     begin
       return @@memcache.set(key, value, ttl)

@@ -1,6 +1,6 @@
-# TODO: move to migrations
+# TODO: move GTFS functions to database migration
 
-def addUtilityFunctions
+def add_utility_functions
 
   # return type of transport given the smallint GTFS route_type code
   $pg_csdk.exec <<-SQL

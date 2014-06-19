@@ -101,9 +101,10 @@ osm_tables = [
   {table: 'planet_osm_point', id_prefix: 'n'},
   {table: 'planet_osm_line', id_prefix: 'w'},
   {table: 'planet_osm_polygon', id_prefix: 'w'}
+  # {table: 'planet_osm_rels', id_prefix: 'r'}
 ]
-# TODO: support 'planet_osm_rels': {table: 'planet_osm_rels', id_prefix: 'r'}
-# Finish members support first!
+# TODO: support OpenStreetMap relations.
+# Prerequisite: support members/sets.
 
 select = <<-SQL
   SELECT
