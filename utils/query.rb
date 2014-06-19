@@ -228,7 +228,7 @@ module CitySDKLD
         # TODO: move to endpoint model
         data = {
           resource: @q[:resource],
-          data: {TODO: 'hier alles over endpoint!'},
+          data: CitySDKLD.get_endpoint_data(@q),
           query: @q
         }
       when :context

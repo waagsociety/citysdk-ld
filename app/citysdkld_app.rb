@@ -4,6 +4,11 @@ module CitySDKLD
 
   class App
 
+    @config = JSON.parse(File.read("./config.#{ENV["RACK_ENV"]}.json"), symbolize_names: true)
+    def self.get_config
+      @config
+    end
+
     def self.instance
       @instance ||= Rack::Builder.new do
         use Rack::Cors do

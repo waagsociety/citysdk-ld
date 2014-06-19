@@ -52,6 +52,7 @@ module CitySDKLD
               description: layer[:description],
               category: layer[:category],
               subcategory: layer[:subcategory],
+              :'rdf:type' => layer[:'rdf:type'],
               organization: layer[:organization],
               data_sources: layer[:data_sources],
               update_rate: layer[:update_rate],
@@ -94,16 +95,12 @@ module CitySDKLD
       end
 
       def endpoints
-        singular_plural
+        @result[:features] << {
+          type: "Feature",
+          properties: @data.select {|k,_| k != :geometry },
+          geometry: @data[:geometry]
+        }
       end
-
-      # def endpoints
-      #   @result[:features] << {
-      #     type: "Feature",
-      #     properties: @data,
-      #     geometry: @data[:geometry]
-      #   }
-      # end
 
     end
   end

@@ -10,12 +10,11 @@ module CitySDKLD
 
     def initialize
       super
-
-      @config = JSON.parse(File.read("./config.#{ENV["RACK_ENV"]}.json"), symbolize_names: true)
+      config = CitySDKLD::App.get_config
 
       # TODO: is this the right place to connect to the database?
       # how does this work on server with nginx + spawning + multiple database connections?
-      @database = Sequel.connect "postgres://#{@config[:db][:user]}:#{@config[:db][:password]}@#{@config[:db][:host]}/#{@config[:db][:database]}"
+      @database = Sequel.connect "postgres://#{config[:db][:user]}:#{config[:db][:password]}@#{config[:db][:host]}/#{config[:db][:database]}"
 
       #@database.logger = Logger.new(STDOUT)
 

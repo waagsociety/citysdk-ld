@@ -17,6 +17,6 @@ Dir[File.expand_path('../../serializers/*.rb', __FILE__)].each do |f|
 end
 
 require 'api'
-require 'endpoint'
+require 'endpoint_query'
 require 'citysdkld_app'
 require 'utils'

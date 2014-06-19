@@ -55,16 +55,6 @@ module CitySDKLD
       end
 
       def status
-        # Status
-        # return { :status => 'success',
-        #   :url => request.url,
-        #   "name" => "CitySDK Version 1.0",
-        #   "description" => "live testing; preliminary documentation @ http://dev.citysdk.waag.org",
-        #   "health" => {
-        #     "kv8" => kv8 ? "alive, #{kv8}" : "dead",
-        #     "divv" => divv ? "alive, last timestamp: #{divv}" : "dead",
-        #   }
-
         @result.merge @data
       end
 

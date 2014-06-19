@@ -150,8 +150,9 @@ module CitySDKLD
         end
       end
 
-      def status
+      def endpoints
       end
+
     end
   end
 end

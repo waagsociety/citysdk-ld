@@ -85,7 +85,7 @@ module Sequel
         # Get layers data from internal layers hash
         layer_ids = self.all.map { |a| a.values[:id] }
 
-        if params[:layer] and layer_ids.length == 0
+        if params[:layer] and layer_ids.length == 0 and query[:single]
           query[:api].error!("Layer not found: '#{params[:layer]}'", 404)
         end
 
