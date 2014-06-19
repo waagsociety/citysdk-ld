@@ -51,6 +51,7 @@ module CitySDKLD
               title: layer[:title],
               description: layer[:description],
               category: layer[:category],
+              subcategory: layer[:subcategory],
               organization: layer[:organization],
               data_sources: layer[:data_sources],
               update_rate: layer[:update_rate],

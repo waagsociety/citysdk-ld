@@ -24,6 +24,7 @@ class CDKLayer < Sequel::Model(:layers)
     ]
 
     optional_keys = [
+      'subcategory',
       'update_rate',
       'webservice_url',
       '@context',
@@ -229,48 +230,6 @@ class CDKLayer < Sequel::Model(:layers)
     get_layer_names[name]
   end
 
-  # Temporarily disabled this function,
-  # only useful when wildcards (and query UNIONs) are again supported
-  # # TODO: refactor: rename p, rename layer_names!
-  # def self.ids_from_names(p)
-  #   # Accepts full layer names and layer names
-  #   # with wildcards after dot layer separators:
-  #   #    cbs.*
-  #   case p
-  #   when Array
-  #     return p.map { |name|  self.ids_from_names(name) }.flatten.uniq
-  #   when String
-  #     layer_names = self.get_layer_names
-  #     if layer_names
-  #       if p.include? "*"
-  #         raise "Wildcards in layer filters are not yet supported"
-  #
-  #         # wildcards can only be used once, on the end of layer specifier after "." separator
-  #         if p.length >= 3 and p.scan("*").size == 1 and p.scan(".*").size == 1 and p[-2,2] == ".*"
-  #           prefix = p[0..(p.index("*") - 1)]
-  #           layer_ids = layer_names.select{|k,v| k.start_with? prefix}.values
-  #           if layer_ids.length > 0
-  #             return layer_ids
-  #           else
-  #             raise "No layers found: '#{p}'"
-  #           end
-  #         else
-  #           raise "You can only use wildcards in layer names directly after a name separator (e.g. osm.*)"
-  #         end
-  #       else
-  #         if layer_names[p]
-  #           return layer_names[p]
-  #         else
-  #           raise "Layer not found: '#{p}'"
-  #         end
-  #       end
-  #     else
-  #       # No layer names available, something went wrong
-  #       raise 'Layer cache unavailable'
-  #     end
-  #   end
-  # end
-
   def self.name_from_id(id)
     layer = self.get_layer(id)
     layer[:name]
@@ -310,13 +269,20 @@ class CDKLayer < Sequel::Model(:layers)
       Sequel.function(:ST_AsText, :geom).as(:wkt)
     )
 
+    categories = CDKCategory.to_hash(:id, :name)
+
     dataset = dataset.where(id: layer_id) if layer_id
 
     dataset.all.each do |l|
-      l.values[:owner] = CDKOwner.make_hash(CDKOwner.where(id: l.values[:owner_id]).first)
-      l.values[:fields] = CDKField.where(layer_id: l.values[:id]).all.map { |l| CDKField.make_hash(l.values) }
+      values = l.values
 
-      layer = make_hash(l.values)
+      values[:owner] = CDKOwner.make_hash(CDKOwner.where(id: values[:owner_id]).first)
+      values[:fields] = CDKField.where(layer_id: values[:id]).all.map { |f| CDKField.make_hash(f.values) }
+
+      values[:category] = categories[values[:category_id]]
+      values.delete(:category_id)
+
+      layer = make_hash values
       deps[layer[:id]] = layer[:depends_on_layer_id] if (layer[:depends_on_layer_id] && layer[:depends_on_layer_id] != 0)
       # Save layer data in memcache without expiration
       key = self.memcached_key(layer[:id].to_s)

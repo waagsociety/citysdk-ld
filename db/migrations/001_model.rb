@@ -78,6 +78,7 @@ Sequel.migration do
       String :name, null: false, unique: true
       String :title
       String :description
+      String :subcategory
       column :data_sources, 'text[]'
       String :licence
       bool :authoritative, default: false
