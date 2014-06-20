@@ -70,9 +70,6 @@ module CitySDKLD
         post = env['api.request.body']
       end
 
-      # TODO: see if method is GET, and if so, if post contains :query
-      # Use filters from post query as well.
-
       # Always return all layers when single object is requested and no
       # layer filter is specified
       if single and resource == :objects and not filters.map {|f| f[:filter ]}.include? :layer
