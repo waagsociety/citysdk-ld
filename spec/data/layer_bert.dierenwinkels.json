@@ -16,9 +16,14 @@
       "name": "icon",
       "type": "xsd:string",
       "description": "Emoji depicting pet shop's category"
+    },
+    {
+      "name": "sinds",
+      "type": "xsd:date",
+      "description": "Shop's date of opening"
     }
   ],
   "@context": {
-    "type": "vcard:locality"
+    "sinds": "dc:date"
   }
 }

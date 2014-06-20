@@ -8,7 +8,8 @@
         "title": "Amfibieënspeciaalzaak Den Haag",
         "data": {
           "icon": "🐸",
-          "type": "amfibieën"
+          "type": "amfibieën",
+          "sinds": "1998-03-31"
         }
       },
       "geometry": {
@@ -26,7 +27,8 @@
         "title": "Het Grote Spinnen- en insectenimperium",
         "data": {
           "icon": "🐜",
-          "type": "geleedpotigen"
+          "type": "geleedpotigen",
+          "sinds": "2002-01-15"
         }
       },
       "geometry": {
@@ -44,7 +46,8 @@
         "title": "Vissenwinkel Zoet & Zout",
         "data": {
           "icon": "🐟",
-          "type": "vissen"
+          "type": "vissen",
+          "sinds": "1995-11-01"
         }
       },
       "geometry": {
