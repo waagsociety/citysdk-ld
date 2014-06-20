@@ -64,7 +64,7 @@ describe CitySDKLD::API do
 
       it "creates owner 'tom' with a too simple password" do
         header "CONTENT_TYPE", "application/json"
-        post "/owners", read_test_data('owner_tom.json').gsub('ABCabc456','nix')
+        post "/owners", read_test_data('owner_tom.json').gsub('ABCabc456', 'nix')
         last_response.status.should == 422
         body_json(last_response).should == {error: 'Password needs to be longer, or contain numbers, capitals or symbols'}
       end
@@ -284,10 +284,15 @@ describe CitySDKLD::API do
       end
     end
 
-    describe "GET /layer/bert.dierenwinkels/@context" do
-      # TODO: get single context: turtle, json, etc.
-      # TODO: Not accepted for Turtle!
-    end
+    # TODO: this test still fails!
+    # Serialization should only be attemped when content type matches possible output
+    # describe "GET /layers/bert.dierenwinkels/@context" do
+    #   it "tries to get RDF/Turtle version of JSON-LD context" do
+    #     get "/layers/bert.dierenwinkels/@context", nil, {'HTTP_ACCEPT' => "text/turtle"}
+    #     puts last_response
+    #     last_response.status.should == 406
+    #   end
+    # end
 
     ######################################################################
     # fields:
