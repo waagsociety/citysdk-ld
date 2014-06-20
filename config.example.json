@@ -1,5 +1,18 @@
 {
   "endpoint": {
+    "title": "CitySDK LD API - Amsterdam",
+    "site": "http://citysdk.waag.org/",
+    "organization": "Waag Society",
+    "homepage": "http://waag.org/en",
+    "email": "citysdk@waag.org",
+    "location": "Amsterdam, The Netherlands",
+    "github": "https://github.com/waagsociety/citysdk-ld",
+    "wiki":	"https://github.com/waagsociety/citysdk-ld/wiki",
+    "base_uri": "http://rdf.citysdk.eu/ams/",
+    "geometry": {
+      "type":"Point",
+      "coordinates": [4.90032,52.37278]
+    }
   },
   "db": {
     "host": "localhost",
