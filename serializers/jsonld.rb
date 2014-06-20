@@ -11,8 +11,6 @@ module CitySDKLD
       FORMAT = :jsonld
       CONTENT_TYPE = 'application/ld+json'
 
-      #https://code.google.com/p/linked-data-api/wiki/API_Viewing_Resources#Page_Description
-
       def finish
 
         case @resource
@@ -36,7 +34,7 @@ module CitySDKLD
       end
 
       def jsonld_objects
-        # TODO: add fields!!!
+        # TODO: add layer's fields to serialization
 
         first = true
         @result[:features].map! do |feature|
@@ -57,15 +55,17 @@ module CitySDKLD
                 :@type => ':LayerOnObject'
               }.merge layer
 
-              # TODO: url from config
-              context = "http://api.citysdk.waag.org/layers/#{l}/@context"
+              context = "http://#{@query[:host]}/layers/#{l}/@context"
               if first
                 context = @layers[l][:@context] if @layers[l][:@context]
               end
 
+              types = [':LayerData']
+              types << @layers[l][:'rdf:type'] if @layers[l][:'rdf:type']
+
               layer[:data] = {
                 :@id => ":objects/#{cdk_id}/layers/#{l}",
-                :@type => ':LayerData',
+                :@type => types,
                 :@context => context
               }.merge layer[:data]
 
@@ -76,8 +76,8 @@ module CitySDKLD
           first = false
 
           {
-            :"@id" => ":objects/#{cdk_id}",
-            :"@type" => ':Object'
+            :@id => ":objects/#{cdk_id}",
+            :@type => ':Object'
           }.merge feature
         end
       end
@@ -90,16 +90,16 @@ module CitySDKLD
           }.merge feature[:properties]
 
           {
-            :"@id" => ":layers/#{feature[:properties][:name]}",
-            :"@type" => [":Layer", "dcat:Dataset"]
+            :@id => ":layers/#{feature[:properties][:name]}",
+            :@type => [":Layer", "dcat:Dataset"]
           }.merge feature
         end
       end
 
       def create_object_context
-        # TODO: set correct base, and use config.json
+        endpoint_data = CitySDKLD.get_endpoint_data(@query)
         {
-          :@base => "http://rdf.citysdk.eu/ams/",
+          :@base => endpoint_data[:base_uri],
           :title => "dc:title",
           :cdk_id => ":cdk_id",
           :features => ":apiResult",
@@ -119,8 +119,9 @@ module CitySDKLD
       end
 
       def create_layer_context
+        endpoint_data = CitySDKLD.get_endpoint_data(@query)
         {
-          :@base => 'http://rdf.citysdk.eu/ams/',
+          :@base => endpoint_data[:base_uri],
           :title => 'dct:title',
           :features => ':apiResult',
           :properties => '_:properties',
