@@ -48,6 +48,8 @@ Sequel.migration do
       column :domains, 'text[]'
       String :password
       String :salt
+      String :session_key
+      timestamptz :session_expires
       timestamptz :created_at, null: false, default: :now.sql_function
     end
 
