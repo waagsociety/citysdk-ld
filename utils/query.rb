@@ -6,7 +6,7 @@ module CitySDKLD
 
     def initialize(resource, single, env)
       api = env["api.endpoint"]
-
+      
       # Build params hash from routing arguments and query parameters
       params = env["rack.routing_args"].delete_if {|k, _| [:route_info, 'method', 'path'].include? k }.merge (
         Hash[env["rack.request.query_hash"].map {|k, v| [k.to_sym, v] }]
@@ -208,6 +208,7 @@ module CitySDKLD
     end
 
     def read
+
       dataset = nil
       data = nil
       case @q[:resource]
@@ -221,6 +222,7 @@ module CitySDKLD
         dataset = CDKObjectDatum.get_dataset @q
       when :fields
         dataset = CDKField.get_dataset @q
+
       when :endpoints
         # TODO: move to endpoint model
         data = {
@@ -228,6 +230,17 @@ module CitySDKLD
           data: CitySDKLD.get_endpoint_data(@q),
           query: @q
         }
+        
+      when :sessions
+        session = CDKOwner.sessionkey(@q[:params][:name], @q[:params][:password])
+        data = {
+          resource: @q[:resource],
+          data: {},
+          single: true,
+          query: @q
+        }
+        data[:data][:session_key] = session if session
+
       when :context
         # TODO: move to Layer model!
         layer_id = CDKLayer.id_from_name(@q[:params][:layer])

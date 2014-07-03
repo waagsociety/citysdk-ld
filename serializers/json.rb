@@ -54,9 +54,9 @@ module CitySDKLD
         end
       end
 
-      def status
-        @result.merge @data
-      end
+      # def status
+      #   @result.merge @data
+      # end
 
     end
   end

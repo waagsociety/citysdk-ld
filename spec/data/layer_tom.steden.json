@@ -9,6 +9,7 @@
     "http://nl.wikipedia.org/wiki/Amsterdam"
   ],
   "authoritative": true,
+  "rdf_type": "csdk:City",
   "category": "administrative",
   "fields": [
     {

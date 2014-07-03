@@ -5,6 +5,7 @@
   "description": "Alle dierenwinkels met allemaal dieren en konijnen",
   "data_sources": ["http://www.doggo.nl/overzicht-dierenspeciaalzaken.php"],
   "category": "commercial",
+  "rdf_type": "csdk:PetStore",
   "licence": "MIT License",
   "fields": [
     {

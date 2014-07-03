@@ -4,6 +4,7 @@
   "title": "Openingstijden",
   "description": "Openingstijden van dierenwinkels en achtbanen",
   "data_sources": ["http://www.openingstijden.nl/"],
+  "rdf_type": "csdk:OpeningHours",
   "category": "commercial",
   "fields": [
     {

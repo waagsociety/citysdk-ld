@@ -81,7 +81,7 @@ Sequel.migration do
       String :title
       String :description
       String :subcategory
-      String :'rdf:type'
+      String :rdf_type
       column :data_sources, 'text[]'
       String :licence
       bool :authoritative, default: false

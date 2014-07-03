@@ -87,6 +87,7 @@ module CitySDKLD
     mount ::CitySDKLD::Objects
     mount ::CitySDKLD::Owners
     mount ::CitySDKLD::Endpoints
+    mount ::CitySDKLD::Sessions
 
     # Notice: Swagger _must_ be called _after_ all endpoints are mounted
     # TODO: swagger should specify possible output formats (JSON, JSON-LD, Turtle, ...)

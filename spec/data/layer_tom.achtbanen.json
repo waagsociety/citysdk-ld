@@ -4,6 +4,7 @@
   "title": "Nederlandse achtbanen",
   "description": "Achtbanen in Nederland (met en zonder loopings)",
   "data_sources": ["http://nl.wikipedia.org/wiki/Lijst_van_achtbanen_in_Nederland"],
+  "rdf_type": "csdk:RollerCoasters",
   "category": "tourism",
   "fields": [
     {

@@ -17,6 +17,9 @@ class CDKField < Sequel::Model(:fields)
     unless layer_id
       query[:api].error!("Layer not found: #{query[:params][:layer]}", 404)
     end
+    
+    CDKOwner.verifyOwnerForLayer(query, layer_id)
+    
 
     keys = [
       'name',
@@ -35,7 +38,7 @@ class CDKField < Sequel::Model(:fields)
     case query[:method]
     when :post
       # create
-
+      
       # 'name' must exist in POST data
       if data['name']
         field = field_from_name_and_layer_id(data['name'], layer_id)
@@ -49,6 +52,7 @@ class CDKField < Sequel::Model(:fields)
 
       written_layer_id = layer_id
       written_field_name = data['name']
+      
     when :put, :patch
       query[:api].error!('Field name cannot be changed', 422) if data['name']
       field = field_from_name_and_layer_id(query[:params][:field], layer_id)
@@ -76,6 +80,7 @@ class CDKField < Sequel::Model(:fields)
   def self.execute_delete(query)
     layer_id = CDKLayer.id_from_name query[:params][:layer]
     if layer_id
+      CDKOwner.verifyOwnerForLayer(query, layer_id)
       count = CDKField.where(layer_id: layer_id, name: query[:params][:field]).delete
       if count == 0
         query[:api].error!("Field not found: #{query[:params][:field]}", 404)

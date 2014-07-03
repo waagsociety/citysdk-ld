@@ -66,6 +66,8 @@ class CDKObject < Sequel::Model(:objects)
       query[:api].error!("Layer not found: '#{query[:params][:layer]}'", 404) unless layer_id
     end
 
+    CDKOwner.verifyOwnerForLayer(query, layer_id)
+
     unless ["Feature", "FeatureCollection"].include? query[:data]["type"]
       query[:api].error!("POST data must be GeoJSON Feature or FeatureCollection", 422)
     end
@@ -190,8 +192,10 @@ class CDKObject < Sequel::Model(:objects)
     #
     # See layer.rb > execute_delete for example
 
-    cdk_id_exists = CDKObject.where(cdk_id: query[:params][:cdk_id]).count > 0
-    query[:api].error!("Object not found: '#{query[:params][:cdk_id]}'", 404) unless cdk_id_exists
+    object = CDKObject.where(cdk_id: query[:params][:cdk_id]).first
+    query[:api].error!("Object not found: '#{query[:params][:cdk_id]}'", 404) unless object
+    
+    CDKOwner.verifyOwnerForLayer(query, object[:layer_id])
 
     # TODO: create SQL function in 003_functions migration
     move_object = <<-SQL

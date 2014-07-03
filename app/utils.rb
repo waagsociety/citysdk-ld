@@ -162,6 +162,11 @@ end
 # Additional functions
 ##########################################################################################
 
+
+def jsonlog(o)
+  puts JSON.pretty_generate(o.to_hash)
+end
+
 class String
   def round_coordinates(precision)
     self.gsub(/(\d+)\.(\d{#{precision}})\d+/, '\1.\2')

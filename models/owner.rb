@@ -30,13 +30,12 @@ class CDKOwner < Sequel::Model(:owners)
       query[:api].error!("Incorrect keys found in POST data: #{(data.keys - (required_keys + optional_keys)).join(', ')}", 422)
     end
 
-    salt = nil
     if data['password']
       password = data['password']
       secure, message = CitySDKLD.password_secure? password
       if secure
-        salt = Digest::MD5.hexdigest(Random.rand().to_s)
-        data['password'] = Digest::MD5.hexdigest(salt + password)
+        data['salt'] = Digest::MD5.hexdigest(Random.rand().to_s)
+        data['password'] = Digest::MD5.hexdigest(data['salt'] + password)
       else
         query[:api].error!(message, 422)
       end
@@ -53,7 +52,10 @@ class CDKOwner < Sequel::Model(:owners)
     case query[:method]
     when :post
       # create
-
+      
+      # need to be admin user to create owners
+      self.verifyAdmin(query)
+      
       owner_id = self.id_from_name data['name']
       if owner_id
         query[:api].error!("Owner already exists: #{data['name']}", 422)
@@ -63,9 +65,6 @@ class CDKOwner < Sequel::Model(:owners)
         query[:api].error!("Cannot create owner, keys are missing in POST data: #{(required_keys - data.keys).join(', ')}", 422)
       end
 
-      if salt
-        data['salt'] = salt
-      end
 
       # Set Location header
       # Location: http://endpoint/onwers/data[:name]
@@ -73,17 +72,16 @@ class CDKOwner < Sequel::Model(:owners)
       written_owner_id = insert(data)
     when :patch
       # update
-
       if data['name']
         query[:api].error!('Owner name cannot be changed', 422)
       end
-
-      if salt
-        data['salt'] = salt
-      end
+      
+      self.verifyAdmin(query) if data['admin']
 
       owner_id = self.id_from_name query[:params][:owner]
+
       if owner_id
+        self.verifyOwner(query, owner_id)
         where(id: owner_id).update(data)
       else
         query[:api].error!("Owner not found: #{query[:params][:owner]}", 404)
@@ -92,11 +90,11 @@ class CDKOwner < Sequel::Model(:owners)
     end
 
     dataset.where(id: written_owner_id)
-
-
   end
 
   def self.execute_delete(query)
+    self.verifyAdmin(query)
+
     owner_id = id_from_name query[:params][:owner]
     if owner_id == 0
       query[:api].error!("Owner 'citysdk' cannot be deleted", 422)
@@ -106,6 +104,7 @@ class CDKOwner < Sequel::Model(:owners)
       # for example
 
       # TODO: create SQL function in 003_functions migration
+
       move_objects = <<-SQL
         UPDATE objects SET layer_id = -1
         WHERE id IN (
@@ -139,6 +138,65 @@ class CDKOwner < Sequel::Model(:owners)
       nil
     end
   end
+  
+  
+  def self.checkSessionTimout(query, user)
+    query[:api].error!("Session has timed out", 401) if user[:session_expires] < Time.now
+  end
+  
+  def self.verifyOwner(query, owner_id)
+    if query[:api].headers['X-Auth']
+      editor = self.where(session_key: query[:api].headers['X-Auth']).first
+      return self.checkSessionTimout(query, editor) if editor[:admin] or (editor[:id] == owner_id )
+    end
+    query[:api].error!("Operation needs administrative authorization or be on own user", 401)
+  end
+
+  def self.verifyOwnerForLayer(query, layer_id)
+    if query[:api].headers['X-Auth']
+      editor = self.where(session_key: query[:api].headers['X-Auth']).first
+      layer  = CDKLayer.where(id: layer_id).first
+      return self.checkSessionTimout(query, editor) if editor[:admin] or (editor[:id] == layer[:owner_id] )
+    end
+    query[:api].error!("Operation requires authorization", 401) unless query[:api].headers['X-Auth']
+  end
+
+  def self.verifyDomain(query,dom)
+    query[:api].error!("Operation requires authorization", 401) unless query[:api].headers['X-Auth']
+    editor = self.where(session_key: query[:api].headers['X-Auth']).first
+    return self.checkSessionTimout(query, editor) if editor[:admin] or editor[:domains].include?(dom)
+    query[:api].error!("Owner has no access to domain '#{dom}'", 403)
+  end
+  
+  def self.verifyAdmin(query)
+    if query[:api].headers['X-Auth']
+      admin = self.where(session_key: query[:api].headers['X-Auth']).first
+      return self.checkSessionTimout(query, admin) if admin and admin[:admin]
+    end
+    query[:api].error!("Operation needs administrative authorization", 401)
+  end
+
+  def self.sessionkey(name, password)
+    owner = self.authenticate(name, password)
+    if owner
+      key = Digest::MD5.hexdigest(Time.now.to_s + password)
+      owner.update( { session_key: key, session_expires: Time.now + 5.minutes } )
+      return key
+    else
+      nil
+    end
+  end
+
+  def self.authenticate(name, password)
+    owner = CDKOwner.where(name: name).first
+    if owner and (Digest::MD5.hexdigest(owner[:salt] + password ) == owner[:password])
+      return owner
+    else
+      nil
+    end
+  end
+
+
 
   def self.make_hash(o)
     {
@@ -148,7 +206,7 @@ class CDKOwner < Sequel::Model(:owners)
       website:      o[:website],
       organization: o[:organization],
       admin:        o[:admin]
-    }.delete_if{ |_, v| not v or v == '' }
+    }.delete_if{ |_, v| v.nil? or v == '' }
   end
 
 end
