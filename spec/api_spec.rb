@@ -67,7 +67,7 @@ describe CitySDKLD::API do
         header "CONTENT_TYPE", "application/json"
         post "/owners", read_test_data('owner_bert.json')
         last_response.status.should == 401
-        body_json(last_response).should == {error: "Operation needs administrative authorization"}
+        body_json(last_response).should == {error: "Operation requires administrative authorization"}
       end
 
 
@@ -116,7 +116,7 @@ describe CitySDKLD::API do
         header "X-Auth", $bert_key
         post "/owners", read_test_data('owner_tom.json')
         last_response.status.should == 401
-        body_json(last_response).should == {error: "Operation needs administrative authorization"}
+        body_json(last_response).should == {error: "Operation requires administrative authorization"}
       end
 
       it "creates owner 'rutger'" do
@@ -155,7 +155,7 @@ describe CitySDKLD::API do
         header "CONTENT_TYPE", "application/json"
         patch "/owners/bert", {admin: true}.to_json
         last_response.status.should == 401
-        body_json(last_response).should == {error: "Operation needs administrative authorization"}
+        body_json(last_response).should == {error: "Operation requires administrative authorization"}
       end
     end
 

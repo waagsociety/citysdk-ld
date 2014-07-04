@@ -12,8 +12,17 @@ module CitySDKLD
       super
       config = CitySDKLD::App.get_config
 
-      # TODO: is this the right place to connect to the database?
-      # how does this work on server with nginx + spawning + multiple database connections?
+      if defined?(PhusionPassenger)
+        # Deal with nginx + passenger spawning
+        PhusionPassenger.on_event(:starting_worker_process) do |forked|
+          if forked
+            # We're in smart spawning mode, do not use parent connections.
+            CitySDKLD.memcached_new
+            Sequel::Model.db.disconnect
+          end
+          # Else we're in direct spawning mode. We don't need to do anything.
+        end
+      end
       @database = Sequel.connect "postgres://#{config[:db][:user]}:#{config[:db][:password]}@#{config[:db][:host]}/#{config[:db][:database]}"
 
       #@database.logger = Logger.new(STDOUT)

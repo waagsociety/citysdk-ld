@@ -93,6 +93,10 @@ class CDKOwner < Sequel::Model(:owners)
   end
 
   def self.execute_delete(query)
+    
+    return self.delete_session(query) if query[:resource] == :sessions
+    
+    
     self.verify_admin(query)
 
     owner_id = id_from_name query[:params][:owner]
@@ -149,7 +153,7 @@ class CDKOwner < Sequel::Model(:owners)
       editor = self.where(session_key: query[:api].headers['X-Auth']).first
       return self.check_session_timeout(query, editor) if editor[:admin] or (editor[:id] == owner_id )
     end
-    query[:api].error!("Operation needs administrative authorization or be on own user", 401)
+    query[:api].error!("Operation requires authorization", 401)
   end
 
   def self.verify_owner_for_layer(query, layer_id)
@@ -173,7 +177,7 @@ class CDKOwner < Sequel::Model(:owners)
       admin = self.where(session_key: query[:api].headers['X-Auth']).first
       return self.check_session_timeout(query, admin) if admin and admin[:admin]
     end
-    query[:api].error!("Operation needs administrative authorization", 401)
+    query[:api].error!("Operation requires administrative authorization", 401)
   end
 
   def self.sessionkey(name, password)
@@ -185,6 +189,13 @@ class CDKOwner < Sequel::Model(:owners)
     else
       nil
     end
+  end
+
+  def self.delete_session(query)
+    if query[:api].headers['X-Auth']
+      self.where(session_key: query[:api].headers['X-Auth']).update({session_key: nil})
+    end
+    ''
   end
 
   def self.authenticate(name, password)

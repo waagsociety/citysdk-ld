@@ -195,11 +195,13 @@ module CitySDKLD
       when :layers
         CDKLayer.execute_delete @q
       when :owners
-         CDKOwner.execute_delete @q
+        CDKOwner.execute_delete @q
       when :data
-         CDKObjectDatum.execute_delete @q
+        CDKObjectDatum.execute_delete @q
       when :fields
         CDKField.execute_delete @q
+      when :sessions
+        CDKOwner.execute_delete @q
       end
 
       # If execute_delete function did not result in error, resource is deleted

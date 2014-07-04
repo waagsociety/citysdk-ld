@@ -26,7 +26,7 @@ set :repo_url, 'https://github.com/waagsociety/citysdk-ld'
 set :linked_files, %w{config.production.json}
 
 # Default value for linked_dirs is []
-set :linked_dirs, %w{log}
+# set :linked_dirs, %w{log}
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
@@ -40,9 +40,12 @@ namespace :deploy do
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
       # Your restart mechanism here, for example:
+      execute "mkdir -p", release_path.join('public')
+      execute "mkdir -p", release_path.join('tmp')
       execute :touch, release_path.join('tmp/restart.txt')
     end
   end
+
 
   after :publishing, :restart
 

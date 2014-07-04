@@ -12,7 +12,13 @@ module CitySDKLD
         do_query :layers
       end
 
-      desc 'Create new layer'
+      desc 'Create new layer',
+      headers: {
+        "X-Auth" => {
+          description: "Admin or layer owner session key",
+          required: true
+        }
+      }
       post '/' do
         do_query :layers, single: true
       end
@@ -24,12 +30,24 @@ module CitySDKLD
           do_query :layers, single: true
         end
 
-        desc 'Edit a layer'
+        desc 'Edit a layer',
+        headers: {
+          "X-Auth" => {
+            description: "Admin or layer owner session key",
+            required: true
+          }
+        }
         patch '/' do
           do_query :layers, single: true
         end
 
-        desc 'Delete a layer'
+        desc 'Delete a layer',
+        headers: {
+          "X-Auth" => {
+            description: "Admin or layer owner session key",
+            required: true
+          }
+        }
         delete '/' do
           do_query :layers
         end
@@ -44,7 +62,13 @@ module CitySDKLD
           do_query :context, single: true
         end
 
-        desc 'Overwrite JSON-LD context of single layer'
+        desc 'Overwrite JSON-LD context of single layer',
+        headers: {
+          "X-Auth" => {
+            description: "Admin or layer owner session key",
+            required: true
+          }
+        }
         put '/@context' do
           do_query :context, single: true
         end
@@ -56,12 +80,24 @@ module CitySDKLD
             do_query :objects
           end
 
-          desc 'Create one or more objects with data on single layer, or add data to existing objects (or a combination thereof)'
+          desc 'Create one or more objects with data on single layer, or add data to existing objects (or a combination thereof)',
+          headers: {
+            "X-Auth" => {
+              description: "Admin or layer owner session key",
+              required: true
+            }
+          }
           post '/' do
             do_query :objects
           end
 
-          desc 'Edit one or more objects and data on single layer'
+          desc 'Edit one or more objects and data on single layer',
+          headers: {
+            "X-Auth" => {
+              description: "Admin or layer owner session key",
+              required: true
+            }
+          }
           patch '/' do
             do_query :objects
           end
@@ -82,7 +118,13 @@ module CitySDKLD
             do_query :fields
           end
 
-          desc 'Create new field for single layer'
+          desc 'Create new field for single layer',
+          headers: {
+            "X-Auth" => {
+              description: "Admin or layer owner session key",
+              required: true
+            }
+          }
           post '/' do
             do_query :fields, single: true
           end
@@ -92,17 +134,35 @@ module CitySDKLD
             do_query :fields, single: true
           end
 
-          desc 'Overwrite single field on single layer'
+          desc 'Overwrite single field on single layer',
+          headers: {
+            "X-Auth" => {
+              description: "Admin or layer owner session key",
+              required: true
+            }
+          }
           put '/:field' do
             do_query :fields, single: true
           end
 
-          desc 'Edit single field on single layer'
+          desc 'Edit single field on single layer',
+          headers: {
+            "X-Auth" => {
+              description: "Admin or layer owner session key",
+              required: true
+            }
+          }
           patch '/:field' do
             do_query :fields, single: true
           end
 
-          desc 'Delete a single field on single layer'
+          desc 'Delete a single field on single layer',
+          headers: {
+            "X-Auth" => {
+              description: "Admin or layer owner session key",
+              required: true
+            }
+          }
           delete '/:field' do
             do_query :fields, single: true
           end
