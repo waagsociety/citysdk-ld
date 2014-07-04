@@ -46,7 +46,7 @@ class CDKObjectDatum < Sequel::Model(:object_data)
     layer_id = CDKLayer.id_from_name(query[:params][:layer])
     query[:api].error!("Layer not found: '#{query[:params][:layer]}'", 404) unless layer_id
 
-    CDKOwner.verifyOwnerForLayer(query, layer_id)
+    CDKOwner.verify_owner_for_layer(query, layer_id)
 
     object_datum = CDKObjectDatum.get_from_object_and_layer(query[:params][:cdk_id], layer_id)
     query[:api].error!("Object not found: '#{query[:params][:cdk_id]}'", 404) unless object_datum
@@ -93,7 +93,7 @@ class CDKObjectDatum < Sequel::Model(:object_data)
 
   def self.execute_delete(query)
     layer_id = CDKLayer.id_from_name query[:params][:layer]
-    CDKOwner.verifyOwnerForLayer(query, layer_id)
+    CDKOwner.verify_owner_for_layer(query, layer_id)
     object_datum = CDKObjectDatum.get_from_object_and_layer(query[:params][:cdk_id], layer_id)
 
     query[:api].error!("Layer not found: #{query[:params][:layer]}", 404) unless layer_id

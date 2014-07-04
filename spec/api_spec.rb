@@ -1,4 +1,4 @@
-# encoding: UTF-8
+#encoding: utf-8
 
 require 'spec_helper'
 
@@ -10,7 +10,7 @@ describe CitySDKLD::API do
   end
 
   def read_test_data(filename)
-    File.read("./spec/data/#{filename}")
+    File.read("./spec/data/#{filename}").force_encoding("UTF-8")
   end
 
   def read_test_data_json(filename)

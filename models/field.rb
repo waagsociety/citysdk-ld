@@ -18,7 +18,7 @@ class CDKField < Sequel::Model(:fields)
       query[:api].error!("Layer not found: #{query[:params][:layer]}", 404)
     end
     
-    CDKOwner.verifyOwnerForLayer(query, layer_id)
+    CDKOwner.verify_owner_for_layer(query, layer_id)
     
 
     keys = [
@@ -80,7 +80,7 @@ class CDKField < Sequel::Model(:fields)
   def self.execute_delete(query)
     layer_id = CDKLayer.id_from_name query[:params][:layer]
     if layer_id
-      CDKOwner.verifyOwnerForLayer(query, layer_id)
+      CDKOwner.verify_owner_for_layer(query, layer_id)
       count = CDKField.where(layer_id: layer_id, name: query[:params][:field]).delete
       if count == 0
         query[:api].error!("Field not found: #{query[:params][:field]}", 404)
