@@ -12,13 +12,7 @@ module CitySDKLD
       do_query :sessions, single: true
     end
 
-    desc 'Close session',
-    headers: {
-      "X-Auth" => {
-        description: "Session key of session to close",
-        required: true
-      }
-    }
+    desc 'Close session'
     delete '/session' do
       do_query :sessions
     end
