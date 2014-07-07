@@ -100,6 +100,10 @@ module CitySDKLD
 
     # Notice: Swagger _must_ be called _after_ all endpoints are mounted
     # TODO: swagger should specify possible output formats (JSON, JSON-LD, Turtle, ...)
-    add_swagger_documentation api_version: 'v1', mount_path: '/swagger', hide_format: true
+    add_swagger_documentation api_version: 'v1', 
+                              mount_path: '/swagger', 
+                              hide_format: true, 
+                              hide_documentation_path: true, 
+                              authorizations: { }
   end
 end
