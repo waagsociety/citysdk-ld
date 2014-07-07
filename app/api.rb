@@ -98,6 +98,8 @@ module CitySDKLD
     mount ::CitySDKLD::Endpoints
     mount ::CitySDKLD::Sessions
 
+    mount ::CitySDKLD::NGSI10
+
     # Notice: Swagger _must_ be called _after_ all endpoints are mounted
     # TODO: swagger should specify possible output formats (JSON, JSON-LD, Turtle, ...)
     add_swagger_documentation api_version: 'v1', 
