@@ -67,7 +67,7 @@ class CDKObject < Sequel::Model(:objects)
     end
 
     CDKOwner.verify_owner_for_layer(query, layer_id)
-
+    
     unless ["Feature", "FeatureCollection"].include? query[:data]["type"]
       query[:api].error!("POST data must be GeoJSON Feature or FeatureCollection", 422)
     end
@@ -95,8 +95,6 @@ class CDKObject < Sequel::Model(:objects)
       elsif properties['layer']
         query[:api].error!("Object's layer cannot be set or changed with POST data", 422)
       elsif not (properties.keys - ['cdk_id', 'id', 'data', 'layers', 'title']).empty?
-        puts properties.inspect
-        puts (properties.keys - ['cdk_id', 'id', 'data', 'layers', 'title']).inspect
         msg = properties['cdk_id'] ? "cdk_id = '#{properties['cdk_id']}'" : "id = '#{properties['id']}'"
         query[:api].error!("Incorrect keys found for object with #{msg}", 422)
       end
