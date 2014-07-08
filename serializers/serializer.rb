@@ -32,9 +32,7 @@ module CitySDKLD
       end
 
       def serialize(object, env)
-        
-        swagger = env['PATH_INFO'].index('/swagger') == 0
-        if swagger
+        if (env['PATH_INFO'] =~ /\/ngsi|swagger/) 
           object.to_json
         else
           if object.class == Hash

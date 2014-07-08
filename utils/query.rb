@@ -6,7 +6,7 @@ module CitySDKLD
 
     def initialize(resource, single, env)
       api = env["api.endpoint"]
-      
+
       # Build params hash from routing arguments and query parameters
       params = env["rack.routing_args"].delete_if {|k, _| [:route_info, 'method', 'path'].include? k }.merge (
         Hash[env["rack.request.query_hash"].map {|k, v| [k.to_sym, v] }]
@@ -163,6 +163,7 @@ module CitySDKLD
         }
       when :layers
         dataset = CDKLayer.execute_write @q
+        
       when :context
         # CDKLayer expects string keys in POST data - not symbols
         # TODO: convert ALL input data from request and filters with symbolize_names?
@@ -177,13 +178,21 @@ module CitySDKLD
           data: context ? context : {},
           query: @q
         }
+        
       when :owners
         dataset = CDKOwner.execute_write @q
+        
       when :data
         data = CDKObjectDatum.execute_write @q
+        
       when :fields
         dataset = CDKField.execute_write @q
+
+      when :ngsi10
+        data = NGSI10.do_query(@q)
+
       end
+
       data = dataset.serialize(@q) if dataset
       data
     end
