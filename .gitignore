@@ -4,3 +4,4 @@ config.test.json
 config.json
 log
 tmp/restart.txt
+config.production.json

@@ -254,7 +254,7 @@ title: Map Viewer
         if (hash.length > 1) {
           var url = hash.substring(1);
           if (url.substring(0, endpoint.length) == endpoint) {
-            $("#url").val(url.substring(endpoint.length + 1));
+            $("#url").val(url.substring(endpoint.length));
           } else {
             $("#url").val(url);
           }
