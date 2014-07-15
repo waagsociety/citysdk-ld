@@ -245,11 +245,26 @@ class CDKObject < Sequel::Model(:objects)
   end
 
   def self.db_hash_from_geojson(query, cdk_id, layer_id, feature)
-    db_hash = {
-      cdk_id: cdk_id,
-      layer_id: layer_id,
-      geom: Sequel.function(:ST_SetSRID, Sequel.function(:ST_GeomFromGeoJSON, feature['geometry'].to_json), 4326)
-    }
+    if feature['crs'] and 
+       feature['crs']['type'] == 'EPSG' and 
+       feature['crs']['properties']['code'] != 4326
+      
+      db_hash = {
+        cdk_id: cdk_id,
+        layer_id: layer_id,
+        geom: Sequel.function(:ST_Transform, 
+                Sequel.function(:ST_SetSRID, 
+                                 Sequel.function(:ST_GeomFromGeoJSON, feature['geometry'].to_json), 
+                                 feature['crs']['properties']['code'])
+                ,4326)
+      }
+    else
+      db_hash = {
+        cdk_id: cdk_id,
+        layer_id: layer_id,
+        geom: Sequel.function(:ST_SetSRID, Sequel.function(:ST_GeomFromGeoJSON, feature['geometry'].to_json), 4326)
+      }
+    end
     db_hash[:title] = feature['properties']['title'] if feature['properties']['title']
     db_hash
   end
