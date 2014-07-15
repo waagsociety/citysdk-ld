@@ -32,7 +32,6 @@ module CitySDKLD
       end
 
       def serialize(object, env)
-        
         swagger = env['PATH_INFO'].index('/swagger') == 0
         if swagger
           object.to_json
@@ -50,6 +49,8 @@ module CitySDKLD
               finish
             rescue NoMethodError
               @query[:api].error!("Serialization error - #{@resource} not implemented for #{@query[:format]}.", 500)
+            rescue Exception => e
+              @query[:api].error!("Serialization error - #{e.message}; (data: #{@data}; resource: #{@resource}).", 500)
             end
           end
         end

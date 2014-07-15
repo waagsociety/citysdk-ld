@@ -180,7 +180,7 @@ module CitySDKLD
       when :owners
         dataset = CDKOwner.execute_write @q
       when :data
-        data = CDKObjectDatum.execute_write @q
+        dataset = CDKObjectDatum.execute_write @q
       when :fields
         dataset = CDKField.execute_write @q
       end

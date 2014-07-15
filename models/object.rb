@@ -95,8 +95,6 @@ class CDKObject < Sequel::Model(:objects)
       elsif properties['layer']
         query[:api].error!("Object's layer cannot be set or changed with POST data", 422)
       elsif not (properties.keys - ['cdk_id', 'id', 'data', 'layers', 'title']).empty?
-        puts properties.inspect
-        puts (properties.keys - ['cdk_id', 'id', 'data', 'layers', 'title']).inspect
         msg = properties['cdk_id'] ? "cdk_id = '#{properties['cdk_id']}'" : "id = '#{properties['id']}'"
         query[:api].error!("Incorrect keys found for object with #{msg}", 422)
       end
@@ -252,11 +250,7 @@ class CDKObject < Sequel::Model(:objects)
       db_hash = {
         cdk_id: cdk_id,
         layer_id: layer_id,
-        geom: Sequel.function(:ST_Transform, 
-                Sequel.function(:ST_SetSRID, 
-                                 Sequel.function(:ST_GeomFromGeoJSON, feature['geometry'].to_json), 
-                                 feature['crs']['properties']['code'])
-                ,4326)
+        geom: Sequel.function(:ST_Transform,Sequel.function(:ST_SetSRID, Sequel.function(:ST_GeomFromGeoJSON, feature['geometry'].to_json), feature['crs']['properties']['code']),4326)
       }
     else
       db_hash = {

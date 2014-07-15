@@ -151,7 +151,7 @@ class CDKOwner < Sequel::Model(:owners)
   def self.verify_owner(query, owner_id)
     if query[:api].headers['X-Auth']
       editor = self.where(session_key: query[:api].headers['X-Auth']).first
-      return self.check_session_timeout(query, editor) if editor[:admin] or (editor[:id] == owner_id )
+      return self.check_session_timeout(query, editor) if editor and (editor[:admin] or (editor[:id] == owner_id ))
     end
     query[:api].error!("Operation requires authorization", 401)
   end
@@ -160,15 +160,15 @@ class CDKOwner < Sequel::Model(:owners)
     if query[:api].headers['X-Auth']
       editor = self.where(session_key: query[:api].headers['X-Auth']).first
       layer  = CDKLayer.where(id: layer_id).first
-      return self.check_session_timeout(query, editor) if editor[:admin] or (editor[:id] == layer[:owner_id] )
+      return self.check_session_timeout(query, editor) if editor and (editor[:admin] or (editor[:id] == layer[:owner_id] ))
     end
-    query[:api].error!("Operation requires authorization", 401) unless query[:api].headers['X-Auth']
+    query[:api].error!("Operation requires owners' authorization", 401)
   end
 
   def self.verify_domain(query,dom)
     query[:api].error!("Operation requires authorization", 401) unless query[:api].headers['X-Auth']
     editor = self.where(session_key: query[:api].headers['X-Auth']).first
-    return self.check_session_timeout(query, editor) if editor[:admin] or editor[:domains].include?(dom)
+    return self.check_session_timeout(query, editor) if editor and (editor[:admin] or editor[:domains].include?(dom))
     query[:api].error!("Owner has no access to domain '#{dom}'", 403)
   end
   
