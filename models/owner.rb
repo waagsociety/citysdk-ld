@@ -146,13 +146,12 @@ class CDKOwner < Sequel::Model(:owners)
   
   def self.check_session_timeout(query, user)
     query[:api].error!("Session has timed out", 401) if user[:session_expires] < Time.now
-    user
   end
   
   def self.verify_owner(query, owner_id)
     if query[:api].headers['X-Auth']
       editor = self.where(session_key: query[:api].headers['X-Auth']).first
-      return self.check_session_timeout(query, editor) if editor and (editor[:admin] or (editor[:id] == owner_id ))
+      return self.check_session_timeout(query, editor) if editor[:admin] or (editor[:id] == owner_id )
     end
     query[:api].error!("Operation requires authorization", 401)
   end
@@ -161,15 +160,15 @@ class CDKOwner < Sequel::Model(:owners)
     if query[:api].headers['X-Auth']
       editor = self.where(session_key: query[:api].headers['X-Auth']).first
       layer  = CDKLayer.where(id: layer_id).first
-      return self.check_session_timeout(query, editor) if editor and (editor[:admin] or (editor[:id] == layer[:owner_id] ))
+      return self.check_session_timeout(query, editor) if editor[:admin] or (editor[:id] == layer[:owner_id] )
     end
-    query[:api].error!("Operation requires owners' authorization", 401)
+    query[:api].error!("Operation requires authorization", 401) unless query[:api].headers['X-Auth']
   end
 
   def self.verify_domain(query,dom)
     query[:api].error!("Operation requires authorization", 401) unless query[:api].headers['X-Auth']
     editor = self.where(session_key: query[:api].headers['X-Auth']).first
-    return self.check_session_timeout(query, editor) if editor and (editor[:admin] or editor[:domains].include?(dom))
+    return self.check_session_timeout(query, editor) if editor[:admin] or editor[:domains].include?(dom)
     query[:api].error!("Owner has no access to domain '#{dom}'", 403)
   end
   
@@ -181,14 +180,10 @@ class CDKOwner < Sequel::Model(:owners)
     query[:api].error!("Operation requires administrative authorization", 401)
   end
 
-  def self.sessionkey(query)
-    owner = self.authenticate(query[:params][:name], query[:params][:password])
+  def self.sessionkey(name, password)
+    owner = self.authenticate(name, password)
     if owner
-      if (owner[:session_key] and owner[:session_expires] > Time.now)
-        key = owner.session_key 
-      else
-        key = Digest::MD5.hexdigest(Time.now.to_s + query[:params][:password])
-      end
+      key = Digest::MD5.hexdigest(Time.now.to_s + password)
       owner.update( { session_key: key, session_expires: Time.now + 5.minutes } )
       return key
     else

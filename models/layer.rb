@@ -74,8 +74,7 @@ class CDKLayer < Sequel::Model(:layers)
       layer_id = id_from_name(data['name'])
       query[:api].error!("Layer already exists: #{data['name']}", 422) if layer_id
 
-      owner = CDKOwner.verify_domain(query,data['name'].split('.')[0])
-      data['owner_id'] = owner.id unless (owner.admin || data['owner_id'].nil?)
+      CDKOwner.verify_domain(query,data['name'].split('.')[0])
 
       required_keys = required_keys - ['owner', 'category'] + ['owner_id', 'category_id']
 
@@ -99,13 +98,13 @@ class CDKLayer < Sequel::Model(:layers)
 
     when :patch
       # update
+      
 
       query[:api].error!('Layer name cannot be changed', 422) if data['name']
 
       layer_id = self.id_from_name query[:params][:layer]
       if layer_id
-        owner = CDKOwner.verify_owner_for_layer(query, layer_id)
-        data['owner_id'] = owner.id unless (owner.admin || data['owner_id'].nil?)
+        CDKOwner.verify_owner_for_layer(query, layer_id)
         Sequel::Model.db.transaction do
           if data['fields']
             CDKField.where(layer_id: layer_id).delete
@@ -128,8 +127,7 @@ class CDKLayer < Sequel::Model(:layers)
 
       layer_id = self.id_from_name query[:params][:layer]
       if layer_id
-        owner = CDKOwner.verify_owner_for_layer(query, layer_id)
-        data['owner_id'] = owner.id unless (owner.admin || data['owner_id'].nil?)
+        CDKOwner.verify_owner_for_layer(query, layer_id)
         where(id: layer_id).update(data)
         update_layer_hash
       else
@@ -137,6 +135,7 @@ class CDKLayer < Sequel::Model(:layers)
       end
       written_layer_id = layer_id
     end
+
     dataset.where(id: written_layer_id)
   end
 

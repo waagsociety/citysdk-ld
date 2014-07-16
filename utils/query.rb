@@ -183,7 +183,8 @@ module CitySDKLD
         dataset = CDKOwner.execute_write @q
         
       when :data
-        dataset = CDKObjectDatum.execute_write @q
+        data = CDKObjectDatum.execute_write @q
+        
       when :fields
         dataset = CDKField.execute_write @q
 
@@ -242,7 +243,7 @@ module CitySDKLD
         }
         
       when :sessions
-        session = CDKOwner.sessionkey(@q)
+        session = CDKOwner.sessionkey(@q[:params][:name], @q[:params][:password])
         data = {
           resource: @q[:resource],
           data: {},
