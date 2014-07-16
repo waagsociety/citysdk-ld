@@ -184,9 +184,12 @@ class CDKOwner < Sequel::Model(:owners)
   def self.sessionkey(query)
     owner = self.authenticate(query[:params][:name], query[:params][:password])
     if owner
-      return owner.session_key if (owner[:session_key] and owner[:session_expires] > Time.now)
-      key = Digest::MD5.hexdigest(Time.now.to_s + query[:params][:password])
-      owner.update( { session_key: key, session_expires: Time.now + 5.hours } )
+      if (owner[:session_key] and owner[:session_expires] > Time.now)
+        key = owner.session_key 
+      else
+        key = Digest::MD5.hexdigest(Time.now.to_s + query[:params][:password])
+      end
+      owner.update( { session_key: key, session_expires: Time.now + 5.minutes } )
       return key
     else
       nil
