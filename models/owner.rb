@@ -146,6 +146,7 @@ class CDKOwner < Sequel::Model(:owners)
   
   def self.check_session_timeout(query, user)
     query[:api].error!("Session has timed out", 401) if user[:session_expires] < Time.now
+    user
   end
   
   def self.verify_owner(query, owner_id)
@@ -180,11 +181,12 @@ class CDKOwner < Sequel::Model(:owners)
     query[:api].error!("Operation requires administrative authorization", 401)
   end
 
-  def self.sessionkey(name, password)
-    owner = self.authenticate(name, password)
+  def self.sessionkey(query)
+    owner = self.authenticate(query[:params][:name], query[:params][:password])
     if owner
-      key = Digest::MD5.hexdigest(Time.now.to_s + password)
-      owner.update( { session_key: key, session_expires: Time.now + 5.minutes } )
+      return owner.session_key if (owner[:session_key] and owner[:session_expires] > Time.now)
+      key = Digest::MD5.hexdigest(Time.now.to_s + query[:params][:password])
+      owner.update( { session_key: key, session_expires: Time.now + 5.hours } )
       return key
     else
       nil
