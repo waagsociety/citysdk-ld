@@ -234,7 +234,7 @@ module CitySDKLD
         }
         
       when :sessions
-        session = CDKOwner.sessionkey(@q[:params][:name], @q[:params][:password])
+        session = CDKOwner.sessionkey(@q)
         data = {
           resource: @q[:resource],
           data: {},
