@@ -75,7 +75,7 @@ class CDKLayer < Sequel::Model(:layers)
       query[:api].error!("Layer already exists: #{data['name']}", 422) if layer_id
 
       owner = CDKOwner.verify_domain(query,data['name'].split('.')[0])
-      self.check_layer_owner(data,owner)
+      data['owner_id'] = owner.admin ? (data['owner_id'] || owner.id) : owner.id
 
       required_keys = required_keys - ['owner', 'category'] + ['owner_id', 'category_id']
 
@@ -105,7 +105,8 @@ class CDKLayer < Sequel::Model(:layers)
       layer_id = self.id_from_name query[:params][:layer]
       if layer_id
         owner = CDKOwner.verify_owner_for_layer(query, layer_id)
-        data['owner_id'] = owner.id unless (owner.admin || data['owner_id'].nil?)
+        data['owner_id'] = owner.admin ? (data['owner_id'] || owner.id) : owner.id
+        
         Sequel::Model.db.transaction do
           if data['fields']
             CDKField.where(layer_id: layer_id).delete
@@ -129,7 +130,8 @@ class CDKLayer < Sequel::Model(:layers)
       layer_id = self.id_from_name query[:params][:layer]
       if layer_id
         owner = CDKOwner.verify_owner_for_layer(query, layer_id)
-        data['owner_id'] = owner.id unless (owner.admin || data['owner_id'].nil?)
+        data['owner_id'] = owner.admin ? (data['owner_id'] || owner.id) : owner.id
+        
         where(id: layer_id).update(data)
         update_layer_hash
       else
@@ -247,13 +249,6 @@ class CDKLayer < Sequel::Model(:layers)
     layer[:name]
   end
   
-  
-  ##########################################################################################
-  # Enforce own owner_id unless user is admin
-  ##########################################################################################
-  def self.check_layer_owner(data,user)
-    data['owner_id'] = user.admin ? (data['owner_id'] || user.id) : user.id
-  end
 
   ##########################################################################################
   # Real-time/web service layers:
