@@ -54,24 +54,22 @@ class CDKObjectDatum < Sequel::Model(:object_data)
     case query[:method]
     when :post
       # create
-
       if object_datum[:id]
         # Data already exists for :cdk_id on :layer, abort!
         query[:api].error!("Data already exists on layer for: '#{query[:params][:cdk_id]}'", 409)
       else
         self.insert(object_id: object_datum[:object_id], data: Sequel.hstore(data), layer_id: layer_id)
       end
-
+      ds = self.where({ object_id: object_datum[:object_id], layer_id: layer_id})
     when :put
       # overwrite
-
       if object_datum[:id]
         self.where(id: object_datum[:id]).update(data: Sequel.hstore(data))
       else
         # No data exists for :cdk_id on :layer, abort!
         query[:api].error!("No data exists on layer for: '#{query[:params][:cdk_id]}'", 404)
       end
-
+      ds = self.where(id: object_datum[:id])
     when :patch
       # update
 
@@ -82,13 +80,9 @@ class CDKObjectDatum < Sequel::Model(:object_data)
         # No data exists for :cdk_id on :layer, abort!
         query[:api].error!("No data exists on layer for: '#{query[:params][:cdk_id]}'", 404)
       end
-
+      ds = self.where(id: object_datum[:id])
     end
-
-    # Return useful data! And 201!
-    {
-      bla: "hdon"
-    }
+    ds
   end
 
   def self.execute_delete(query)
