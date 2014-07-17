@@ -1,0 +1,51 @@
+{
+    "contextElements": [
+        {
+            "type": "Room",
+            "isPattern": "false",
+            "id": "Room4",
+            "attributes": [
+              {
+                  "name": "temperature",
+                  "type": "centigrade",
+                  "value": "23"
+              },
+              {
+                  "name": "pressure",
+                  "type": "mmHg",
+                  "value": "720"
+              }
+            ]
+        },
+        {
+            "type": "Room",
+            "isPattern": "false",
+            "id": "Room7",
+            "attributes": [
+              {
+                  "name": "temperature",
+                  "type": "centigrade",
+                  "value": "2"
+              },
+              {
+                  "name": "pressure",
+                  "type": "mmHg",
+                  "value": "710"
+              }
+            ]
+        },
+        {
+            "type": "House",
+            "isPattern": "false",
+            "id": "House1",
+            "attributes": [
+              {
+                  "name": "rooms",
+                  "type": "count",
+                  "value": "3"
+              }
+            ]
+        }
+    ],
+    "updateAction": "APPEND"
+}
