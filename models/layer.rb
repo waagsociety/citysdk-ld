@@ -19,19 +19,19 @@ class CDKLayer < Sequel::Model(:layers)
       'title',
       'description',
       'data_sources',
-      'owner',
-      'category'
+      'category',
+      'subcategory',
+      'licence',
+      'rdf_type'
     ]
 
     optional_keys = [
-      'authoritative',
-      'subcategory',
       'update_rate',
       'webservice_url',
+      'authoritative',
       '@context',
-      'licence',
       'fields',
-      'rdf_type'
+      'owner'
     ]
 
     # Make sure POST data contains only valid keys
@@ -75,7 +75,7 @@ class CDKLayer < Sequel::Model(:layers)
       query[:api].error!("Layer already exists: #{data['name']}", 422) if layer_id
 
       owner = CDKOwner.verify_domain(query,data['name'].split('.')[0])
-      data['owner_id'] = owner.id unless (owner.admin || data['owner_id'].nil?)
+      self.check_layer_owner(data,owner)
 
       required_keys = required_keys - ['owner', 'category'] + ['owner_id', 'category_id']
 
@@ -245,6 +245,14 @@ class CDKLayer < Sequel::Model(:layers)
   def self.name_from_id(id)
     layer = self.get_layer(id)
     layer[:name]
+  end
+  
+  
+  ##########################################################################################
+  # Enforce own owner_id unless user is admin
+  ##########################################################################################
+  def self.check_layer_owner(data,user)
+    data['owner_id'] = user.admin ? (data['owner_id'] || user.id) : user.id
   end
 
   ##########################################################################################

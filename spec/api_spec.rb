@@ -137,7 +137,6 @@ describe CitySDKLD::API do
         body_json(last_response).should == {error: "'name' can only contain alphanumeric characters, underscores and periods"}
       end
     end
-
     describe "PATCH /owners/bert" do
       it "edits owner 'bert' " do
         fullname = 'Bert “😩” Spaan'
@@ -202,6 +201,7 @@ describe CitySDKLD::API do
     describe "GET /owners/bert" do
       # TODO: get single owner: turtle, json, etc.
     end
+
 
     ######################################################################
     # layers:
@@ -272,7 +272,7 @@ describe CitySDKLD::API do
         header "CONTENT_TYPE", "application/json"
         patch "/layers/bert.dierenwinkels", {title: title}.to_json
         last_response.status.should == 401
-        body_json(last_response).should == { error: "Operation requires authorization" }
+        body_json(last_response).should == { error: "Operation requires owners' authorization" }
       end
     end
 
@@ -298,10 +298,10 @@ describe CitySDKLD::API do
     end
 
     describe "GET /layers/bert.dierenwinkels/owners" do
-      it "owner of 'bert.dierenwinkels' should be rutger" do
+      it "owner of 'bert.dierenwinkels' should not be rutger" do
         get '/layers/bert.dierenwinkels/owners'
         last_response.status.should == 200
-        body_json(last_response)[0][:name].should == 'rutger'
+        body_json(last_response)[0][:name].should == 'bert'
       end
     end
 
@@ -941,7 +941,7 @@ describe CitySDKLD::API do
 
     describe "DELETE /objects/bert.dierenwinkels.1/layers/rutger.openingstijden" do
       it "deletes data on layer 'rutger.openingstijden' on single object 'bert.dierenwinkels.1'" do
-        header "X-Auth", $bert_key
+        header "X-Auth", $citysdk_key
         delete "/objects/bert.dierenwinkels.1/layers/rutger.openingstijden"
         last_response.status.should == 204
         last_response.body.should == ''
@@ -1018,6 +1018,9 @@ describe CitySDKLD::API do
         body_json(last_response)[:features].length.should == 0
       end
     end
+  
+  
+  
 
   end
 end

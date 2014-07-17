@@ -11,6 +11,8 @@
   "authoritative": true,
   "rdf_type": "csdk:City",
   "category": "administrative",
+  "subcategory": "stats",
+  "licence": "unspecified",
   "fields": [
     {
       "name": "naam",
