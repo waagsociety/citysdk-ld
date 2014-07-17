@@ -1,8 +1,8 @@
 require 'rubygems'
 require 'rack/test'
-require File.expand_path("../../config/environment", __FILE__)
 
 ENV["RACK_ENV"] = 'test'
+require File.expand_path("../../config/environment", __FILE__)
 
 config = JSON.parse(File.read("./config.test.json"), symbolize_names: true)
 
