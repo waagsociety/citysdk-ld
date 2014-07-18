@@ -25,7 +25,7 @@ module CitySDKLD
       end
       @database = Sequel.connect "postgres://#{config[:db][:user]}:#{config[:db][:password]}@#{config[:db][:host]}/#{config[:db][:database]}"
 
-      #@database.logger = Logger.new(STDOUT)
+      @database.logger = Logger.new(STDOUT)
 
       Sequel.extension :pg_hstore_ops
       Sequel.extension :pg_array_ops

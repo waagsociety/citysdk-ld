@@ -170,6 +170,14 @@ def jsonlog(o)
   puts JSON.pretty_generate(o.to_hash)
 end
 
+class Object
+  def blank?
+    self.nil? or 
+    (self.class == String and self =~ /^\s*$/) or
+    respond_to(:empty?) ?  self.empty? : !!self
+  end
+end
+
 class String
   def round_coordinates(precision)
     self.gsub(/(\d+)\.(\d{#{precision}})\d+/, '\1.\2')
