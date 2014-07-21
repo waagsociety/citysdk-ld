@@ -263,6 +263,11 @@ module CitySDKLD
           data: context ? context : {},
           query: @q
         }
+
+
+      when :ngsi10
+        data = NGSI10.do_query(@q)
+
       end
 
       data = dataset.execute_query(@q).serialize(@q) if dataset

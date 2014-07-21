@@ -35,6 +35,23 @@
             ]
         },
         {
+            "type": "Room",
+            "isPattern": "false",
+            "id": "Kamer11",
+            "attributes": [
+              {
+                  "name": "temperature",
+                  "type": "centigrade",
+                  "value": "12"
+              },
+              {
+                  "name": "pressure",
+                  "type": "mmHg",
+                  "value": "711"
+              }
+            ]
+        },
+        {
             "type": "House",
             "isPattern": "false",
             "id": "House1",
