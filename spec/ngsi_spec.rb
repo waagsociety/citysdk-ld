@@ -42,8 +42,11 @@ describe CitySDKLD::API do
       header "X-Auth", $citysdk_key
       json = read_test_data('ngsi_query.json')
       post "/ngsi10/queryContext", json
+      
+puts       last_response.body
+      
       expect(body_json(last_response)[:contextResponses][0][:statusCode][:code]).to eq("200")
-      expect(body_json(last_response)[:contextResponses][0][:contextElement][:attributes].length).to be(2)
+      expect(body_json(last_response)[:contextResponses][0][:contextElement][:attributes].length).to be(3)
     end
 
     it "correctly handles queries for objects of non-existing types" do
@@ -118,7 +121,21 @@ describe CitySDKLD::API do
       res = res[:attributes]
       expect(obj[:contextResponses].length).to be(3)
       expect(res.length).to be(1)
-      expect(res[0][:value]).to eq("720")
+      expect(res[0][:value]).to eq("620")
+    end
+    
+    it "can update attibutes for an entity" do
+      path = "/ngsi10/contextEntities/Kamer11/attributes/"
+      header "CONTENT_TYPE", "application/json"
+      header "X-Auth", $citysdk_key
+      get path + "pressure"
+      data = body_json(last_response)
+      expect(data[:attributes][0][:value]).to eq("711")
+      data.delete(:statusCode)
+      data[:attributes][0][:value] = "pipo"
+      put path, data.to_json
+      get path + "pressure"
+      expect(body_json(last_response)[:attributes][0][:value]).to eq("pipo")
     end
 
   end

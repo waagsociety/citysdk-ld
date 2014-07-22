@@ -5,6 +5,40 @@
             "isPattern": "false",
             "id": "Room7"
         }
-    ]
+    ],
+    "restriction": {
+        "scopes": [
+            {
+                "type": "FIWARE_Location",
+                "value": {
+                    "polygon": {
+                        "inverted": "true",
+                        "vertices": [
+                            {
+                                "latitude": "0.0",
+                                "longitude": "0.0"
+                            },
+                            {
+                                "latitude": "0.0",
+                                "longitude": "6.0"
+                            },
+                            {
+                                "latitude": "6.0",
+                                "longitude": "6.0"
+                            },
+                            {
+                                "latitude": "6.0",
+                                "longitude": "0.0"
+                            },
+                            {
+                                "latitude": "0.0",
+                                "longitude": "0.0"
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    }
 }
 

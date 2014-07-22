@@ -18,22 +18,23 @@ module CitySDKLD
         do_query :ngsi10
       end
 
-      desc 'Query context broker for contextElements'
+      desc 'Create a new context subscription'
       post '/subscribeContext' do
         do_query :ngsi10
       end
 
-      desc 'Query context broker for contextElements'
+      desc 'Update/edit a context subscription'
       post '/updateContextSubscription' do
         do_query :ngsi10
       end
 
-      desc 'Query context broker for contextElements'
+      desc 'Delete a context subscription'
       post '/unsubscribeContext' do
         do_query :ngsi10
       end
       
       resource :contextEntityTypes do
+        
         desc 'Return objects of particular type'
         get '/:cetype' do
           do_query :ngsi10, single: true
@@ -51,8 +52,14 @@ module CitySDKLD
       resource :contextEntities do
 
         resource '/:entity', requirements: { entity: ::Helpers.alphanumeric_regex } do
+          
           desc 'Return single context entity'
           get '/' do
+            do_query :ngsi10, single: true
+          end
+
+          desc 'Update attributes for single context entity'
+          put '/attributes' do
             do_query :ngsi10, single: true
           end
 
