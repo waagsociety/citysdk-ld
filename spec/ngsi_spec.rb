@@ -40,13 +40,11 @@ describe CitySDKLD::API do
     it "can query for existing objects" do
       header "CONTENT_TYPE", "application/json"
       header "X-Auth", $citysdk_key
-      json = read_test_data('ngsi_query.json')
-      post "/ngsi10/queryContext", json
-      
-puts       last_response.body
-      
+      json = read_test_data_json('ngsi_query.json')
+      json.delete(:restriction)
+      post "/ngsi10/queryContext", json.to_json
       expect(body_json(last_response)[:contextResponses][0][:statusCode][:code]).to eq("200")
-      expect(body_json(last_response)[:contextResponses][0][:contextElement][:attributes].length).to be(3)
+      expect(body_json(last_response)[:contextResponses][0][:contextElement][:attributes].length).to be(4)
     end
 
     it "correctly handles queries for objects of non-existing types" do
@@ -73,6 +71,7 @@ puts       last_response.body
       json = read_test_data_json('ngsi_query.json')
       json[:entities][0][:id] = "r.*"
       json[:entities][0][:isPattern] = true
+      json.delete(:restriction)
       post "/ngsi10/queryContext", json.to_json
       expect(body_json(last_response)[:contextResponses].length).to be(2)
       json[:entities][0][:id] = ".*"
@@ -90,6 +89,7 @@ puts       last_response.body
       json[:entities][0][:id] = ".*"
       json[:entities][0][:isPattern] = true
       json[:entities][0].delete(:type)
+      json.delete(:restriction)
       post "/ngsi10/queryContext", json.to_json
       expect(body_json(last_response)[:contextResponses].length).to be(4)
     end
@@ -123,7 +123,7 @@ puts       last_response.body
       expect(res.length).to be(1)
       expect(res[0][:value]).to eq("620")
     end
-    
+
     it "can update attibutes for an entity" do
       path = "/ngsi10/contextEntities/Kamer11/attributes/"
       header "CONTENT_TYPE", "application/json"
@@ -137,7 +137,64 @@ puts       last_response.body
       get path + "pressure"
       expect(body_json(last_response)[:attributes][0][:value]).to eq("pipo")
     end
+    
+    it "can query for objects within polygon" do
+      header "CONTENT_TYPE", "application/json"
+      json = read_test_data_json('ngsi_query.json')
+      json[:entities][0][:id] = ".*"
+      json[:entities][0][:isPattern] = true
+      post "/ngsi10/queryContext", json.to_json
+      expect(body_json(last_response)[:contextResponses].length).to be(2)
+      expect(body_json(last_response)[:contextResponses][0][:contextElement][:attributes].length).to be(4)
+    end
+    
+    it "can query for objects outside polygon" do
+      header "CONTENT_TYPE", "application/json"
+      json = read_test_data_json('ngsi_query.json')
+      json[:entities][0][:id] = ".*"
+      json[:entities][0][:isPattern] = true
+      json[:restriction][:scopes][0][:value][:polygon][:inverted] = true
+      post "/ngsi10/queryContext", json.to_json
+      expect(body_json(last_response)[:contextResponses].length).to be(1)
+      expect(body_json(last_response)[:contextResponses][0][:contextElement][:id]).to eq("Room4")
+    end
+    
+    it "can query for objects within radius from a point" do
+      header "CONTENT_TYPE", "application/json"
+      json = read_test_data_json('ngsi_query.json')
+      json[:entities][0][:id] = ".*"
+      json[:entities][0][:isPattern] = true
+      json[:restriction][:scopes][0][:value] = {
+        circle: {
+          centerLatitude: 52.37277,
+          centerLongitude: 4.90033,
+          radius: 1000,
+          inverted: false
+        }
+      }
+      post "/ngsi10/queryContext", json.to_json
+      expect(body_json(last_response)[:contextResponses].length).to be(2)
+      expect(body_json(last_response)[:contextResponses][0][:contextElement][:attributes].length).to be(4)
+    end
 
+    it "can query for objects outside radius from a point" do
+      header "CONTENT_TYPE", "application/json"
+      json = read_test_data_json('ngsi_query.json')
+      json[:entities][0][:id] = ".*"
+      json[:entities][0][:isPattern] = true
+      json[:restriction][:scopes][0][:value] = {
+        circle: {
+          centerLatitude: 52.37277,
+          centerLongitude: 4.90033,
+          radius: 10000,
+          inverted: true
+        }
+      }
+      post "/ngsi10/queryContext", json.to_json
+      expect(body_json(last_response)[:contextResponses].length).to be(1)
+      expect(body_json(last_response)[:contextResponses][0][:contextElement][:id]).to eq("Room4")
+    end
+    
   end
 
 end

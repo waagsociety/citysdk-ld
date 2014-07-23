@@ -130,7 +130,7 @@ module CitySDKLD
 
     def self.get_one_entity(ce,attributes, restriction)
       retvalue = []
-      if ce['isPattern']
+      if ce['isPattern'] == true
         pattern = "(.*)\\." + ce['id']
         objects = self.objects_select_filter(CDKObject.where(cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)), restriction)
         @count = CDKObject.where(cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)).count() if @details
@@ -140,8 +140,7 @@ module CitySDKLD
           retvalue << self.get_one_object(ce, o, layer, attributes)
         end
       else
-        pattern = "(.*)\\." + Regexp::quote(ce['id'])
-        object = self.objects_select_filter( CDKObject.where(cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)), restriction).first
+        object = self.objects_select_filter( CDKObject.where(Sequel.like(:cdk_id, "%#{ce['id'].downcase}")), restriction).first
         if object
           layer = CitySDKLD.memcached_get(CDKLayer.memcached_key(object.layer_id.to_s))
           self.populate_field_types(layer) 
@@ -153,7 +152,7 @@ module CitySDKLD
 
     def self.get_one_layered_entity(ce,layer,attributes, restriction)
       retvalue = []
-      if ce['isPattern']
+      if ce['isPattern'] == true
         pattern = Regexp::quote(layer.name + ".") + ce['id']
         objects = self.objects_select_filter(CDKObject.where(layer_id: layer.id, cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)), restriction)
         @count  = CDKObject.where(layer_id: layer.id, cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)).count() if @details
@@ -251,14 +250,24 @@ module CitySDKLD
     end
     
     def self.create_object(query,layer,data)
-      object = { "type" => "Feature", "properties" => { "id" => nil, "title" => nil, "data" => { } }, 
-                 "geometry" => { "type" => "Point", "coordinates" => [4.90032,52.37278] } 
+      object = { "type" => "Feature", "properties" => { "id" => data['id'], "title" => data['id'], "data" => { } }, 
+                 "geometry" => { "type" => "Point", "coordinates" => [4.90033, 52.37277] } 
                }
-      object["properties"]["title"] = object["properties"]["id"] = data['id']
       data['attributes'].each do |a|
+        if a['metadatas']
+          seen_geometry = false
+          a['metadatas'].each do |m|
+            if m['name'] == 'location' and a['value'] =~ /([\d\.]+)[\s,]+([\d\.]+)/
+              object["geometry"]["coordinates"] = [$2.to_f,$1.to_f]
+              seen_geometry = true
+            end
+          end
+          next if seen_geometry
+        end
         object["properties"]["data"][a['name']] = a['value']
         a['value'] = "" # empty values for response object
       end
+
       q = query.dup
       q[:params] = query[:params].dup
       q[:params][:layer] = layer[:name]
@@ -318,20 +327,36 @@ module CitySDKLD
       'POLYGON((' + ret + '))'
     end
     
+    Sequel.function(:ST_SetSRID,p,4326)
+    
     def self.objects_select_filter(dataset, restriction)
-      dataset = dataset.select(:cdk_id, :layer_id, Sequel.as(Sequel.function(:ST_AsText, Sequel.function(:ST_Centroid, :geom)), :centr))
+      dataset = dataset.select(:cdk_id, :layer_id, :title,  Sequel.as(Sequel.function(:ST_AsText, Sequel.function(:ST_Centroid, :geom)), :centr))
       if restriction
         restriction['scopes'].each do |s|
           if s["type"] == "FIWARE_Location"
             if s["value"]["polygon"] # p["vertices"], p["inverted"]
               p = self.polygon(s["value"]["polygon"]["vertices"])
-              puts p
-              if s["value"]["polygon"]["inverted"]
-                dataset = dataset.where( Sequel.not(Sequel.function(:ST_Contains, Sequel.function(:ST_PolygonFromText,p), Sequel.function(:ST_Centroid, :geom))) )
+              if s["value"]["polygon"]["inverted"] == true
+                dataset = dataset.exclude( 
+                  Sequel.function(:ST_Contains, 
+                    Sequel.function(:ST_SetSRID,Sequel.function(:ST_PolygonFromText,p), 4326), 
+                      Sequel.function(:ST_Centroid, :geom)) )
               else
-                dataset = dataset.where( Sequel.function(:ST_Contains, Sequel.function(:ST_PolygonFromText,p), Sequel.function(:ST_Centroid, :geom)) )
+                dataset = dataset
+                  .where( Sequel.function(:ST_Contains, 
+                    Sequel.function(:ST_SetSRID,Sequel.function(:ST_PolygonFromText,p), 4326), 
+                      Sequel.function(:ST_Centroid, :geom)) )
               end
             elsif s["value"]["circle"] # c["centerLatitude"], c["centerLongitude"], c["radius"], c["inverted"]
+              lat = s["value"]["circle"]["centerLatitude"].to_f
+              lon = s["value"]["circle"]["centerLongitude"].to_f
+              rad = s["value"]["circle"]["radius"].to_f
+              intersects = "ST_Intersects(ST_Transform(Geometry(ST_Buffer(Geography(ST_Transform(ST_SetSRID(ST_Point(#{lon}, #{lat}), 4326), 4326)), #{rad})), 4326), ST_Centroid(geom))"
+              if s["value"]["circle"]["inverted"] == true
+                dataset = dataset.exclude( intersects )
+              else
+                dataset = dataset.where( intersects )
+              end
             end
           end
         end

@@ -12,27 +12,27 @@
                 "type": "FIWARE_Location",
                 "value": {
                     "polygon": {
-                        "inverted": "true",
+                        "inverted": "false",
                         "vertices": [
                             {
-                                "latitude": "0.0",
-                                "longitude": "0.0"
+                                "latitude": "52.4301",
+                                "longitude": "4.7763"
                             },
                             {
-                                "latitude": "0.0",
-                                "longitude": "6.0"
+                                "latitude": "52.4259",
+                                "longitude": "5.0317"
                             },
                             {
-                                "latitude": "6.0",
-                                "longitude": "6.0"
+                                "latitude": "52.2875",
+                                "longitude": "5.0304"
                             },
                             {
-                                "latitude": "6.0",
-                                "longitude": "0.0"
+                                "latitude": "52.3320",
+                                "longitude": "4.7914"
                             },
                             {
-                                "latitude": "0.0",
-                                "longitude": "0.0"
+                              "latitude": "52.4301",
+                              "longitude": "4.7763"
                             }
                         ]
                     }

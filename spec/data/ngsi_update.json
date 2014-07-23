@@ -14,7 +14,19 @@
                   "name": "pressure",
                   "type": "mmHg",
                   "value": "620"
-              }
+              },
+              {
+                 "name": "position",
+                 "type": "coords",
+                 "value": "52.37278, 0.90032",
+                 "metadatas": [
+                   {
+                     "name": "location",
+                     "type": "string",
+                     "value": "WSG84"
+                   }
+                 ]
+               }
             ]
         },
         {
@@ -31,7 +43,20 @@
                   "name": "pressure",
                   "type": "mmHg",
                   "value": "710"
-              }
+              },
+              {
+                 "name": "position",
+                 "type": "coords",
+                 "value": "52.3714,4.8961",
+                 "metadatas": [
+                   {
+                     "name": "location",
+                     "type": "string",
+                     "value": "WSG84"
+                   }
+                 ]
+               }
+              
             ]
         },
         {
@@ -48,7 +73,19 @@
                   "name": "pressure",
                   "type": "mmHg",
                   "value": "711"
-              }
+              },
+              {
+                 "name": "position",
+                 "type": "coords",
+                 "value": "52.3714,4.8961",
+                 "metadatas": [
+                   {
+                     "name": "location",
+                     "type": "string",
+                     "value": "WSG84"
+                   }
+                 ]
+               }
             ]
         },
         {
