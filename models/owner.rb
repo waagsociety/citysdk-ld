@@ -181,6 +181,14 @@ class CDKOwner < Sequel::Model(:owners)
     query[:api].error!("Operation requires administrative authorization", 401)
   end
 
+  def self.admin?(query)
+    if query[:api].headers['X-Auth']
+      user = self.where(session_key: query[:api].headers['X-Auth']).first
+      return (user[:admin] && user[:session_expires] > Time.now) if user
+    end
+    false
+  end
+
   def self.sessionkey(query)
     owner = self.authenticate(query[:params][:name], query[:params][:password])
     if owner
@@ -212,17 +220,17 @@ class CDKOwner < Sequel::Model(:owners)
     end
   end
 
-
-
-  def self.make_hash(o)
-    {
+  def self.make_hash(o,q=nil)
+    h = {
       name:         o[:name],
       fullname:     o[:fullname],
       email:        o[:email],
       website:      o[:website],
       organization: o[:organization],
-      admin:        o[:admin]
+      admin:        o[:admin],
     }.delete_if{ |_, v| v.nil? or v == '' }
+    h[:domains] = o[:domains].join('; ') if (q and self.admin?(q))
+    h
   end
 
 end
