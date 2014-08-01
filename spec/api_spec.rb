@@ -679,50 +679,6 @@ describe CitySDKLD::API do
       ######################################################################
       # Accept header:
       ######################################################################
-<<<<<<< HEAD
-
-
-      it "uses Accept header to get RDF/Turtle of /objects" do
-        get "/objects", nil, {'HTTP_ACCEPT' => "text/turtle"}
-        last_response.status.should == 200
-        last_response.header['Content-Type'].should == 'text/turtle'
-      end
-
-      it "uses Accept header to get JSON-LD of /objects" do
-        get "/objects", nil, {'HTTP_ACCEPT' => "application/ld+json"}
-        last_response.status.should == 200
-        last_response.header['Content-Type'].should == 'application/json'
-        body_json(last_response).has_key?(:@context).should == true
-      end
-
-
-      it "checks if pagination Link headers are set for query on multiple layers" do
-        get "/objects?layer=rutger.openingstijden,bert.dierenwinkels&per_page=3&page=2"
-        last_response.status.should == 200
-        last_response.header["X-Result-Count"].to_i.should == 3
-        last_response.header["Link"].should == [
-          '<http://example.org/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=1&per_page=3>; rel="first"',
-          '<http://example.org/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=1&per_page=3>; rel="prev"',
-          '<http://example.org/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=2&per_page=3>; rel="last"'
-        ].join(', ')
-      end
-
-    end
-
-    describe "miscellaneous" do
-      ######################################################################
-      # miscellaneous:
-      ######################################################################
-
-      it "gets endpoint status" do
-        get "/"
-        last_response.status.should == 200
-        # TODO: check endpoint content
-      end
-
-=======
-
-
       it "uses Accept header to get RDF/Turtle of /objects" do
         get "/objects", nil, {'HTTP_ACCEPT' => "text/turtle"}
         last_response.status.should == 200

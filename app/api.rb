@@ -97,6 +97,7 @@ module CitySDKLD
     mount ::CitySDKLD::Owners
     mount ::CitySDKLD::Endpoints
     mount ::CitySDKLD::Sessions
+    mount ::CitySDKLD::NGSI10
 
 
 
