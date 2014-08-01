@@ -149,6 +149,24 @@ class CDKOwner < Sequel::Model(:owners)
     user
   end
   
+  def self.admin?(query)
+    if query[:api].headers['X-Auth']
+      user = self.where(session_key: query[:api].headers['X-Auth']).first
+      return (user[:admin] && user[:session_expires] > Time.now) if user
+    end
+    false
+  end
+
+  def self.self_or_admin?(query,name)
+    if query[:api].headers['X-Auth']
+      user = self.where(session_key: query[:api].headers['X-Auth']).first
+      if user and user[:session_expires] > Time.now
+        return (user[:admin] or user[:name] == name )
+      end
+    end
+    false
+  end
+
   def self.verify_owner(query, owner_id)
     if query[:api].headers['X-Auth']
       editor = self.where(session_key: query[:api].headers['X-Auth']).first
@@ -174,10 +192,7 @@ class CDKOwner < Sequel::Model(:owners)
   end
   
   def self.verify_admin(query)
-    if query[:api].headers['X-Auth']
-      admin = self.where(session_key: query[:api].headers['X-Auth']).first
-      return self.check_session_timeout(query, admin) if admin and admin[:admin]
-    end
+    return true if self.admin?(query)
     query[:api].error!("Operation requires administrative authorization", 401)
   end
 
@@ -214,8 +229,8 @@ class CDKOwner < Sequel::Model(:owners)
 
 
 
-  def self.make_hash(o)
-    {
+  def self.make_hash(o,q=nil)
+    h = {
       name:         o[:name],
       fullname:     o[:fullname],
       email:        o[:email],
@@ -223,6 +238,8 @@ class CDKOwner < Sequel::Model(:owners)
       organization: o[:organization],
       admin:        o[:admin]
     }.delete_if{ |_, v| v.nil? or v == '' }
+    h[:domains] = o[:domains].join(', ') if (q and self.self_or_admin?(q,o[:name]))
+    h
   end
 
 end
