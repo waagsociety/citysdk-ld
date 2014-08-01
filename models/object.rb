@@ -67,7 +67,7 @@ class CDKObject < Sequel::Model(:objects)
     end
 
     CDKOwner.verify_owner_for_layer(query, layer_id)
-
+    
     unless ["Feature", "FeatureCollection"].include? query[:data]["type"]
       query[:api].error!("POST data must be GeoJSON Feature or FeatureCollection", 422)
     end

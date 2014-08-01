@@ -97,7 +97,7 @@ module Sequel
       when :fields
         data = self.all.map { |f| CDKField.make_hash(f.values) }
       when :owners
-        data = self.all.map { |o| CDKOwner.make_hash(o.values) }
+        data = self.all.map { |o| CDKOwner.make_hash(o.values, query) }
         query[:api].error!("Owner not found: '#{params[:owner]}'", 404) if data.length == 0 and query[:single]
       end
 

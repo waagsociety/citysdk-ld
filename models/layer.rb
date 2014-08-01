@@ -11,7 +11,7 @@ class CDKLayer < Sequel::Model(:layers)
 
   def self.execute_write(query)
     data = query[:data]
-
+    
     written_layer_id = nil
 
     required_keys = [
@@ -19,24 +19,24 @@ class CDKLayer < Sequel::Model(:layers)
       'title',
       'description',
       'data_sources',
-      'owner',
-      'category'
+      'category',
+      'subcategory',
+      'licence',
+      'rdf_type'
     ]
 
     optional_keys = [
-      'authoritative',
-      'subcategory',
       'update_rate',
       'webservice_url',
+      'authoritative',
       '@context',
-      'licence',
       'fields',
-      'rdf_type'
+      'owner'
     ]
 
     # Make sure POST data contains only valid keys
     unless (data.keys - (required_keys + optional_keys)).empty?
-      query[:api].error!("Incorrect keys found in POST data: #{(data.keys - (required_keys + optional_keys)).join(', ')}", 422)
+      query[:api].error!("Incorrect keys found in layer POST data: #{(data.keys - (required_keys + optional_keys)).join(', ')}", 422)
     end
 
     # Convert array to pg_array
@@ -61,8 +61,13 @@ class CDKLayer < Sequel::Model(:layers)
     end
 
     if data['category']
+      owner = CDKOwner.where(session_key: query[:api].headers['X-Auth']).first
       category_id = CDKCategory.id_from_name(data['category']) if data['category']
       query[:api].error!("Category does not exist: '#{data['category']}'", 422) unless category_id
+
+#      if category_id == 0 and (owner.nil? or !owner.admin)
+#        query[:api].error!("Category does not exist: '#{data['category']}'", 422)
+#      end
       data.delete('category')
       data['category_id'] = category_id
     end
@@ -75,7 +80,7 @@ class CDKLayer < Sequel::Model(:layers)
       query[:api].error!("Layer already exists: #{data['name']}", 422) if layer_id
 
       owner = CDKOwner.verify_domain(query,data['name'].split('.')[0])
-      data['owner_id'] = owner.id unless (owner.admin || data['owner_id'].nil?)
+      data['owner_id'] = owner.admin ? (data['owner_id'] || owner.id) : owner.id
 
       required_keys = required_keys - ['owner', 'category'] + ['owner_id', 'category_id']
 
@@ -105,7 +110,8 @@ class CDKLayer < Sequel::Model(:layers)
       layer_id = self.id_from_name query[:params][:layer]
       if layer_id
         owner = CDKOwner.verify_owner_for_layer(query, layer_id)
-        data['owner_id'] = owner.id unless (owner.admin || data['owner_id'].nil?)
+        data['owner_id'] = owner.admin ? (data['owner_id'] || owner.id) : owner.id
+
         Sequel::Model.db.transaction do
           if data['fields']
             CDKField.where(layer_id: layer_id).delete
@@ -124,12 +130,12 @@ class CDKLayer < Sequel::Model(:layers)
       # PUT /layers/:layer/@context
 
       # POST data should only contain one key: '@context
-      query[:api].error!('Incorrect keys found in POST data', 422) unless data.keys == ['@context']
+      query[:api].error!('Incorrect keys found in layer PUT data', 422) unless data.keys == ['@context']
 
       layer_id = self.id_from_name query[:params][:layer]
       if layer_id
         owner = CDKOwner.verify_owner_for_layer(query, layer_id)
-        data['owner_id'] = owner.id unless (owner.admin || data['owner_id'].nil?)
+        data['owner_id'] = owner.admin ? (data['owner_id'] || owner.id) : owner.id
         where(id: layer_id).update(data)
         update_layer_hash
       else
@@ -246,6 +252,7 @@ class CDKLayer < Sequel::Model(:layers)
     layer = self.get_layer(id)
     layer[:name]
   end
+  
 
   ##########################################################################################
   # Real-time/web service layers:

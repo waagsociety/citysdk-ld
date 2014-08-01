@@ -32,7 +32,7 @@ class CDKField < Sequel::Model(:fields)
 
     # Make sure POST data contains only valid keys
     unless (data.keys - keys).empty?
-      query[:api].error!("Incorrect keys found in POST data: #{(data.keys - keys).join(', ')}", 422)
+      query[:api].error!("Incorrect keys found in field PUT/POST data: #{(data.keys - keys).join(', ')}", 422)
     end
 
     case query[:method]

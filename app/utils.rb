@@ -164,7 +164,18 @@ end
 
 
 def jsonlog(o)
+  puts
+  o = {array: o} if o.is_a?(Array)
+  o = {string: o} if o.is_a?(String)
   puts JSON.pretty_generate(o.to_hash)
+end
+
+class Object
+  def blank?
+    self.nil? or 
+    (self.class == String and self =~ /^\s*$/) or
+    respond_to(:empty?) ?  self.empty? : !!self
+  end
 end
 
 class String

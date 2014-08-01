@@ -27,7 +27,7 @@ class CDKOwner < Sequel::Model(:owners)
 
     # Make sure POST data contains only valid keys
     unless (data.keys - (required_keys + optional_keys)).empty?
-      query[:api].error!("Incorrect keys found in POST data: #{(data.keys - (required_keys + optional_keys)).join(', ')}", 422)
+      query[:api].error!("Incorrect keys found in owner PUT/POST data: #{(data.keys - (required_keys + optional_keys)).join(', ')}", 422)
     end
 
     if data['password']
@@ -236,7 +236,7 @@ class CDKOwner < Sequel::Model(:owners)
       email:        o[:email],
       website:      o[:website],
       organization: o[:organization],
-      admin:        o[:admin]
+      admin:        o[:admin],
     }.delete_if{ |_, v| v.nil? or v == '' }
     h[:domains] = o[:domains].join(', ') if (q and self.self_or_admin?(q,o[:name]))
     h

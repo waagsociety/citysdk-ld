@@ -118,7 +118,8 @@ Sequel.migration do
       # Indexes:
       index :layer_id
       index :members, type: :gin
-      full_text_index :title
+      full_text_index :title 
+      full_text_index :cdk_id
       index Sequel.function(:lower, :title)
     end
 

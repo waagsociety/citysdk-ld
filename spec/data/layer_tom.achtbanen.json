@@ -6,6 +6,8 @@
   "data_sources": ["http://nl.wikipedia.org/wiki/Lijst_van_achtbanen_in_Nederland"],
   "rdf_type": "csdk:RollerCoasters",
   "category": "tourism",
+  "subcategory": "amusement",
+  "licence": "unspecified",
   "fields": [
     {
       "name": "lengte",
@@ -26,3 +28,4 @@
     "vis": "koek"
   }
 }
+

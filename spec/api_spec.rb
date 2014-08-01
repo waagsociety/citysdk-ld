@@ -3,32 +3,6 @@
 require 'spec_helper'
 include Rack::Test::Methods
 
-def app
-  CitySDKLD::API
-end
-
-def read_test_data(filename)
-  File.read("./spec/data/#{filename}").force_encoding("UTF-8")
-end
-
-def read_test_data_json(filename)
-  JSON.parse(read_test_data(filename), symbolize_names: true)
-end
-
-def body_json(last_response)
-  JSON.parse(last_response.body, symbolize_names: true)
-end
-
-def compare_hash(h1, h2, skip_recursion = false)
-  result = true
-  h1.keys.each do |k|
-    if h1[k] and h1[k] != ''
-      result &= (h1[k] == h2[k])
-    end
-  end
-  result &= compare_hash(h2, h1, true) unless skip_recursion
-  result
-end
 
 describe CitySDKLD::API do
 
@@ -47,7 +21,6 @@ describe CitySDKLD::API do
     
     
     describe "GET /session" do
-
       it "gets a session key for owner 'citysdk'" do
         header "CONTENT_TYPE", "application/json"
         get "/session?name=citysdk&password=ChangeMeNow"
@@ -55,7 +28,6 @@ describe CitySDKLD::API do
         $citysdk_key = body_json(last_response)[:features][0][:properties][:session_key]
         $citysdk_key.should_not == nil
       end
-      
     end
     
     describe "POST /owners" do
@@ -707,6 +679,48 @@ describe CitySDKLD::API do
       ######################################################################
       # Accept header:
       ######################################################################
+<<<<<<< HEAD
+
+
+      it "uses Accept header to get RDF/Turtle of /objects" do
+        get "/objects", nil, {'HTTP_ACCEPT' => "text/turtle"}
+        last_response.status.should == 200
+        last_response.header['Content-Type'].should == 'text/turtle'
+      end
+
+      it "uses Accept header to get JSON-LD of /objects" do
+        get "/objects", nil, {'HTTP_ACCEPT' => "application/ld+json"}
+        last_response.status.should == 200
+        last_response.header['Content-Type'].should == 'application/json'
+        body_json(last_response).has_key?(:@context).should == true
+      end
+
+
+      it "checks if pagination Link headers are set for query on multiple layers" do
+        get "/objects?layer=rutger.openingstijden,bert.dierenwinkels&per_page=3&page=2"
+        last_response.status.should == 200
+        last_response.header["X-Result-Count"].to_i.should == 3
+        last_response.header["Link"].should == [
+          '<http://example.org/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=1&per_page=3>; rel="first"',
+          '<http://example.org/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=1&per_page=3>; rel="prev"',
+          '<http://example.org/objects?layer=rutger.openingstijden,bert.dierenwinkels&page=2&per_page=3>; rel="last"'
+        ].join(', ')
+      end
+
+    end
+
+    describe "miscellaneous" do
+      ######################################################################
+      # miscellaneous:
+      ######################################################################
+
+      it "gets endpoint status" do
+        get "/"
+        last_response.status.should == 200
+        # TODO: check endpoint content
+      end
+
+=======
 
 
       it "uses Accept header to get RDF/Turtle of /objects" do
