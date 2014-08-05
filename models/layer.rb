@@ -59,6 +59,7 @@ class CDKLayer < Sequel::Model(:layers)
       data.delete('owner')
       data['owner_id'] = owner_id
     end
+    data.delete('owner')
 
     if data['category']
       owner = CDKOwner.where(session_key: query[:api].headers['X-Auth']).first
