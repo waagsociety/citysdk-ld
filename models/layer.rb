@@ -111,7 +111,7 @@ class CDKLayer < Sequel::Model(:layers)
       if layer_id
         owner = CDKOwner.verify_owner_for_layer(query, layer_id)
         data['owner_id'] = owner.admin ? (data['owner_id'] || owner.id) : owner.id
-        
+
         Sequel::Model.db.transaction do
           if data['fields']
             CDKField.where(layer_id: layer_id).delete
@@ -136,7 +136,6 @@ class CDKLayer < Sequel::Model(:layers)
       if layer_id
         owner = CDKOwner.verify_owner_for_layer(query, layer_id)
         data['owner_id'] = owner.admin ? (data['owner_id'] || owner.id) : owner.id
-        
         where(id: layer_id).update(data)
         update_layer_hash
       else

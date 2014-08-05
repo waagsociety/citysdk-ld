@@ -97,8 +97,8 @@ module CitySDKLD
     mount ::CitySDKLD::Owners
     mount ::CitySDKLD::Endpoints
     mount ::CitySDKLD::Sessions
-
     mount ::CitySDKLD::NGSI10
+
 
 
     # Notice: Swagger _must_ be called _after_ all endpoints are mounted

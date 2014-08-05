@@ -679,8 +679,6 @@ describe CitySDKLD::API do
       ######################################################################
       # Accept header:
       ######################################################################
-
-
       it "uses Accept header to get RDF/Turtle of /objects" do
         get "/objects", nil, {'HTTP_ACCEPT' => "text/turtle"}
         last_response.status.should == 200
