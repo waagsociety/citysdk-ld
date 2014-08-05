@@ -56,6 +56,11 @@ module CitySDKLD
             do_query :objects
           end
 
+          desc 'Delete all objects from a single layer'
+          delete '/' do
+            do_query :objects
+          end
+
           desc 'Create one or more objects with data on single layer, or add data to existing objects (or a combination thereof)'
           post '/' do
             do_query :objects

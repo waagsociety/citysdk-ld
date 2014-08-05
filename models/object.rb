@@ -17,6 +17,7 @@ class CDKObject < Sequel::Model(:objects)
   end
 
   def self.get_dataset(query)
+    
     geom = true
     if query[:params][:geom] and query[:params][:geom].to_bool == false
       geom = false
@@ -181,8 +182,39 @@ class CDKObject < Sequel::Model(:objects)
 
     results
   end
+  
+  
+  def self.execute_delete_from_layer(query)
+    # delete all objects from a single layer
+    layer_id = CDKLayer.id_from_name(query[:params][:layer])
+    query[:api].error!("Layer not found: '#{query[:params][:layer]}'", 404) unless layer_id
+
+    Sequel::Model.db.transaction do
+      # delete object data:
+      CDKObjectDatum.where(layer_id: layer_id).delete
+      # delete objects:
+      # TO DO fix objects where data from other layers!!
+      CDKObject.where(layer_id: layer_id).delete
+
+
+      
+      # move_object = <<-SQL
+      #   UPDATE objects SET layer_id = -1
+      #   FROM object_data
+      #   WHERE object_id = objects.id AND
+      #     object_data.layer_id != #{layer_id} AND
+      #     objects.layer_id != -1
+      # SQL
+
+    end
+
+  end
 
   def self.execute_delete(query)
+    
+    # delete all objects from a single layer
+    return execute_delete_from_layer(query) if query[:path][0] == :layers
+      
     # If object has data on other layers:
     #   Delete data and move object itself to layer -1
     # If object has only data on its own layer:

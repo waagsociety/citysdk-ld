@@ -53,8 +53,8 @@ class CDKLayer < Sequel::Model(:layers)
     # If owner and category are provided, make sure
     # owner and category exist, and
     # replace named values in data hash
-    if data['owner']
-      owner_id = CDKOwner.id_from_name(data['owner']) if data['owner']
+    unless data['owner'].blank? 
+      owner_id = CDKOwner.id_from_name(data['owner'])
       query[:api].error!("Owner does not exist: '#{data['owner']}'", 422) unless owner_id
       data.delete('owner')
       data['owner_id'] = owner_id
@@ -148,6 +148,7 @@ class CDKLayer < Sequel::Model(:layers)
   end
 
   def self.execute_delete(query)
+
     layer_id = self.id_from_name query[:params][:layer]
     if layer_id == -1
       query[:api].error!("Layer 'none' cannot be deleted", 422)
@@ -218,7 +219,6 @@ class CDKLayer < Sequel::Model(:layers)
 
   def self.make_hash(l)
     l[:@context] = JSON.parse(l[:@context], symbolize_names: true) if l[:@context]
-
     l[:wkt] = l[:wkt].round_coordinates(CitySDKLD::Serializers::COORDINATE_PRECISION) if l[:wkt]
     l[:geojson] = JSON.parse(l[:geojson].round_coordinates(CitySDKLD::Serializers::COORDINATE_PRECISION), symbolize_names: true) if l[:geojson]
 

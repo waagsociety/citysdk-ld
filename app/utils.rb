@@ -171,10 +171,12 @@ def jsonlog(o)
 end
 
 class Object
+  def deep_copy
+    Marshal.load(Marshal.dump(self))
+  end
   def blank?
-    self.nil? or 
-    (self.class == String and self =~ /^\s*$/) or
-    respond_to(:empty?) ?  self.empty? : !!self
+    return false if self.class == Symbol
+    self.nil? or (self.class==String and self.strip == '') or (self.respond_to?(:empty?) ? self.empty? : false)
   end
 end
 

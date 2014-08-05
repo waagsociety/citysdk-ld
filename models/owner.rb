@@ -210,6 +210,11 @@ class CDKOwner < Sequel::Model(:owners)
       nil
     end
   end
+  
+  
+  def self.current_owner
+    self.where(session_key: query[:api].headers['X-Auth']).first
+  end
 
   def self.delete_session(query)
     if query[:api].headers['X-Auth']
