@@ -96,7 +96,7 @@ class CDKField < Sequel::Model(:fields)
 
   def self.make_hash(l)
     l.delete(:layer_id)
-    l.delete_if{ |_, v| not v or v == '' }
+    l.delete_if{ |_, v| v.blank? }
   end
 
 end

@@ -56,7 +56,6 @@ class CDKLayer < Sequel::Model(:layers)
     unless data['owner'].blank? 
       owner_id = CDKOwner.id_from_name(data['owner'])
       query[:api].error!("Owner does not exist: '#{data['owner']}'", 422) unless owner_id
-      data.delete('owner')
       data['owner_id'] = owner_id
     end
     data.delete('owner')
@@ -65,10 +64,6 @@ class CDKLayer < Sequel::Model(:layers)
       owner = CDKOwner.where(session_key: query[:api].headers['X-Auth']).first
       category_id = CDKCategory.id_from_name(data['category']) if data['category']
       query[:api].error!("Category does not exist: '#{data['category']}'", 422) unless category_id
-
-#      if category_id == 0 and (owner.nil? or !owner.admin)
-#        query[:api].error!("Category does not exist: '#{data['category']}'", 422)
-#      end
       data.delete('category')
       data['category_id'] = category_id
     end
@@ -221,7 +216,7 @@ class CDKLayer < Sequel::Model(:layers)
     l[:@context] = JSON.parse(l[:@context], symbolize_names: true) if l[:@context]
     l[:wkt] = l[:wkt].round_coordinates(CitySDKLD::Serializers::COORDINATE_PRECISION) if l[:wkt]
     l[:geojson] = JSON.parse(l[:geojson].round_coordinates(CitySDKLD::Serializers::COORDINATE_PRECISION), symbolize_names: true) if l[:geojson]
-
+    l[:fields] = CDKField.where(layer_id: l[:id]).all.map { |f| CDKField.make_hash(f.to_hash) }
     l
   end
 
