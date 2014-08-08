@@ -1,9 +1,9 @@
-set :stages, %w(production)
-set :default_stage, 'production'
+set :stages, %w(production testing)
+set :default_stage, 'testing'
 
 require 'capistrano/ext/multistage'
 
-set :application, "citysdk-api"
+set :application, "citysdk-site"
 set :normalize_asset_timestamps, false
 # set :repository,  "gits:citysdk"
 #
