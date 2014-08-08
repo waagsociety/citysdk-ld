@@ -36,7 +36,7 @@ The following data is currently available via this CitySDK LD API instance:
           if (d.sample_url) {
             sample_url = d.sample_url;
           }
-          return '{{ site.baseurl }}/map#' + sample_url;
+          return '{{ site.baseurl }}/map-viewer/#' + sample_url;
         });
 
       var table = li.append("table").attr("class", "green-table");
