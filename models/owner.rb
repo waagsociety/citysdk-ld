@@ -143,9 +143,11 @@ class CDKOwner < Sequel::Model(:owners)
     end
   end
   
-  
   def self.check_session_timeout(query, user)
-    query[:api].error!("Session has timed out", 401) if user[:session_expires] < Time.now
+    if user[:session_expires] < Time.now
+      query[:api].error!("Session has timed out", 401) 
+      user.update(session_expires: Time.now + 5.minutes)
+    end
     user
   end
   
@@ -210,7 +212,6 @@ class CDKOwner < Sequel::Model(:owners)
       nil
     end
   end
-  
   
   def self.current_owner
     self.where(session_key: query[:api].headers['X-Auth']).first
