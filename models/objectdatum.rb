@@ -19,8 +19,7 @@ class CDKObjectDatum < Sequel::Model(:object_data)
 
   def self.data_valid?(data)
     # Object data can never be empty
-    return false if data.keys.count == 0
-
+    
     # We are still using postgres's hstore to store data,
     # data should be unnested.
     # The following classes are allowed for value.class:
@@ -41,7 +40,10 @@ class CDKObjectDatum < Sequel::Model(:object_data)
     end
 
     data = query[:data]
-    query[:api].error!("'data' object in POST data cannot contain arrays or objects", 422) unless data_valid? data
+    return self.where(true) if data.keys.count == 0
+    if ! data_valid?(data)
+      query[:api].error!("'data' object in POST data cannot contain arrays or objects", 422)
+    end
 
     layer_id = CDKLayer.id_from_name(query[:params][:layer])
     query[:api].error!("Layer not found: '#{query[:params][:layer]}'", 404) unless layer_id
