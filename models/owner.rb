@@ -146,8 +146,8 @@ class CDKOwner < Sequel::Model(:owners)
   def self.check_session_timeout(query, user)
     if user[:session_expires] < Time.now
       query[:api].error!("Session has timed out", 401) 
-      user.update(session_expires: Time.now + 5.minutes)
     end
+    user.update(session_expires: Time.now + 5.minutes)
     user
   end
   
