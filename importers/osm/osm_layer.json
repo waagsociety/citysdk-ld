@@ -3,9 +3,11 @@
   "title": "OpenStreetMap",
   "description": "OpenStreetMap",
   "category": "geography",
+  "subcategory": "base",
   "data_sources":  [
     "http://www.openstreetmap.org/"
   ],
   "licence": "http://www.openstreetmap.org/copyright",
+  "rdf_type": "cdk:OSM",
   "@context": {}
 }
