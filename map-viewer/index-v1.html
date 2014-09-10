@@ -274,9 +274,10 @@
       if (url.substring(0, http.length) !== http && url.substring(0, https.length) !== https) {
         url = endpoint + url;
       }
-
+      
+      qamp = url.split('?')[1] ? '&':'?'
       if( url.indexOf("per_page") == -1 ) {
-        url += '?per_page=100';
+        url += qamp + 'per_page=100';
       }
 
       cdkLayer.clearLayers();
