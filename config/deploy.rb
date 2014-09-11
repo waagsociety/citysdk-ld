@@ -1,4 +1,4 @@
-set :stages, %w(production testing)
+set :stages, %w(civitest production testing)
 set :default_stage, 'testing'
 
 require 'capistrano/ext/multistage'
@@ -14,7 +14,7 @@ set :scm, :none
 
 set :branch, "master"
 
-set :deploy_to, "/var/www/dev.citysdk"
+set :deploy_to, "/var/www/site.citysdk"
 # set :deploy_via, :remote_cache
 set :copy_exclude, ['.git', '_site']
 
