@@ -16,9 +16,9 @@ config = JSON.parse(File.read("#{File.dirname(__FILE__)}/../config.#{env}.json")
 database = "postgres://#{config[:db][:user]}:#{config[:db][:password]}@#{config[:db][:host]}/#{config[:db][:database]}"
 
 if ARGV[1] then
-  command = "sequel -m migrations -M #{ARGV[1]} #{database}"
+  command = "sequel -m #{File.dirname(__FILE__)}/migrations -M #{ARGV[1]} #{database}"
 else
-  command = "sequel -m migrations #{database}"
+  command = "sequel -m #{File.dirname(__FILE__)}/migrations #{database}"
 end
 
 system command
