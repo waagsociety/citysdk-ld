@@ -52,10 +52,10 @@ class CDKOwner < Sequel::Model(:owners)
     case query[:method]
     when :post
       # create
-      
+
       # need to be admin user to create owners
       self.verify_admin(query)
-      
+
       owner_id = self.id_from_name data['name']
       if owner_id
         query[:api].error!("Owner already exists: #{data['name']}", 422)
@@ -75,7 +75,7 @@ class CDKOwner < Sequel::Model(:owners)
       if data['name']
         query[:api].error!('Owner name cannot be changed', 422)
       end
-      
+
       self.verify_admin(query) if data['admin']
 
       owner_id = self.id_from_name query[:params][:owner]
@@ -93,10 +93,9 @@ class CDKOwner < Sequel::Model(:owners)
   end
 
   def self.execute_delete(query)
-    
+
     return self.delete_session(query) if query[:resource] == :sessions
-    
-    
+
     self.verify_admin(query)
 
     owner_id = id_from_name query[:params][:owner]
@@ -142,15 +141,15 @@ class CDKOwner < Sequel::Model(:owners)
       nil
     end
   end
-  
+
   def self.check_session_timeout(query, user)
     if user[:session_expires] < Time.now
-      query[:api].error!("Session has timed out", 401) 
+      query[:api].error!("Session has timed out", 401)
     end
     user.update(session_expires: Time.now + 5.minutes)
     user
   end
-  
+
   def self.admin?(query)
     if query[:api].headers['X-Auth']
       user = self.where(session_key: query[:api].headers['X-Auth']).first
@@ -159,11 +158,11 @@ class CDKOwner < Sequel::Model(:owners)
     false
   end
 
-  def self.self_or_admin?(query,name)
+  def self.self_or_admin?(query, name)
     if query[:api].headers['X-Auth']
       user = self.where(session_key: query[:api].headers['X-Auth']).first
       if user and user[:session_expires] > Time.now
-        return (user[:admin] or user[:name] == name )
+        return (user[:admin] or user[:name] == name)
       end
     end
     false
@@ -172,7 +171,7 @@ class CDKOwner < Sequel::Model(:owners)
   def self.verify_owner(query, owner_id)
     if query[:api].headers['X-Auth']
       editor = self.where(session_key: query[:api].headers['X-Auth']).first
-      return self.check_session_timeout(query, editor) if editor and (editor[:admin] or (editor[:id] == owner_id ))
+      return self.check_session_timeout(query, editor) if editor and (editor[:admin] or (editor[:id] == owner_id))
     end
     query[:api].error!("Operation requires authorization", 401)
   end
@@ -181,38 +180,38 @@ class CDKOwner < Sequel::Model(:owners)
     if query[:api].headers['X-Auth']
       editor = self.where(session_key: query[:api].headers['X-Auth']).first
       layer  = CDKLayer.where(id: layer_id).first
-      return self.check_session_timeout(query, editor) if editor and (editor[:admin] or (editor[:id] == layer[:owner_id] ))
+      return self.check_session_timeout(query, editor) if editor and (editor[:admin] or (editor[:id] == layer[:owner_id]))
     end
     query[:api].error!("Operation requires owners' authorization", 401)
   end
 
-  def self.verify_domain(query,dom)
+  def self.verify_domain(query, dom)
     query[:api].error!("Operation requires authorization", 401) unless query[:api].headers['X-Auth']
     editor = self.where(session_key: query[:api].headers['X-Auth']).first
     return self.check_session_timeout(query, editor) if editor and (editor[:admin] or editor[:domains].include?(dom))
     query[:api].error!("Owner has no access to domain '#{dom}'", 403)
   end
-  
+
   def self.verify_admin(query)
     return true if self.admin?(query)
     query[:api].error!("Operation requires administrative authorization", 401)
   end
 
-  def self.sessionkey(query)
+  def self.session_key(query)
     owner = self.authenticate(query[:params][:name], query[:params][:password])
     if owner
       if (owner[:session_key] and owner[:session_expires] > Time.now)
-        key = owner.session_key 
+        key = owner.session_key
       else
         key = Digest::MD5.hexdigest(Time.now.to_s + query[:params][:password])
       end
-      owner.update( { session_key: key, session_expires: Time.now + 5.minutes } )
+      owner.update({session_key: key, session_expires: Time.now + 5.minutes})
       return key
     else
       nil
     end
   end
-  
+
   def self.current_owner
     self.where(session_key: query[:api].headers['X-Auth']).first
   end
@@ -233,9 +232,7 @@ class CDKOwner < Sequel::Model(:owners)
     end
   end
 
-
-
-  def self.make_hash(o,q=nil)
+  def self.make_hash(o, q=nil)
     h = {
       name:         o[:name],
       fullname:     o[:fullname],
@@ -249,4 +246,3 @@ class CDKOwner < Sequel::Model(:owners)
   end
 
 end
-
