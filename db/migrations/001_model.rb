@@ -90,7 +90,7 @@ Sequel.migration do
       String :webservice_url
       String :sample_url
       timestamptz :imported_at
-      timestamptz :created_at, null: false, :default => :now.sql_function
+      timestamptz :created_at, null: false, default: :now.sql_function
 
       # Indexes:
       full_text_index :title

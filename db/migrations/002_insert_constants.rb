@@ -19,8 +19,8 @@ Sequel.migration do
     self[:categories].insert(name: 'security')
     self[:categories].insert(name: 'commercial')
 
-    # Default owner
-    self[:owners].insert(id: 0, name: 'citysdk', fullname: 'CitySDK', organization: 'CitySDK LD', email: 'citysdk@waag.org', admin: true, salt: 'randomsalt', password: '7d4e9594b2816a49282fa8a123df21cf') # password = 'ChangeMeNow'
+    # Default owner - the unencrypted password = 'ChangeMeNow'
+    self[:owners].insert(id: 0, name: 'citysdk', fullname: 'CitySDK', organization: 'CitySDK LD', email: 'citysdk@waag.org', admin: true, salt: 'randomsalt', password: '7d4e9594b2816a49282fa8a123df21cf')
 
     # layer -1, this is where objects end up which layer is removed while still have data attached
     self[:layers].insert(id: -1, name: 'none', title: 'None', description: 'Layer for objects from removed layers', category_id: 0, owner_id: 0)
