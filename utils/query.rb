@@ -163,7 +163,6 @@ module CitySDKLD
         }
       when :layers
         dataset = CDKLayer.execute_write @q
-        
       when :context
         # CDKLayer expects string keys in POST data - not symbols
         # TODO: convert ALL input data from request and filters with symbolize_names?
@@ -178,18 +177,14 @@ module CitySDKLD
           data: context ? context : {},
           query: @q
         }
-        
       when :owners
         dataset = CDKOwner.execute_write @q
-        
       when :data
         dataset = CDKObjectDatum.execute_write @q
       when :fields
         dataset = CDKField.execute_write @q
-
       when :ngsi10
         data = NGSI10.do_query(@q)
-
       end
 
       data = dataset.serialize(@q) if dataset
@@ -232,7 +227,6 @@ module CitySDKLD
         dataset = CDKObjectDatum.get_dataset @q
       when :fields
         dataset = CDKField.get_dataset @q
-
       when :endpoints
         # TODO: move to endpoint model
         data = {
@@ -240,17 +234,15 @@ module CitySDKLD
           data: CitySDKLD.get_endpoint_data(@q),
           query: @q
         }
-        
       when :sessions
-        session = CDKOwner.sessionkey(@q)
+        session_key = CDKOwner.session_key @q
         data = {
           resource: @q[:resource],
-          data: {},
+          data: [],
           single: true,
           query: @q
         }
-        data[:data][:session_key] = session if session
-
+        data[:data] = {session_key: session_key} if session_key
       when :context
         # TODO: move to Layer model!
         layer_id = CDKLayer.id_from_name(@q[:params][:layer])
@@ -263,11 +255,8 @@ module CitySDKLD
           data: context ? context : {},
           query: @q
         }
-
-
       when :ngsi10
         data = NGSI10.do_query(@q)
-
       end
 
       data = dataset.execute_query(@q).serialize(@q) if dataset
