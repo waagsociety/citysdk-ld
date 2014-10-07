@@ -11,7 +11,7 @@ if ARGV.length == 0 or not environments.include? ARGV[0]
 end
 
 env = ARGV[0]
-config = JSON.parse(File.read("../config.#{env}.json"), symbolize_names: true)
+config = JSON.parse(File.read("#{File.dirname(__FILE__)}/../config.#{env}.json"), symbolize_names: true)
 
 database = "postgres://#{config[:db][:user]}:#{config[:db][:password]}@#{config[:db][:host]}/#{config[:db][:database]}"
 
