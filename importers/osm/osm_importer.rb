@@ -1,5 +1,3 @@
-#!/usr/bin/ruby
-
 require 'json'
 require 'sequel'
 require 'faraday'
@@ -13,21 +11,11 @@ OptionParser.new do |opts|
     options[:osm_filename] = f
   end
 
-  opts.on("-o", "--owner OWNER", String, "CitySDK LD API owner") do |o|
-    options[:owner] = o
-  end
-
   options[:keep] = false
   opts.on("-k", "--keep_tables", "Keep OpenStreetMap data in DB after import") do |k|
     options[:keep] = k
   end
-
 end.parse!
-
-if options[:owner].nil?
-  puts 'Owner not specified - use -o argument'
-  exit
-end
 
 if options[:osm_filename].nil?
   puts 'OpenStreetMap file not specified - use -f argument'
@@ -35,22 +23,12 @@ if options[:osm_filename].nil?
 end
 
 env = 'development'
-config = JSON.parse(File.read("../../config.#{env}.json"), symbolize_names: true)
+config = JSON.parse(File.read("#{File.dirname(__FILE__)}/../../config.#{env}.json"), symbolize_names: true)
 
 database = Sequel.connect "postgres://#{config[:db][:user]}:#{config[:db][:password]}@#{config[:db][:host]}/#{config[:db][:database]}"
 database.extension :pg_hstore
 
 osm_filename = ARGV[0]
-owner = ARGV[1]
-
-conn = Faraday.new(url: config[:endpoint][:url])
-
-# Check if owner exists in CitySDK LD API endpoint
-response = conn.get "/owners/#{owner}"
-if response.status != 200
-  puts "Owner not found: '#{owner}'"
-  exit
-end
 
 # Check if OSM file exists and is valid
 unless File.file? options[:osm_filename]
@@ -63,12 +41,51 @@ unless accepted_formats.include? File.extname(options[:osm_filename])
   exit
 end
 
-osm_layer = JSON.parse(File.read("./osm_layer.json"), symbolize_names: true)
-osm_layer[:owner] = options[:owner]
+owner = config[:owner]
+osm_layer = JSON.parse(File.read("#{File.dirname(__FILE__)}/osm_layer.json"), symbolize_names: true)
+osm_layer[:owner] = config[:owner][:name]
+
+osm_schema_exists = database["SELECT TRUE FROM information_schema.schemata WHERE schema_name = 'osm'"].count > 0
+
+unless osm_schema_exists and options[:keep]
+  database.run <<-SQL
+    DROP SCHEMA IF EXISTS osm CASCADE;
+  SQL
+
+  # Use osm2pgsql to read data from osm file into database
+  osm2pgsql = "osm2pgsql --slim -j -d #{config[:db][:database]} -H #{config[:db][:host]} -l -C6000 -U postgres #{options[:osm_filename]}"
+  unless system osm2pgsql
+    puts "Executing osm2pgsql failed... Is osm2pgsql installed?"
+    exit
+  end
+  database.run File.read("#{File.dirname(__FILE__)}/osm_schema.sql")
+end
+
+conn = Faraday.new(url: config[:endpoint][:url])
+
+# Check if owner exists in CitySDK LD API endpoint
+resp = conn.get "/owners/#{owner[:name]}"
+if resp.status != 200
+  puts "Owner not found: '#{owner[:name]}'"
+  exit
+end
+
+# Authenticate!
+resp = conn.get "/session?name=#{owner[:name]}&password=#{owner[:password]}"
+if resp.status.between? 200, 299
+  json = JSON.parse resp.body, symbolize_names: true
+  if json.has_key? :session_key
+    conn.headers['X-Auth'] = json[:session_key]
+  else
+    raise Exception.new 'Invalid credentials'
+  end
+else
+  raise Exception.new resp.body
+end
 
 # Delete osm layer in API
-conn.delete "/layers/#{osm_layer[:name]}"
-if response.status != 200
+resp = conn.delete "/layers/#{osm_layer[:name]}"
+unless [204, 404].include? resp.status
   puts "Error deleting layer '#{osm_layer[:name]}'"
   exit
 end
@@ -82,19 +99,6 @@ end
 if response.status != 201
   puts "Error creating layer '#{osm_layer[:name]}'"
   exit
-end
-
-osm_schema_exists = database["SELECT TRUE FROM information_schema.schemata WHERE schema_name = 'osm'"].count > 0
-
-unless osm_schema_exists and options[:keep]
-  database.run <<-SQL
-    DROP SCHEMA IF EXISTS osm CASCADE;
-  SQL
-
-  # Use osm2pgsql to read data from osm file into database
-  osm2pgsql = "osm2pgsql --slim -j -d #{config[:db][:database]} -H #{config[:db][:host]} -l -C6000 -U postgres #{options[:osm_filename]}"
-  system osm2pgsql
-  database.run File.read('./osm_schema.sql')
 end
 
 osm_tables = [
