@@ -14,19 +14,19 @@ module CitySDKLD
 
       desc 'Create new layer'
       post '/' do
-        do_query :layers, single: true
+        do_query :layers, true
       end
 
       resource '/:layer', requirements: { layer: ::Helpers.alphanumeric_regex } do
 
         desc 'Return single layer'
         get '/' do
-          do_query :layers, single: true
+          do_query :layers, true
         end
 
         desc 'Edit a layer'
         patch '/' do
-          do_query :layers, single: true
+          do_query :layers, true
         end
 
         desc 'Delete a layer'
@@ -41,12 +41,12 @@ module CitySDKLD
 
         desc 'Return JSON-LD context of single layer'
         get '/@context' do
-          do_query :context, single: true
+          do_query :context, true
         end
 
         desc 'Overwrite JSON-LD context of single layer'
         put '/@context' do
-          do_query :context, single: true
+          do_query :context, true
         end
 
         resource :objects do
@@ -74,7 +74,7 @@ module CitySDKLD
           resource '/:cdk_id', requirements: { cdk_id: ::Helpers.alphanumeric_regex } do
             desc 'Return metadata of single layer about single object, e.g. the date the data was added/modified, etc.'
             get '/' do
-              do_query :layer_on_object, single: true
+              do_query :layer_on_object, true
             end
 
           end
@@ -89,27 +89,27 @@ module CitySDKLD
 
           desc 'Create new field for single layer'
           post '/' do
-            do_query :fields, single: true
+            do_query :fields, true
           end
 
           desc 'Return single field of single layer'
           get '/:field' do
-            do_query :fields, single: true
+            do_query :fields, true
           end
 
           desc 'Overwrite single field on single layer'
           put '/:field' do
-            do_query :fields, single: true
+            do_query :fields, true
           end
 
           desc 'Edit single field on single layer'
           patch '/:field' do
-            do_query :fields, single: true
+            do_query :fields, true
           end
 
           desc 'Delete a single field on single layer'
           delete '/:field' do
-            do_query :fields, single: true
+            do_query :fields, true
           end
 
         end

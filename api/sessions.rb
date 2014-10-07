@@ -9,7 +9,7 @@ module CitySDKLD
       requires :password, type: String, desc: "Login password."
     end
     get '/session' do
-      do_query :sessions, single: true
+      do_query :sessions, true
     end
 
     desc 'Close session'

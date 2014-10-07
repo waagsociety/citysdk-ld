@@ -5,7 +5,7 @@ module CitySDKLD
 
     desc 'Return current endpoint status'
     get '/' do
-      do_query :endpoints, single: true
+      do_query :endpoints, true
     end
 
   end

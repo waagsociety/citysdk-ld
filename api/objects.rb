@@ -17,7 +17,7 @@ module CitySDKLD
 
         desc 'Get a single object'
         get '/' do
-          do_query :objects, single: true
+          do_query :objects, true
         end
 
         desc 'Edit a single object'
@@ -41,22 +41,22 @@ module CitySDKLD
 
             desc 'Return all data on single layer of single object'
             get '/' do
-              do_query :data, single: true
+              do_query :data, true
             end
 
             desc 'Add data on layer to single object'
             post '/' do
-              do_query :data, single: true
+              do_query :data, true
             end
 
             desc 'Overwrite data on layer to single object'
             put '/' do
-              do_query :data, single: true
+              do_query :data, true
             end
 
             desc 'Update data on layer to single object'
             patch '/' do
-              do_query :data, single: true
+              do_query :data, true
             end
 
             desc 'Remove data on layer from single object'

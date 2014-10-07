@@ -14,19 +14,19 @@ module CitySDKLD
 
      desc 'Create new owner'
       post '/' do
-        do_query :owners, single: true
+        do_query :owners, true
       end
 
       resource '/:owner', requirements: { owner: ::Helpers.alphanumeric_regex } do
 
         desc 'Get a single owner'
         get '/' do
-          do_query :owners, single: true
+          do_query :owners, true
         end
 
         desc 'Edit an owner'
         patch '/' do
-          do_query :owners, single: true
+          do_query :owners, true
         end
 
         desc 'Delete owner - and all layers and data belonging to this owner'
