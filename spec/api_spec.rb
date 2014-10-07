@@ -3,7 +3,6 @@
 require 'spec_helper'
 include Rack::Test::Methods
 
-
 describe CitySDKLD::API do
 
     # TODO: refactor tests - combine multiple decribe/it blocks which
@@ -18,20 +17,19 @@ describe CitySDKLD::API do
     ######################################################################
     # owners:
     ######################################################################
-    
-    
+
     describe "GET /session" do
       it "gets a session key for owner 'citysdk'" do
         header "CONTENT_TYPE", "application/json"
         get "/session?name=citysdk&password=ChangeMeNow"
         last_response.status.should == 200
-        $citysdk_key = body_json(last_response)[:features][0][:properties][:session_key]
+        $citysdk_key = body_json(last_response)[:session_key]
         $citysdk_key.should_not == nil
       end
     end
-    
+
     describe "POST /owners" do
-      
+
       it "creates owner 'bert' without authorization" do
         header "CONTENT_TYPE", "application/json"
         post "/owners", read_test_data('owner_bert.json')
@@ -52,7 +50,7 @@ describe CitySDKLD::API do
         header "CONTENT_TYPE", "application/json"
         get "/session?name=bert&password=abcABC123"
         last_response.status.should == 200
-        $bert_key = body_json(last_response)[:features][0][:properties][:session_key]
+        $bert_key = body_json(last_response)[:session_key]
         $bert_key.should_not == nil
       end
 
@@ -405,7 +403,7 @@ describe CitySDKLD::API do
     end
 
     describe "POST objects" do
-      
+
       ######################################################################
       # objects + data:
       ######################################################################
@@ -606,7 +604,7 @@ describe CitySDKLD::API do
 
       # All filters:
       # [cdk_id, layer, owner, field, in, contains, bbox, nearby, title, data]
-      
+
       it "gets 10 objects closest to location" do
         get "/objects?lat=52.37277&lon=4.90033"
         last_response.status.should == 200
@@ -790,7 +788,7 @@ describe CitySDKLD::API do
     end
 
     describe "DELETE" do
-      
+
       it "deletes single object 'bert.dierenwinkels.1'" do
         header "X-Auth", $bert_key
         delete "/objects/bert.dierenwinkels.1"
@@ -867,8 +865,7 @@ describe CitySDKLD::API do
         last_response.header["X-Result-Count"].to_i.should == 0
         body_json(last_response)[:features].length.should == 0
       end
-      
-    end
 
+    end
 
 end
