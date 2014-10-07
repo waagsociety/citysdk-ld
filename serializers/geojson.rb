@@ -103,11 +103,7 @@ module CitySDKLD
       end
 
       def sessions
-        @result[:features] << {
-          type: "Feature",
-          properties: @data.select {|k,_| k != :geometry },
-          geometry: {}
-        }
+        @result = @data
       end
 
     end
