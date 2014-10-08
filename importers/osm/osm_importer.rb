@@ -1,3 +1,5 @@
+#encoding: utf-8
+
 require 'json'
 require 'sequel'
 require 'faraday'
@@ -25,7 +27,8 @@ end
 env = 'development'
 config = JSON.parse(File.read("#{File.dirname(__FILE__)}/../../config.#{env}.json"), symbolize_names: true)
 
-database = Sequel.connect "postgres://#{config[:db][:user]}:#{config[:db][:password]}@#{config[:db][:host]}/#{config[:db][:database]}"
+database = Sequel.connect "postgres://#{config[:db][:user]}:#{config[:db][:password]}@#{config[:db][:host]}/#{config[:db][:database]}", encoding: 'UTF-8'
+
 database.extension :pg_hstore
 
 osm_filename = ARGV[0]
@@ -131,7 +134,7 @@ def write_objects(conn, osm_layer, objects)
     req.body = geojson.to_json
   end
   if response.status != 201
-    puts response.inspect
+    puts "HTTP status #{response.status}: " + JSON.parse(response.body)['error']
   end
   response
 end

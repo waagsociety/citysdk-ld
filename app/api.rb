@@ -23,7 +23,7 @@ module CitySDKLD
           # Else we're in direct spawning mode. We don't need to do anything.
         end
       end
-      @database = Sequel.connect "postgres://#{config[:db][:user]}:#{config[:db][:password]}@#{config[:db][:host]}/#{config[:db][:database]}"
+      @database = Sequel.connect "postgres://#{config[:db][:user]}:#{config[:db][:password]}@#{config[:db][:host]}/#{config[:db][:database]}", encoding: 'UTF-8'
 
       #@database.logger = Logger.new(STDOUT)
 
