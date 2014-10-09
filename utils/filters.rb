@@ -69,6 +69,10 @@ module CitySDKLD
       category: {
         url_params: [:category],
         resources: [:layers]
+      },
+      type: {
+        url_params: [:type],
+        resources: [:layers]
       }
 
     }
@@ -338,6 +342,13 @@ module CitySDKLD
 
     def self.category(dataset, params, query)
       dataset.where(category_id: CDKCategory.select(:id).where(name: params[:category]))
+    end
+
+    def self.type(dataset, params, query)
+      case query[:resource]
+      when :layers
+        dataset.where(rdf_type: params[:type])
+      end
     end
 
     # def self.in_set
