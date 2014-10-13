@@ -3,7 +3,7 @@
   "email": "rutger@waag.org",
   "website": "http://rutgervanwilligen.nl/",
   "fullname": "Rutger van Willigen 🍓",
-  "domains": "rutger,test",
+  "domains": ["rutger", "test"],
   "organization": "Waag Society",
   "password": "rRrRrRrRr987"
 }

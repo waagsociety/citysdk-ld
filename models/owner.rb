@@ -43,7 +43,7 @@ class CDKOwner < Sequel::Model(:owners)
 
     if data['domains']
       begin
-        data['domains'] = Sequel.pg_array(data['domains'].split(','))
+        data['domains'] = Sequel.pg_array(data['domains'])
       rescue
         query[:api].error!('Invalid domains encountered - must be comma-separated list of layer prefixes', 422)
       end
