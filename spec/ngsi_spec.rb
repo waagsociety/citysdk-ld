@@ -5,15 +5,15 @@ include Rack::Test::Methods
 
 
 describe CitySDKLD::API do
-  
+
   it "can get a session key for owner 'citysdk'" do
     header "CONTENT_TYPE", "application/json"
     get "/session?name=citysdk&password=ChangeMeNow"
     last_response.status.should == 200
-    $citysdk_key = body_json(last_response)[:features][0][:properties][:session_key]
+    $citysdk_key = body_json(last_response)[:session_key]
     $citysdk_key.should_not == nil
   end
-  
+
   describe "NGSI10" do
     it "can create objects of existing and non-existing type" do
       header "CONTENT_TYPE", "application/json"
@@ -137,7 +137,7 @@ describe CitySDKLD::API do
       get path + "pressure"
       expect(body_json(last_response)[:attributes][0][:value]).to eq("pipo")
     end
-    
+
     it "can query for objects within polygon" do
       header "CONTENT_TYPE", "application/json"
       json = read_test_data_json('ngsi_query.json')
@@ -147,7 +147,7 @@ describe CitySDKLD::API do
       expect(body_json(last_response)[:contextResponses].length).to be(2)
       expect(body_json(last_response)[:contextResponses][0][:contextElement][:attributes].length).to be(4)
     end
-    
+
     it "can query for objects outside polygon" do
       header "CONTENT_TYPE", "application/json"
       json = read_test_data_json('ngsi_query.json')
@@ -158,7 +158,7 @@ describe CitySDKLD::API do
       expect(body_json(last_response)[:contextResponses].length).to be(1)
       expect(body_json(last_response)[:contextResponses][0][:contextElement][:id]).to eq("Room4")
     end
-    
+
     it "can query for objects within radius from a point" do
       header "CONTENT_TYPE", "application/json"
       json = read_test_data_json('ngsi_query.json')
@@ -194,7 +194,7 @@ describe CitySDKLD::API do
       expect(body_json(last_response)[:contextResponses].length).to be(1)
       expect(body_json(last_response)[:contextResponses][0][:contextElement][:id]).to eq("Room4")
     end
-    
+
   end
 
 end
