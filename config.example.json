@@ -14,6 +14,10 @@
       "coordinates": [4.90032,52.37278]
     }
   },
+  "owner": {
+    "name": "citysdk",
+     "password": "ChangeMeNow"
+  },
   "db": {
     "host": "localhost",
     "database": "citysdk-ld",
