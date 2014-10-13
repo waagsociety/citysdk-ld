@@ -297,7 +297,7 @@ module CitySDKLD
         'fields' => [],
         'owner' => "citysdk",
         'description' => "System-generated, Fi-Ware Orion compatible data layer",
-        'data_sources' => ["NGSI"],
+        'dataSources' => ["NGSI"],
         'category' => "none",
         'subcategory' => "",
         'licence' => "unspecified"
@@ -315,7 +315,6 @@ module CitySDKLD
       CDKLayer.execute_write(q)
       CDKLayer.where(:'rdf:type' => 'orion:'+data['type']).first
     end
-
 
     def self.polygon(vertices)
       ret = ''
