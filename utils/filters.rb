@@ -347,7 +347,7 @@ module CitySDKLD
     def self.type(dataset, params, query)
       case query[:resource]
       when :layers
-        dataset.where(rdf_type: params[:type])
+        dataset.where(:'rdf:type' => params[:type])
       end
     end
 

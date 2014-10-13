@@ -6,7 +6,7 @@
   "dataSources": ["http://www.doggo.nl/overzicht-dierenspeciaalzaken.php"],
   "category": "commercial",
   "subcategory": "shops",
-  "rdf_type": "csdk:PetStore",
+  "rdf:type": "csdk:PetStore",
   "licence": "MIT License",
   "fields": [
     {
