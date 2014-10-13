@@ -4,7 +4,7 @@
   "description": "OpenStreetMap",
   "category": "geography",
   "subcategory": "base",
-  "data_sources":  [
+  "dataSources": [
     "http://www.openstreetmap.org/"
   ],
   "licence": "http://www.openstreetmap.org/copyright",

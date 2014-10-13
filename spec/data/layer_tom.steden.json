@@ -3,7 +3,7 @@
   "owner": "tom",
   "title": "Drie grote steden 🏠🏢🏣🏨🏫🏬🏭🏡",
   "description": "Amsterdam, Den Haag en Utrecht",
-  "data_sources": [
+  "dataSources": [
     "http://nl.wikipedia.org/wiki/Den_Haag",
     "http://nl.wikipedia.org/wiki/Utrecht_(stad)",
     "http://nl.wikipedia.org/wiki/Amsterdam"

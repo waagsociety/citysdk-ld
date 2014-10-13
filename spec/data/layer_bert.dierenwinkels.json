@@ -3,7 +3,7 @@
   "owner": "bert",
   "title": "Dierenwinkels in Nederland",
   "description": "Alle dierenwinkels met allemaal dieren en konijnen",
-  "data_sources": ["http://www.doggo.nl/overzicht-dierenspeciaalzaken.php"],
+  "dataSources": ["http://www.doggo.nl/overzicht-dierenspeciaalzaken.php"],
   "category": "commercial",
   "subcategory": "shops",
   "rdf_type": "csdk:PetStore",
