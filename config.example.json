@@ -1,5 +1,6 @@
 {
   "endpoint": {
+    "url": "http://localhost:9292",
     "title": "CitySDK LD API - Amsterdam",
     "site": "http://citysdk.waag.org/",
     "organization": "Waag Society",
