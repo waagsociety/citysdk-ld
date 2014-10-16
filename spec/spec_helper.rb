@@ -46,14 +46,6 @@ def compare_hash(h1, h2, skip_recursion = false)
   result
 end
 
-def jsonlog(o)
-  puts
-  o = {array: o} if o.is_a?(Array)
-  o = {string: o} if o.is_a?(String)
-  puts JSON.pretty_generate(o.to_hash)
-end
-
-
 RSpec.configure do |c|
   c.mock_with :rspec
   c.expect_with :rspec
