@@ -17,7 +17,7 @@ class CDKObject < Sequel::Model(:objects)
   end
 
   def self.get_dataset(query)
-    
+
     geom = true
     if query[:params][:geom] and query[:params][:geom].to_bool == false
       geom = false
@@ -65,10 +65,13 @@ class CDKObject < Sequel::Model(:objects)
     if query[:params][:layer]
       layer_id = CDKLayer.id_from_name(query[:params][:layer])
       query[:api].error!("Layer not found: '#{query[:params][:layer]}'", 404) unless layer_id
+    else
+      object = CDKObject.where(cdk_id: query[:params][:cdk_id]).first
+      layer_id = object[:layer_id]
     end
 
     CDKOwner.verify_owner_for_layer(query, layer_id)
-    
+
     unless ["Feature", "FeatureCollection"].include? query[:data]["type"]
       query[:api].error!("POST data must be GeoJSON Feature or FeatureCollection", 422)
     end
@@ -84,13 +87,21 @@ class CDKObject < Sequel::Model(:objects)
           query[:data]["features"]
         end
 
+    query[:api].error!("Request should contain single Feature", 422) if query[:params][:cdk_id] and features.length > 1
+
     features.each do |feature|
-      properties = feature['properties']
+      properties = {}
+      properties = feature['properties'] if feature['properties']
 
       if !properties
-        query[:api].error!("Object without 'properties' encountered", 422)
+        if query[:method] == :post
+          query[:api].error!("Object without 'properties' encountered", 422)
+        end
       elsif !properties['data'] && !properties['layers']
-        query[:api].error!("Object without data encountered", 422)
+        # Objects in PATCH requests do not have to have data, but objects in POST requests do.
+        if query[:method] == :post
+          query[:api].error!("Object without data encountered", 422)
+        end
       elsif properties['data'] && properties['layers']
         query[:api].error!("Object data must be in 'data' object, or in nested 'layers' object - not both", 422)
       elsif properties['layer']
@@ -122,8 +133,20 @@ class CDKObject < Sequel::Model(:objects)
           id: properties['id'],
           cdk_id: cdk_id
         }
-      elsif properties['cdk_id']
-        cdk_id = properties['cdk_id']
+      elsif properties['cdk_id'] or query[:params][:cdk_id]
+
+        if properties['cdk_id'] and query[:params][:cdk_id]
+          if properties['cdk_id'] != query[:params][:cdk_id]
+            query[:api].error!("URL parameter 'cdk_id' and Feature's 'cdk_id' are both present, but not the same", 422)
+          end
+        end
+
+        cdk_id = nil
+        if properties['cdk_id']
+          cdk_id = properties['cdk_id']
+        else
+          cdk_id = query[:params][:cdk_id]
+        end
 
         if query[:method] == :patch
           objects << {
@@ -143,10 +166,12 @@ class CDKObject < Sequel::Model(:objects)
           query[:api].error!("All objects must have 'cdk_id' property", 422)
         end
       end
-      object_data << {
-        cdk_id: cdk_id,
-        db_hash: CDKObjectDatum.db_hash_from_geojson(query, cdk_id, layer_id, feature)
-      }
+      if feature['properties'] and (feature['properties']['data'] or feature['properties']['layers'])
+        object_data << {
+          cdk_id: cdk_id,
+          db_hash: CDKObjectDatum.db_hash_from_geojson(query, cdk_id, layer_id, feature)
+        }
+      end
     end
 
     Sequel::Model.db.transaction do
@@ -159,31 +184,55 @@ class CDKObject < Sequel::Model(:objects)
         # New bounding boxs needs to be loaded in memcached cache:
         CDKLayer.update_layer_hash layer_id
       when :patch
+
+        update_layer_hash = false
         objects.each do |object|
-          count = CDKObject
-              .where(cdk_id: object[:cdk_id])
-              .update(title: object[:db_hash][:title], geom: object[:db_hash][:geom])
+          update_hash = {}
+          update_hash[:title] = object[:db_hash][:title] if object[:db_hash][:title]
+          if object[:db_hash][:geom]
+            update_layer_hash = true
+            update_hash[:geom] = object[:db_hash][:geom]
+          end
+
+          if update_hash.keys.length > 0
+            db_count = CDKObject
+                .where(cdk_id: object[:cdk_id])
+                .update(update_hash)
+
+            if db_count == 0
+              cdk_id_exists = CDKObject.select(:cdk_id).where(id: object[:cdk_id]).count > 0
+              query[:api].error!("Object not found: '#{object[:cdk_id]}'", 404) unless cdk_id_exists
+            end
+          end
         end
 
         object_data.each do |object_datum|
-          count = CDKObjectDatum
-              .where(object_id: object_datum[:db_hash][:object_id], layer_id: object_datum[:db_hash][:layer_id])
-              .update(data: object_datum[:db_hash][:data])
+          if object_datum[:db_hash][:data]
+            db_count = CDKObjectDatum
+                .where(object_id: object_datum[:db_hash][:object_id], layer_id: object_datum[:db_hash][:layer_id])
+                .update(data: object_datum[:db_hash][:data])
 
-          # if no records were updated, something went wrong
-          if count == 0
-            cdk_id_exists = CDKObject.select(:cdk_id).where(id: object_datum[:db_hash][:object_id]).count > 0
-            query[:api].error!("Object not found: '#{object_datum[:cdk_id]}'", 404) unless cdk_id_exists
-            query[:api].error!("No data found for on layer '#{query[:params][:layer]}' for object '#{object_datum[:cdk_id]}'", 404)
+            # if no records were updated, something went wrong
+            if db_count == 0
+              cdk_id_exists = CDKObject.select(:cdk_id).where(id: object_datum[:db_hash][:object_id]).count > 0
+              query[:api].error!("Object not found: '#{object_datum[:cdk_id]}'", 404) unless cdk_id_exists
+              query[:api].error!("No data found for on layer '#{query[:params][:layer]}' for object '#{object_datum[:cdk_id]}'", 404)
+            end
           end
         end
+
+        # Only update layer hashes if object geometries were changed
+        if update_layer_hash
+          CDKLayer.update_layer_hash layer_id
+        end
+
       end
     end
 
     results
   end
-  
-  
+
+
   def self.execute_delete_from_layer(query)
     # delete all objects from a single layer
     layer_id = CDKLayer.id_from_name(query[:params][:layer])
@@ -196,8 +245,6 @@ class CDKObject < Sequel::Model(:objects)
       # TO DO fix objects where data from other layers!!
       CDKObject.where(layer_id: layer_id).delete
 
-
-      
       # move_object = <<-SQL
       #   UPDATE objects SET layer_id = -1
       #   FROM object_data
@@ -207,14 +254,13 @@ class CDKObject < Sequel::Model(:objects)
       # SQL
 
     end
-
   end
 
   def self.execute_delete(query)
-    
+
     # delete all objects from a single layer
     return execute_delete_from_layer(query) if query[:path][0] == :layers
-      
+
     # If object has data on other layers:
     #   Delete data and move object itself to layer -1
     # If object has only data on its own layer:
@@ -224,7 +270,7 @@ class CDKObject < Sequel::Model(:objects)
 
     object = CDKObject.where(cdk_id: query[:params][:cdk_id]).first
     query[:api].error!("Object not found: '#{query[:params][:cdk_id]}'", 404) unless object
-    
+
     CDKOwner.verify_owner_for_layer(query, object[:layer_id])
 
     # TODO: create SQL function in 003_functions migration
@@ -275,23 +321,25 @@ class CDKObject < Sequel::Model(:objects)
   end
 
   def self.db_hash_from_geojson(query, cdk_id, layer_id, feature)
-    if feature['crs'] and 
-       feature['crs']['type'] == 'EPSG' and 
+    db_hash = {
+      cdk_id: cdk_id,
+      layer_id: layer_id
+    }
+
+    if feature['crs'] and
+       feature['crs']['type'] == 'EPSG' and
        feature['crs']['properties']['code'] != 4326
-      
-      db_hash = {
-        cdk_id: cdk_id,
-        layer_id: layer_id,
-        geom: Sequel.function(:ST_Transform,Sequel.function(:ST_SetSRID, Sequel.function(:ST_GeomFromGeoJSON, feature['geometry'].to_json), feature['crs']['properties']['code']),4326)
-      }
+
+      if feature['geometry']
+        set_srid = Sequel.function(:ST_SetSRID, Sequel.function(:ST_GeomFromGeoJSON, feature['geometry'].to_json), feature['crs']['properties']['code'])
+        db_hash[:geom] = Sequel.function(:ST_Transform, set_srid, 4326)
+      end
     else
-      db_hash = {
-        cdk_id: cdk_id,
-        layer_id: layer_id,
-        geom: Sequel.function(:ST_SetSRID, Sequel.function(:ST_GeomFromGeoJSON, feature['geometry'].to_json), 4326)
-      }
+      if feature['geometry']
+        db_hash[:geom] = Sequel.function(:ST_SetSRID, Sequel.function(:ST_GeomFromGeoJSON, feature['geometry'].to_json), 4326)
+      end
     end
-    db_hash[:title] = feature['properties']['title'] if feature['properties']['title']
+    db_hash[:title] = feature['properties']['title'] if feature['properties'] and feature['properties']['title']
     db_hash
   end
 

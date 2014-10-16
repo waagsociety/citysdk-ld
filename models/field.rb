@@ -17,10 +17,10 @@ class CDKField < Sequel::Model(:fields)
     unless layer_id
       query[:api].error!("Layer not found: #{query[:params][:layer]}", 404)
     end
-    
-    CDKOwner.verify_owner_for_layer(query, layer_id)
-    
 
+    CDKOwner.verify_owner_for_layer(query, layer_id)
+
+    #TODO: type should be a required field
     keys = [
       'name',
       'lang',
@@ -38,7 +38,7 @@ class CDKField < Sequel::Model(:fields)
     case query[:method]
     when :post
       # create
-      
+
       # 'name' must exist in POST data
       if data['name']
         field = field_from_name_and_layer_id(data['name'], layer_id)
@@ -52,7 +52,7 @@ class CDKField < Sequel::Model(:fields)
 
       written_layer_id = layer_id
       written_field_name = data['name']
-      
+
     when :put, :patch
       query[:api].error!('Field name cannot be changed', 422) if data['name']
       field = field_from_name_and_layer_id(query[:params][:field], layer_id)
