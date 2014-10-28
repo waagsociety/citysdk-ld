@@ -11,7 +11,7 @@ module Sequel
       query[:filters].each do |f|
         dataset = CitySDKLD::Filters.send f[:filter], dataset, f[:params], query
       end
-      CitySDKLD::Filters.paginate dataset, query[:params], query
+      CitySDKLD::Filters.paginate(dataset, query[:params], query)
     end
 
   end

@@ -10,7 +10,7 @@ describe CitySDKLD::API do
     header "CONTENT_TYPE", "application/json"
     get "/session?name=citysdk&password=ChangeMeNow"
     last_response.status.should == 200
-    $citysdk_key = body_json(last_response)[:features][0][:properties][:session_key]
+    $citysdk_key = body_json(last_response)[:session_key]
     $citysdk_key.should_not == nil
   end
   

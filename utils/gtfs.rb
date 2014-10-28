@@ -45,7 +45,7 @@ module CDKCommands
     a = Sequel::Model.db.fetch("SELECT * FROM stop_now('#{stop_id}','#{tz}')").all
     a.to_a.each do |t|
       aname = t[:agency_id]
-      key = "gtfs.line.#{aname.downcase.gsub(/\W/,'')}.#{t[:route_name].gsub(/\W/,'')}-#{t[:direction_id]}"
+      key = "gtfs.line.#{aname.downcase.gsub(/\W/,'')}.#{t[:route_name].gsub(/\W/,'')}.#{t[:direction_id]}"
       mckey = "gtfs.line.#{t[:route_id]}-#{t[:direction_id]}"
       if h[key].nil?
         h[key] = {
@@ -60,18 +60,18 @@ module CDKCommands
       h[key][:times] << self.get_realtime(mckey,stop_id,t[:departure])
       h[key][:times].uniq!
 
-      line = Object.where(:cdk_id=>key).first
-      if line
-        members = line.members.to_a
-        lstops = Object.where(:nodes__id => members).all
-        lstops = lstops.sort_by { |a| members.index(a.values[:id]) }
-        seen_current = false
-        h[key][:stops] = []
-        lstops.each do |k|
-          seen_current = true if k[:cdk_id] == stop.cdk_id
-          h[key][:stops] << k[:cdk_id] if (seen_current and (k[:cdk_id] != stop.cdk_id))
-        end
-      end
+      # line = Object.where(:cdk_id=>key).first
+      # if line
+      #   members = line.members.to_a
+      #   lstops = Object.where(:nodes__id => members).all
+      #   lstops = lstops.sort_by { |a| members.index(a.values[:id]) }
+      #   seen_current = false
+      #   h[key][:stops] = []
+      #   lstops.each do |k|
+      #     seen_current = true if k[:cdk_id] == stop.cdk_id
+      #     h[key][:stops] << k[:cdk_id] if (seen_current and (k[:cdk_id] != stop.cdk_id))
+      #   end
+      # end
     end
 
     r = []

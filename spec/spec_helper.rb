@@ -11,7 +11,7 @@ config = JSON.parse(File.read("./config.test.json"), symbolize_names: true)
 
 # Expects the user who executes `rspec` to also have postgres login rights - without password
 system "psql postgres -c 'DROP DATABASE IF EXISTS \"#{config[:db][:database]}\"'"
-system "createdb \"#{config[:db][:database]}\""
+system "createdb \"#{config[:db][:database]}\" -T template0 -E UTF8"
 system "psql \"#{config[:db][:database]}\" -c 'CREATE EXTENSION hstore'"
 system "psql \"#{config[:db][:database]}\" -c 'CREATE EXTENSION postgis'"
 system "psql \"#{config[:db][:database]}\" -c 'CREATE EXTENSION pg_trgm'"

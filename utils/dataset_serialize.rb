@@ -89,7 +89,7 @@ module Sequel
           query[:api].error!("Layer not found: '#{params[:layer]}'", 404)
         end
 
-        data = layer_ids.map { |layer_id| CDKLayer.get_layer layer_id }
+        data = layer_ids.map { |layer_id| CDKLayer.get_layer(layer_id) }
       when :data
         data = self.all.map { |d| CDKObjectDatum.make_hash(d.values, {cdk_id: params[:cdk_id]}, query)[:data] }
       when :layer_on_object
