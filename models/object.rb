@@ -106,7 +106,7 @@ class CDKObject < Sequel::Model(:objects)
         # for POST requests
         query[:api].error!("All objects must have 'cdk_id' property", 422) if query[:method] == :patch
 
-        unless feature['geometry'] or feature['members']
+        unless feature['geometry']
           query[:api].error!("New object without geometry encountered", 422)
         end
 
@@ -122,6 +122,7 @@ class CDKObject < Sequel::Model(:objects)
           id: properties['id'],
           cdk_id: cdk_id
         }
+        
       elsif properties['cdk_id']
         cdk_id = properties['cdk_id']
 
@@ -152,6 +153,9 @@ class CDKObject < Sequel::Model(:objects)
     Sequel::Model.db.transaction do
       case query[:method]
       when :post
+        
+        a = objects.map { |o| o[:db_hash] }
+        
         CDKObject.multi_insert(objects.map { |o| o[:db_hash] })
         CDKObjectDatum.multi_insert(object_data.map { |o| o[:db_hash] })
 
@@ -301,7 +305,6 @@ class CDKObject < Sequel::Model(:objects)
 
     h.delete(:layer_id)
     h.delete(:id)
-    h.delete(:members)
 
     h.delete(:created_at)
     h.delete(:updated_at)

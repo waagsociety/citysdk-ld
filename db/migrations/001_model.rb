@@ -77,18 +77,19 @@ Sequel.migration do
       foreign_key :category_id, :categories, type: 'integer', null: false
       foreign_key :depends_on_layer_id, :layers, type: 'integer', on_delete: :cascade
 
-      String :name, null: false, unique: true
-      String :title
-      String :description
-      String :subcategory
-      String :rdf_type
-      column :data_sources, 'text[]'
-      String :licence
-      bool :authoritative, default: false
-      column :@context, 'json'
+      String  :name, null: false, unique: true
+      String  :title
+      String  :description
+      String  :subcategory
+      String  :rdf_type
+      column  :rdf_prefixes, 'hstore'
+      column  :data_sources, 'text[]'
+      String  :licence
+      bool    :authoritative, default: false
+      column  :@context, 'json'
       integer :update_rate
-      String :webservice_url
-      String :sample_url
+      String  :webservice_url
+      String  :sample_url
       timestamptz :imported_at
       timestamptz :created_at, null: false, default: :now.sql_function
 
@@ -111,13 +112,11 @@ Sequel.migration do
 
       String :cdk_id, null: false, unique: true
       String :title
-      column :members, 'bigint[]'
       timestamptz :created_at, null: false, default: :now.sql_function
       timestamptz :updated_at, null: false, default: :now.sql_function
 
       # Indexes:
       index :layer_id
-      index :members, type: :gin
       full_text_index :title 
       full_text_index :cdk_id
       index Sequel.function(:lower, :title)

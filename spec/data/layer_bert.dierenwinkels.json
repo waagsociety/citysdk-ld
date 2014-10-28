@@ -8,6 +8,10 @@
   "subcategory": "shops",
   "rdf_type": "csdk:PetStore",
   "licence": "MIT License",
+  "rdf_prefixes": {
+    "pet": "http://petvoc.org",
+    "petf": "http://purl.org/petfood/terms#"
+  },
   "fields": [
     {
       "name": "type",

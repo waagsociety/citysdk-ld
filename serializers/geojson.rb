@@ -52,7 +52,9 @@ module CitySDKLD
               description: layer[:description],
               category: layer[:category],
               subcategory: layer[:subcategory],
-              :'rdf:type' => layer[:'rdf:type'],
+              rdf_type: layer[:rdf_type],
+              rdf_prefixes: layer[:rdf_prefixes],
+              licence: layer[:licence],
               organization: layer[:organization],
               data_sources: layer[:data_sources],
               update_rate: layer[:update_rate],
@@ -66,6 +68,7 @@ module CitySDKLD
           }
           feature.delete_if { |k, v| v.nil? }
           feature[:properties].delete_if { |k, v| v.nil? }
+          feature[:properties][:depends] = CDKLayer::name_from_id(layer[:depends_on_layer_id]) if (layer[:depends_on_layer_id] and layer[:depends_on_layer_id] != 0)
           @result[:features] << feature
         end
       end

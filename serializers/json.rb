@@ -39,6 +39,9 @@ module CitySDKLD
           result = {
             name: layer[:name],
             title: layer[:title],
+            licence: layer[:licence],
+            rdf_type: layer[:rdf_type],
+            rdf_prefixes: layer[:rdf_prefixes],
             description: layer[:description],
             category: layer[:category],
             organization: layer[:organization],
@@ -49,6 +52,7 @@ module CitySDKLD
             :@context => layer[:@context],
             geom: layer[:geojson] ? layer[:geojson] : nil
           }
+          result[:depends] = CDKLayer::name_from_id(layer[:depends_on_layer_id]) if (layer[:depends_on_layer_id] and layer[:depends_on_layer_id] != 0)
           result.delete_if { |k, v| v.nil? }
           @result[:results] << result
         end

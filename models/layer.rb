@@ -8,6 +8,23 @@ class CDKLayer < Sequel::Model(:layers)
 
   KEY_LAYER_NAMES = "layer_names"
   KEY_LAYER_DEPENDENCIES = "layer_dependencies"
+  
+  def self.prefixes_valid?(h)
+    # Object data can never be empty
+    return false if h.class != Hash
+    
+    # We are still using postgres's hstore to store data,
+    # data should be unnested.
+    # The following classes are allowed for value.class:
+    # [String, NilClass, Fixnum, Float, Numeric, TrueClass, FalseClass]
+    nested = false
+    h.values.each do |value|
+      nested ||= ![String, Fixnum, NilClass, Float, Numeric, TrueClass, FalseClass].include?(value.class)
+    end
+    # data is valid when not nested
+    not nested
+  end
+  
 
   def self.execute_write(query)
     data = query[:data]
@@ -29,14 +46,21 @@ class CDKLayer < Sequel::Model(:layers)
       'update_rate',
       'webservice_url',
       'authoritative',
+      'depends',
       '@context',
       'fields',
+      'rdf_prefixes',
       'owner'
     ]
 
     # Make sure POST data contains only valid keys
     unless (data.keys - (required_keys + optional_keys)).empty?
       query[:api].error!("Incorrect keys found in layer POST data: #{(data.keys - (required_keys + optional_keys)).join(', ')}", 422)
+    end
+    
+    # Convert dependant layer to id
+    if data['depends']
+      data['depends_on_layer_id'] = id_from_name(data['depends']) || '0'
     end
 
     # Convert array to pg_array
@@ -60,6 +84,14 @@ class CDKLayer < Sequel::Model(:layers)
     end
     data.delete('owner')
 
+    if(data['rdf_prefixes']) 
+      if self.prefixes_valid?(data['rdf_prefixes'])
+        data['rdf_prefixes'] = Sequel.hstore(data['rdf_prefixes'])
+      else
+        query[:api].error!("rdf_prefixes are not a key-value hash", 422)
+      end
+    end
+
     if data['category']
       owner = CDKOwner.where(session_key: query[:api].headers['X-Auth']).first
       category_id = CDKCategory.id_from_name(data['category']) if data['category']
@@ -71,7 +103,6 @@ class CDKLayer < Sequel::Model(:layers)
     case query[:method]
     when :post
       # create
-      
       layer_id = id_from_name(data['name'])
       query[:api].error!("Layer already exists: #{data['name']}", 422) if layer_id
 
@@ -100,7 +131,6 @@ class CDKLayer < Sequel::Model(:layers)
 
     when :patch
       # update
-
       query[:api].error!('Layer name cannot be changed', 422) if data['name']
 
       layer_id = self.id_from_name query[:params][:layer]
@@ -293,15 +323,15 @@ class CDKLayer < Sequel::Model(:layers)
 
       values[:owner] = CDKOwner.make_hash(CDKOwner.where(id: values[:owner_id]).first)
       values[:fields] = CDKField.where(layer_id: values[:id]).all.map { |f| CDKField.make_hash(f.values) }
-
       values[:category] = categories[values[:category_id]]
       values.delete(:category_id)
 
-      layer = make_hash values
+      layer = make_hash(values)
       deps[layer[:id]] = layer[:depends_on_layer_id] if (layer[:depends_on_layer_id] && layer[:depends_on_layer_id] != 0)
       # Save layer data in memcache without expiration
       key = self.memcached_key(layer[:id].to_s)
       CitySDKLD.memcached_set(key, layer, 0)
+      
       names[layer[:name]] = layer[:id]
     end
 

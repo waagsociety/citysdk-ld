@@ -196,6 +196,7 @@ describe CitySDKLD::API do
         header "X-Auth", $bert_key
         post "/layers", data.to_json
         last_response.status.should == 201
+        # puts JSON.pretty_generate(body_json(last_response)[:features][0])
         body_json(last_response)[:features][0][:properties][:name].should == 'bert.dierenwinkels'
       end
 
@@ -563,6 +564,16 @@ describe CitySDKLD::API do
         post "/layers/tom.steden/objects", data.to_json
         last_response.status.should == 201
         body_json(last_response).length.should == data[:features].length
+      end
+
+      it "edits data on layer 'tom.steden' of tom.steden.utrecht" do
+        data = read_test_data_json 'objects_tom.steden.json'
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $citysdk_key
+        patch "/objects/tom.steden.utrecht/layers/tom.steden", {"inwoners" => 542322}.to_json
+        last_response.status.should == 200
+        get "/objects/tom.steden.utrecht"
+        body_json(last_response)[:features][0][:properties][:layers][:'tom.steden'][:data][:inwoners].should == "542322"
       end
 
       it "adds data on layer 'rutger.openingstijden' to existing objects" do
