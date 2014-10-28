@@ -4,3 +4,4 @@ config.json
 log/access.log
 log/error.log
 tmp/restart.txt
+importers/gtfs/update.log

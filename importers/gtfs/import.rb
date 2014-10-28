@@ -7,19 +7,26 @@ require 'tempfile'
 require 'getoptlong'
 require './gtfs_util.rb'
 require './gtfs_funcs.rb'
-
+require './gtfs_layers.rb'
+require 'citysdk'
+include CitySDK
 
 
 local_ip = UDPSocket.open {|s| s.connect("123.123.123.123", 1); s.addr.last}
 if(local_ip =~ /192\.168|10\.0\.135/)
-  dbconf = JSON.parse(File.read('../../config.json'), {symbolize_names: true})
+  dbconf = JSON.parse(File.read('../../config.development.json'), {symbolize_names: true})
 else
-  dbconf = JSON.parse(File.read('/var/www/citysdk/current/config.json'), {symbolize_names: true})
+  dbconf = JSON.parse(File.read('/var/www/citysdk/current/config.production.json'), {symbolize_names: true})
 end
 
 $DB_name = dbconf[:db][:database]
 $DB_user = dbconf[:db][:user]
 $DB_pass = dbconf[:db][:password]
+
+$admuser = dbconf[:endpoint][:admuser]
+$admpass = dbconf[:endpoint][:admpass]
+$apihost = dbconf[:endpoint][:url]
+
 $newDir = ''
 $pg_csdk = nil
 $prefix = ''
@@ -369,6 +376,7 @@ def one_file(f)
     columns.each do |c|
       ca << "#{c} #{$c_types[f][c] || 'text'}"
     end
+    $pg_csdk.exec "set client_encoding to 'UTF8'"
     $pg_csdk.exec "create table igtfs.#{f} (#{ca.join(',')})"
     $pg_csdk.exec "copy igtfs.#{f} from '#{$newDir}/#{f}.txt' QUOTE '#{$quote}' CSV HEADER"
     columns
@@ -400,132 +408,108 @@ $zrp = Zrp.new
 
 
 
-def do_stops
 
+
+def do_stops
+  
   $zrp.n
   $zrp.p "Mapping stops.."
 
-
-  stops_a = []
-
-  CSV.open("#{$newDir}/stops.txt", 'r:bom|utf-8', :quote_char => '"', :col_sep =>',',:headers => true, :row_sep =>:auto) do |csv|
-    csv.each do |row|
-      s = $prefix + row['stop_id']
-      stops_a << "'#{s}'"
-    end
-  end
-
-
-
-  stops = $pg_csdk.exec("select * from gtfs.stops where stop_id in (#{stops_a.join(',')}) order by stop_name");
+  stops = $pg_csdk.exec("select  stop_id, stop_name, location_type, parent_station, wheelchair_boarding, platform_code, ST_AsGeoJSON(location) as geometry from gtfs.stops order by stop_name");
   stopsCount = stops.cmdtuples
   $zrp.n
   $zrp.n
 
   stops.each do |stop|
-    nid = GTFS_Import::stopObject(stop)
-
-    if nid
-      GTFS_Import::stopObjectData(nid, stop)
-    end
+    node = {
+      type: 'Feature',
+      geometry: JSON.parse(stop['geometry']),
+      properties: {
+        id: "#{stop['stop_id'].downcase.gsub(/\W/,'.')}",
+        title: stop['stop_name']
+      }
+    }
+    stop.delete('geometry')
+    stop["parent_station"] = "gtfs.stops.#{stop['parent_station'].downcase.gsub(/\W/,'.')}"
+    node[:properties][:data] = stop
+    
+    $api.create_object(node)
+    
     $zrp.p "#{stopsCount}; #{stop['stop_name']}" if stopsCount % 100 == 0
     stopsCount -= 1
   end
-
-
 end
 
-def do_routes
 
-  $zrp.n
-  $zrp.p "Mapping routes.."
 
-  @val=nil
 
-  if $gtfs_files.include?('feed_info')
+def addOneRoute(route,dir)
+  line = {
+    type: "LineString",
+    coordinates: []
+  }
 
-    File.open("#{$newDir}/feed_info.txt", 'r:bom|utf-8') do |f|
-      h = f.gets.chomp.split(',') #headers
-      sd = h.index('feed_start_date') || h.index('feed_valid_from')
-      ed = h.index('feed_end_date') || h.index('feed_valid_to')
-      if( sd && ed)
-        s = f.gets.chomp.split(',')
-        sd = s[sd] + " 00:00"
-        ed = s[ed] + " 23:59"
-        @val = "[#{sd},#{ed}]"
+  r = route['route_id']
+
+  stops = $pg_csdk.exec("select * from stops_for_line('#{r}',#{dir})")
+  shape = $pg_csdk.exec("select * from shape_for_line('#{r}')")
+  if shape.cmdtuples == 0
+    shape = nil
+  else
+    shape.each do |s|
+      line[:coordinates] << [s['lon'].to_f, s['lat'].to_f]
+    end
+  end
+
+  if stops.cmdtuples > 1
+    start_name = end_name = nil
+    stops.each do |s|
+      start_name = s['name'] if start_name.nil?
+      end_name = s['name']
+      if( shape.nil? )
+        line[:coordinates] << [s['lon'].to_f, s['lat'].to_f]
       end
     end
-  end
+    route['route_from'] = start_name
+    route['route_to'] = end_name
 
+    aname = route['agency_id'] || ''
+
+    node = {
+      type: 'Feature',
+      geometry: line,
+      properties: {
+        id: "#{aname.gsub(/\W/,'')}.#{route['route_id'].gsub(/\W/,'')}.#{dir}".downcase,
+        title: route['route_long_name']
+      }
+    }
+    node[:properties][:data] = route
+    
+    $api.create_object(node)
+
+  else
+    $routes_rejected += 1
+  end
+end
+
+
+def do_routes
+  $zrp.n
+  $zrp.p "Mapping routes.."
   $routes_rejected = 0
 
-  route_a = []
-
-  CSV.open("#{$newDir}/routes.txt", 'r:bom|utf-8', :quote_char => '"', :col_sep =>',',:headers => true, :row_sep =>:auto) do |csv|
-    csv.each do |row|
-      r = $prefix + row['route_id']
-      route_a << "'#{r}'"
-    end
-  end
-
-  routes = $pg_csdk.exec("select * from gtfs.routes where route_id in (#{route_a.join(',')})");
-
-
+  routes = $pg_csdk.exec("select * from gtfs.routes");
   totalRoutes = routes.cmdtuples
 
   $zrp.n
   routes.each do |route|
     $zrp.p "#{totalRoutes}; #{route['route_id']}; #{route['route_short_name']}; #{route['route_long_name']}"
     totalRoutes -= 1
-    GTFS_Import::addOneRoute(route,0,@val)
-    GTFS_Import::addOneRoute(route,1,@val)
+    addOneRoute(route,0)
+    addOneRoute(route,1)
   end
 
 end
-
-
-
-def do_cleanup
-
-  $zrp.n
-  $zrp.p "Cleaning up.."
-
-  $zrp.p "Collecting old trips.."
-
-  $pg_csdk.exec <<-SQL
-    select trip_id,service_id into temporary cu_tripids from gtfs.trips where
-      service_id in (
-        select distinct service_id from gtfs.calendar_dates where date <= (now() - '2 days'::interval)
-      );
-  SQL
-
-  $zrp.p "Removing still valid trips from collection.."
-  $pg_csdk.exec <<-SQL
-    delete from  cu_tripids where
-      service_id in (
-       select distinct service_id from gtfs.calendar_dates where date > (now() - '2 days'::interval)
-      );
-  SQL
-
-  $zrp.p "Deleting old stoptimes.."
-  $pg_csdk.exec <<-SQL
-    delete from gtfs.stop_times where trip_id in
-      ( select distinct trip_id from cu_tripids );
-  SQL
-
-  $zrp.p "Deleting obsolete trips.."
-  $pg_csdk.exec <<-SQL
-    delete from gtfs.trips where trip_id in
-      ( select distinct trip_id from cu_tripids );
-  SQL
-
-  $zrp.p "Deleting old calendar date entries.."
-  $pg_csdk.exec <<-SQL
-    delete from gtfs.calendar_dates where date <= (now() - '2 days'::interval);
-  SQL
-
-end
-
 
 opts = GetoptLong.new(
   [ '--prefix', '-p', GetoptLong::REQUIRED_ARGUMENT ]
@@ -567,10 +551,7 @@ end
 
 begin
   $pg_csdk = PGconn.new('localhost', '5432', nil, nil, $DB_name, $DB_user, $DB_pass)
-
-  GTFS_Import::get_layer_ids()
-
-  GTFS_Import::do_log("Starting update: prefix: #{$prefix}")
+  GTFS_Import::do_log("Starting update...")
 
   $pg_csdk.transaction do
     begin
@@ -585,32 +566,37 @@ begin
 
   GTFS_Import::do_log("\tCommited copy gtfs.")
 
-  $pg_csdk.transaction do
-    begin
-      do_cleanup
-    rescue Exception => e
-      $stderr.puts e.message
-      $stderr.puts "\nROLLBACK (cleanup)"
-      exit(1)
-    end
-  end
-
-  GTFS_Import::do_log("\tCommited cleanup.")
+  $api = API.new($apihost)
+  $api.batch_size = 1000
+  $api.set_layer('gtfs.stops')
+  $api.authenticate($admuser,$admpass)
+  GTFS_Import::make_clear_layers($api)
 
   $pg_csdk.transaction do
     begin
       do_stops
-      do_routes
+      $api.release
+      GTFS_Import::do_log("\tCommited stops.")
     rescue Exception => e
       $stderr.puts e.message
-      $stderr.puts "\nROLLBACK (map stops & routes)"
+      $stderr.puts "\nROLLBACK (map stops)"
       exit(1)
     end
   end
 
-  GTFS_Import::do_log("\tCommited stops and routes mapping.")
-
-  $stderr.puts "\nCOMMIT"
+  $api.set_layer('gtfs.lines')
+  $api.authenticate($admuser,$admpass)
+  $pg_csdk.transaction do
+    begin
+      do_routes
+      $api.release
+      GTFS_Import::do_log("\tCommited routes mapping.")
+    rescue Exception => e
+      $stderr.puts e.message
+      $stderr.puts "\nROLLBACK (map routes)"
+      exit(1)
+    end
+  end
 
 rescue Exception => e
   puts e.message

@@ -3,14 +3,16 @@ require "pg"
 require "json"
 require 'socket'
 require 'getoptlong'
-require './gtfs_util.rb'
+require './gtfs_layers.rb'
 require './gtfs_funcs.rb'
+require 'citysdk'
+include CitySDK
 
 local_ip = UDPSocket.open {|s| s.connect("123.123.123.123", 1); s.addr.last}
 if(local_ip =~ /192\.168|10\.0\.135/)
-  dbconf = JSON.parse(File.read('../../config.json'), {symbolize_names: true})
+  dbconf = JSON.parse(File.read('../../config.development.json'), {symbolize_names: true})
 else
-  dbconf = JSON.parse(File.read('/var/www/citysdk/current/config.json'), {symbolize_names: true})
+  dbconf = JSON.parse(File.read('/var/www/citysdk/current/config.production.json'), {symbolize_names: true})
 end
 
 $DB_name = dbconf[:db][:database]
@@ -73,29 +75,25 @@ end
 
 
 begin
+  # create gtfs schema
 
   $pg_csdk = PGconn.new('localhost', '5432', nil, nil, $DB_name, $DB_user, $DB_pass)
-
-  GTFS_Import::get_layer_ids()
-
   $pg_csdk.transaction do
     $pg_csdk.exec("drop schema if exists gtfs cascade; create schema gtfs;")
-
-    [$gtfs_lines,$gtfs_stops].each do |l|
-      $pg_csdk.exec("delete from node_data where layer_id = #{l};")
-    end
-    [$gtfs_lines,$gtfs_stops].each do |l|
-      $pg_csdk.exec("delete from nodes where layer_id = #{l};")
-    end
-
     $gtfs_files.each do |f|
       create_table(f)
       createIndexes(f)
     end
     add_utility_functions()
   end
-  GTFS_Import::do_log('Cleared GTFS layer..')
-  $stderr.puts "\nCOMMIT"
+  
+  # make or clear gtfs layers
+  api = API.new(dbconf[:endpoint][:url])
+  api.authenticate(dbconf[:endpoint][:admuser],dbconf[:endpoint][:admpass])
+  GTFS_Import::make_clear_layers(api)
+  api.release()
+
+  # GTFS_Import::do_log('Created GTFS layers..')
 rescue Exception => e
   puts e.message
 ensure

@@ -41,23 +41,6 @@ module GTFS_Import
     end
   end
 
-  def self.get_layer_ids()
-
-    res = $pg_csdk.exec("select id from layers where name = 'gtfs.stops'");
-    $gtfs_stops = res[0]['id'].to_i if res.cmdtuples > 0
-    if($gtfs_stops.nil?)
-      $stderr.puts "No gtfs.stops layer found!"
-      exit(-1)
-    end
-
-    res = $pg_csdk.exec("select id from layers where name = 'gtfs.lines'");
-    $gtfs_lines = res[0]['id'].to_i if res.cmdtuples > 0
-    if($gtfs_lines.nil?)
-      $stderr.puts "No gtfs.lines layer found!"
-      exit(-1)
-    end
-
-  end
 
 
   $calendar_excepts = {}
@@ -166,34 +149,6 @@ module GTFS_Import
   end
 
 
-  def self.stopObject(stop)
-
-    cdkid = "gtfs.stop.#{stop['stop_id'].downcase.gsub(/\W/,'.')}"
-    location = stop['location']
-    stop_name = $pg_csdk.escape(stop['stop_name'])
-
-    res = $pg_csdk.exec("select id from nodes where cdk_id = '#{cdkid}'")
-    if( res.cmd_tuples > 0)
-      id = res[0]['id']
-      queri = "update nodes set name='#{stop_name}', geom='#{location}'::geometry where id=#{id}"
-    else
-      id = $pg_csdk.exec("select nextval('nodes1_id_seq')")[0]['nextval'].to_i
-      queri = "insert into nodes (id,cdk_id,layer_id,node_type,name,geom) VALUES (#{id},'#{cdkid}',#{$gtfs_stops}, 2, '#{stop_name}' , '#{location}');"
-    end
-
-    begin
-      r = $pg_csdk.exec(queri)
-    rescue Exception => e
-      puts "stopObject: #{e.message}"
-      puts queri
-      return nil
-    end
-    if( r.result_status == 1)
-      return id
-    end
-    return nil
-  end
-
 
   @@agency_names = {}
   def self.get_agency_name(id)
@@ -212,21 +167,21 @@ module GTFS_Import
     if aname && aname == ''
       aname = $prefix
     end
-    cdkid = "gtfs.line.#{aname.gsub(/\W/,'')}.#{route['route_id'].gsub(/\W/,'')}-#{dir}".downcase
+    cdkid = "gtfs.line.#{aname.gsub(/\W/,'')}.#{route['route_id'].gsub(/\W/,'')}.#{dir}".downcase
     line = 'ARRAY[' + line.join(',') + "]"
     members = "{" + members.join(',') + "}"
 
     name = $pg_csdk.escape("#{aname} #{RevMods[route['route_type']]} #{route['route_short_name']}")
 
-    res = $pg_csdk.exec("select id from nodes where cdk_id = '#{cdkid}'")
+    res = $pg_csdk.exec("select id from objects where cdk_id = '#{cdkid}'")
     if( res.cmd_tuples > 0)
       id = res[0]['id']
       # update
-      queri = "update nodes set name='#{name}', geom=ST_MakeLine(#{line}), members='#{members}' where id=#{id}"
+      queri = "update objects set title='#{name}', geom=ST_MakeLine(#{line}), members='#{members}' where id=#{id}"
     else
       # insert
       id = $pg_csdk.exec("select nextval('nodes1_id_seq')")[0]['nextval'].to_i
-      queri = "insert into nodes (id,name,cdk_id,layer_id,node_type,members,geom) VALUES (#{id},'#{name}','#{cdkid}',#{$gtfs_lines}, 3, '#{members}', ST_MakeLine(#{line}));"
+      queri = "insert into objects (id,title,cdk_id,layer_id,node_type,members,geom) VALUES (#{id},'#{name}','#{cdkid}',#{$gtfs_lines}, 3, '#{members}', ST_MakeLine(#{line}));"
     end
 
     begin
@@ -243,58 +198,22 @@ module GTFS_Import
     return nil
   end
 
-  def self.stopObjectData(node_id, gtfsStop)
-
-    gtfsStop.delete('location') # don't need to keep this..
-
-    res = $pg_csdk.exec("select id from node_data where node_id = #{node_id} and layer_id = #{$gtfs_stops}")
-    if( res.cmd_tuples > 0)
-      id = res[0]['id']
-      queri  = "update node_data set"
-      queri += " data=#{gtfsStop.to_hstore($pg_csdk)}"
-      queri += ", modalities='#{GTFS_Import::modalitiesForStop(gtfsStop)}'"
-      queri += " where id=#{id}"
-    else
-      id = $pg_csdk.exec("select nextval('node_data_id_seq')")[0]['nextval'].to_i
-      queri  = "insert into node_data (id,node_id,layer_id,data,modalities) "
-      queri += "VALUES (#{id},'#{node_id}',#{$gtfs_stops}, #{gtfsStop.to_hstore($pg_csdk)}, '#{GTFS_Import::modalitiesForStop(gtfsStop)}');"
-    end
-
-    begin
-      r = $pg_csdk.exec(queri)
-    rescue Exception => e
-      puts "stopObjectData: #{e.message}"
-      puts queri
-      return nil
-    end
-    if( r.result_status == 1)
-      return id
-    end
-    return nil
-  end
 
 
-  def self.route_node_data(node_id, route,val)
+  def self.route_node_data(node_id, route)
     # {"route_id"=>"ARR|17186", "agency_id"=>"ARR", "route_short_name"=>"186", "route_long_name"=>"Oegstgeest - Gouda via Leiden", "route_type"=>"3"}
-
-    mods = "{#{route['route_type']}}"
-
-    res = $pg_csdk.exec("select id from node_data where node_id = #{node_id} and layer_id = #{$gtfs_lines}")
+    res = $pg_csdk.exec("select id from object_data where object_id = #{node_id} and layer_id = #{$gtfs_lines}")
     if( res.cmd_tuples > 0)
       id = res[0]['id']
-      queri  = "update node_data set"
+      queri  = "update object_data set"
       queri += " data=#{route.to_hstore($pg_csdk)}"
       queri += ", modalities='#{mods}'"
       queri += ", validity='#{val}'" if val
       queri += " where id=#{id}"
     else
       id = $pg_csdk.exec("select nextval('node_data_id_seq')")[0]['nextval'].to_i
-      queri =  "insert into node_data (id,node_id,layer_id,data,modalities,validity) "
-      if val
-        queri += "VALUES (#{id},'#{node_id}',#{$gtfs_lines}, #{route.to_hstore($pg_csdk)}, '#{mods}','#{val}');"
-      else
-        queri += "VALUES (#{id},'#{node_id}',#{$gtfs_lines}, #{route.to_hstore($pg_csdk)}, '#{mods}', NULL);"
-      end
+      queri =  "insert into object_data (id,object_id,layer_id,data) "
+      queri += "VALUES (#{id},'#{node_id}',#{$gtfs_lines}, #{route.to_hstore($pg_csdk)});"
     end
 
     begin
@@ -310,7 +229,7 @@ module GTFS_Import
     return nil
   end
 
-  def self.addOneRoute(route,dir,val)
+  def self.addOneRoute(route,dir)
     r = route['route_id']
     # puts "select * from stops_for_line('#{r}',#{dir})"
 
@@ -327,17 +246,17 @@ module GTFS_Import
       stops.each do |s|
         stop_id = s['stop_id']
         next if stop_id.nil? or stop_id==''
-        nd = %{ (node_data.data @> '"stop_id"=>"#{stop_id}"') }
+        nd = %{ (object_data.data @> '"stop_id"=>"#{stop_id}"') }
         begin
-          q = "select * from node_data where layer_id = #{$gtfs_stops} and #{nd} limit 1"
+          q = "select * from object_data where layer_id = #{$gtfs_stops} and #{nd} limit 1"
           nd = $pg_csdk.exec(q)
           if(nd)
             nd.each do |n|
               start_name = s['name'] if start_name.nil?
               end_name = s['name']
-              members << n['node_id']
+              members << n['object_id']
               if( shape.nil? )
-                line << "'" + $pg_csdk.exec("select geom from nodes where id = #{n['node_id'].to_i} limit 1" )[0]['geom'] + "'::geometry"
+                line << "'" + $pg_csdk.exec("select geom from objects where id = #{n['object_id'].to_i} limit 1" )[0]['geom'] + "'::geometry"
               end
             end
           end
@@ -361,7 +280,7 @@ module GTFS_Import
 
           id = GTFS_Import::routeObject(route,members,line,dir)
           if(id)
-            GTFS_Import::route_node_data(id,route,val)
+            GTFS_Import::route_node_data(id,route)
           end
         rescue
           return 0

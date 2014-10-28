@@ -259,10 +259,11 @@ def add_utility_functions
   $pg_csdk.exec <<-SQL
       drop function if exists stops_for_line(text,integer);
       create function stops_for_line(text,integer)
-      returns table(name text, location text, stop_id text, stop_seq smallint)
+      returns table(name text, lon float, lat float, stop_id text, stop_seq smallint)
       as $$
-          select distinct stops.stop_name,
-                          st_asewkt(stops.location) as location,
+          select distinct stops.stop_name as name,
+                          st_x(stops.location) as lon,
+                          st_y(stops.location) as lat,
                           stops.stop_id,
                           stop_sequence
                     from gtfs.stop_times left join gtfs.stops on stops.stop_id = stop_times.stop_id
@@ -274,14 +275,14 @@ def add_utility_functions
   $pg_csdk.exec <<-SQL
     drop function if exists shape_for_line(line text);
     create function shape_for_line(line text)
-      returns table(geom geometry, seq integer)
+      returns table(lon float, lat float, seq integer)
       as $$
       declare tripid text;
       begin
           select longest_trip_for_route(line,1) into tripid;
 
           return query
-              select ST_SetSRID(ST_Point(shape_pt_lon::float, shape_pt_lat::float) ,4326) as geom,
+              select shape_pt_lon::float, shape_pt_lat::float,
                      shape_pt_sequence as seq
                      from gtfs.shapes
                      where shape_id = (select shape_id from gtfs.trips where trip_id = tripid limit 1)
