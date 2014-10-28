@@ -84,10 +84,14 @@ module CitySDKLD
               #@result << "    dc:created \"<object datum created date>\"^^xsd:date ."
 
               if @layers[layer][:@context]
+
+                types = [':LayerData']
+                types << @layers[layer][:'rdf:type'] if @layers[layer][:'rdf:type']
+
                 jsonld = {
                   :@context => @layers[layer][:@context],
                   :@id => ":objects/#{object[:cdk_id]}/layers/#{layer}",
-                  :@type => ":LayerData"
+                  :@type => types
                 }.merge object[:layers][layer][:data]
                 graph = RDF::Graph.new << JSON::LD::API.toRdf(JSON.parse(jsonld.to_json))
 

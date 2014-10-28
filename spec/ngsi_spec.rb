@@ -5,7 +5,7 @@ include Rack::Test::Methods
 
 
 describe CitySDKLD::API do
-  
+
   it "can get a session key for owner 'citysdk'" do
     header "CONTENT_TYPE", "application/json"
     get "/session?name=citysdk&password=ChangeMeNow"
@@ -13,15 +13,14 @@ describe CitySDKLD::API do
     $citysdk_key = body_json(last_response)[:session_key]
     $citysdk_key.should_not == nil
   end
-  
+
   describe "NGSI10" do
     it "can create objects of existing and non-existing type" do
       header "CONTENT_TYPE", "application/json"
       header "X-Auth", $citysdk_key
       post "/ngsi10/updateContext", read_test_data('ngsi_update.json')
-      expect(body_json(last_response)[:statusCode][:code]).to eq("200")
+      last_response.status.should == 201
     end
-
 
     it "can update existing objects" do
       header "CONTENT_TYPE", "application/json"
@@ -30,10 +29,9 @@ describe CitySDKLD::API do
       json[:contextElements] = [json[:contextElements][1]]
       json[:contextElements][0][:attributes][0][:value] = "234";
       post "/ngsi10/updateContext", json.to_json
-      expect(last_response.status).to be(201)
+      last_response.status.should == 201
       get "/objects/ngsi.room.room7"
-      res = body_json(last_response)
-      expect(res[:features][0][:properties][:layers][:"ngsi.room"][:data][:temperature]).to eq("234")
+      body_json(last_response)[:features][0][:properties][:layers][:'ngsi.room'][:data][:temperature].should == "234"
     end
 
 
@@ -137,7 +135,7 @@ describe CitySDKLD::API do
       get path + "pressure"
       expect(body_json(last_response)[:attributes][0][:value]).to eq("pipo")
     end
-    
+
     it "can query for objects within polygon" do
       header "CONTENT_TYPE", "application/json"
       json = read_test_data_json('ngsi_query.json')
@@ -147,7 +145,7 @@ describe CitySDKLD::API do
       expect(body_json(last_response)[:contextResponses].length).to be(2)
       expect(body_json(last_response)[:contextResponses][0][:contextElement][:attributes].length).to be(4)
     end
-    
+
     it "can query for objects outside polygon" do
       header "CONTENT_TYPE", "application/json"
       json = read_test_data_json('ngsi_query.json')
@@ -158,7 +156,7 @@ describe CitySDKLD::API do
       expect(body_json(last_response)[:contextResponses].length).to be(1)
       expect(body_json(last_response)[:contextResponses][0][:contextElement][:id]).to eq("Room4")
     end
-    
+
     it "can query for objects within radius from a point" do
       header "CONTENT_TYPE", "application/json"
       json = read_test_data_json('ngsi_query.json')
@@ -194,7 +192,7 @@ describe CitySDKLD::API do
       expect(body_json(last_response)[:contextResponses].length).to be(1)
       expect(body_json(last_response)[:contextResponses][0][:contextElement][:id]).to eq("Room4")
     end
-    
+
   end
 
 end

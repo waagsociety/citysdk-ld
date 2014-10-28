@@ -28,18 +28,18 @@ class CDKLayer < Sequel::Model(:layers)
 
   def self.execute_write(query)
     data = query[:data]
-    
+
     written_layer_id = nil
 
     required_keys = [
       'name',
       'title',
       'description',
-      'data_sources',
+      'dataSources',
       'category',
       'subcategory',
       'licence',
-      'rdf_type'
+      'rdf:type'
     ]
 
     optional_keys = [
@@ -63,11 +63,6 @@ class CDKLayer < Sequel::Model(:layers)
       data['depends_on_layer_id'] = id_from_name(data['depends']) || '0'
     end
 
-    # Convert array to pg_array
-    if data['data_sources']
-      data['data_sources'] = Sequel.pg_array(data['data_sources'])
-    end
-
     # Convert context to JSON
     if data['@context']
       query[:api].error!('JSON-LD context for layer should be JSON object', 422) unless data['@context'].class == Hash
@@ -77,7 +72,7 @@ class CDKLayer < Sequel::Model(:layers)
     # If owner and category are provided, make sure
     # owner and category exist, and
     # replace named values in data hash
-    unless data['owner'].blank? 
+    unless data['owner'].blank?
       owner_id = CDKOwner.id_from_name(data['owner'])
       query[:api].error!("Owner does not exist: '#{data['owner']}'", 422) unless owner_id
       data['owner_id'] = owner_id
@@ -103,6 +98,7 @@ class CDKLayer < Sequel::Model(:layers)
     case query[:method]
     when :post
       # create
+
       layer_id = id_from_name(data['name'])
       query[:api].error!("Layer already exists: #{data['name']}", 422) if layer_id
 
@@ -113,6 +109,12 @@ class CDKLayer < Sequel::Model(:layers)
 
       unless (data.keys & required_keys).sort == required_keys.sort
         query[:api].error!("Cannot create layer, keys are missing in POST data: #{(required_keys - data.keys).join(', ')}", 422)
+      end
+
+      # Convert array to pg_array, rename dataSources to data_sources
+      if data['dataSources']
+        data['data_sources'] = Sequel.pg_array(data['dataSources'])
+        data.delete('dataSources')
       end
 
       Sequel::Model.db.transaction do
@@ -128,7 +130,6 @@ class CDKLayer < Sequel::Model(:layers)
       end
       update_layer_hash
 
-
     when :patch
       # update
       query[:api].error!('Layer name cannot be changed', 422) if data['name']
@@ -137,6 +138,12 @@ class CDKLayer < Sequel::Model(:layers)
       if layer_id
         owner = CDKOwner.verify_owner_for_layer(query, layer_id)
         data['owner_id'] = owner.admin ? (data['owner_id'] || owner.id) : owner.id
+
+        # Convert array to pg_array, rename dataSources to data_sources
+        if data['dataSources']
+          data['data_sources'] = Sequel.pg_array(data['dataSources'])
+          data.delete('dataSources')
+        end
 
         Sequel::Model.db.transaction do
           if data['fields']
@@ -179,7 +186,7 @@ class CDKLayer < Sequel::Model(:layers)
       query[:api].error!("Layer 'none' cannot be deleted", 422)
     elsif layer_id
       CDKOwner.verify_owner_for_layer(query, layer_id)
-      
+
       # Move objects on layer to be deleted which still have
       # data on other layer to layer = -1
       # Example:
@@ -278,7 +285,7 @@ class CDKLayer < Sequel::Model(:layers)
     layer = self.get_layer(id)
     layer[:name]
   end
-  
+
 
   ##########################################################################################
   # Real-time/web service layers:

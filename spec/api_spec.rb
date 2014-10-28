@@ -23,8 +23,8 @@ describe CitySDKLD::API do
         header "CONTENT_TYPE", "application/json"
         get "/session?name=citysdk&password=ChangeMeNow"
         last_response.status.should == 200
-        $citysdk_key = body_json(last_response)[:session_key]
-        $citysdk_key.should_not == nil
+        $key_citysdk = body_json(last_response)[:session_key]
+        $key_citysdk.should_not == nil
       end
     end
 
@@ -40,7 +40,7 @@ describe CitySDKLD::API do
 
       it "creates owner 'bert'" do
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
         post "/owners", read_test_data('owner_bert.json')
         last_response.status.should == 201
         body_json(last_response)[:name].should == 'bert'
@@ -50,13 +50,13 @@ describe CitySDKLD::API do
         header "CONTENT_TYPE", "application/json"
         get "/session?name=bert&password=abcABC123"
         last_response.status.should == 200
-        $bert_key = body_json(last_response)[:session_key]
-        $bert_key.should_not == nil
+        $key_bert = body_json(last_response)[:session_key]
+        $key_bert.should_not == nil
       end
 
       it "creates another owner 'bert' " do
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
         post "/owners", read_test_data('owner_bert.json')
         last_response.status.should == 422
         body_json(last_response).should == {error: "Owner already exists: bert"}
@@ -64,7 +64,7 @@ describe CitySDKLD::API do
 
       it "creates owner 'tom' with a too simple password" do
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
         post "/owners", read_test_data('owner_tom.json').gsub('ABCabc456', 'nix')
         last_response.status.should == 422
         body_json(last_response).should == {error: 'Password needs to be longer, or contain numbers, capitals or symbols'}
@@ -72,7 +72,7 @@ describe CitySDKLD::API do
 
       it "creates owner 'tom'" do
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
         post "/owners", read_test_data('owner_tom.json')
         last_response.status.should == 201
         body_json(last_response)[:name].should == 'tom'
@@ -80,7 +80,7 @@ describe CitySDKLD::API do
 
       it "creates owner 'tom' without admin authorization" do
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
+        header "X-Auth", $key_bert
         post "/owners", read_test_data('owner_tom.json')
         last_response.status.should == 401
         body_json(last_response).should == {error: "Operation requires administrative authorization"}
@@ -88,17 +88,17 @@ describe CitySDKLD::API do
 
       it "creates owner 'rutger'" do
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
         post "/owners", read_test_data('owner_rutger.json')
         last_response.status.should == 201
         body_json(last_response)[:name].should == 'rutger'
       end
 
       it "creates owner '[tom] " do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_citysdk
         data = read_test_data_json 'owner_tom.json'
         data[:name] = '[tom]'
-        header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $citysdk_key
         post "/owners", data.to_json
         last_response.status.should == 422
         body_json(last_response).should == {error: "'name' can only contain alphanumeric characters, underscores and periods"}
@@ -107,16 +107,16 @@ describe CitySDKLD::API do
 
     describe "PATCH /owners" do
       it "edits owner 'bert' " do
-        fullname = 'Bert “😩” Spaan'
-        header "X-Auth", $bert_key
+        header "X-Auth", $key_bert
         header "CONTENT_TYPE", "application/json"
+        fullname = 'Bert “😩” Spaan'
         patch "/owners/bert", {fullname: fullname}.to_json
         last_response.status.should == 200
         body_json(last_response)[:fullname].should == fullname
       end
 
       it "edits owner 'bert', set role to admin " do
-        header "X-Auth", $bert_key
+        header "X-Auth", $key_bert
         header "CONTENT_TYPE", "application/json"
         patch "/owners/bert", {admin: true}.to_json
         last_response.status.should == 401
@@ -124,19 +124,19 @@ describe CitySDKLD::API do
       end
 
       it "edits owner 'tom' " do
-        website = 'http://demeyer.nl/Lembeh-2014'
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
+        website = 'http://demeyer.nl/Lembeh-2014'
         patch "/owners/tom", {website: website}.to_json
         last_response.status.should == 200
         body_json(last_response)[:website].should == website
       end
 
       it "edits name of owner 'tom''" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_citysdk
         data = read_test_data_json 'owner_tom.json'
         data[:name] = 'tommie'
-        header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $citysdk_key
         patch "/owners/tom", data.to_json
         last_response.status.should == 422
         body_json(last_response).should == {error: "Owner name cannot be changed"}
@@ -160,40 +160,39 @@ describe CitySDKLD::API do
 
     end
 
-
     ######################################################################
     # layers:
     ######################################################################
 
     describe "POST /layers" do
       it "bert creates layer without authorization" do
+        header "CONTENT_TYPE", "application/json"
         data = read_test_data_json 'layer_bert.dierenwinkels.json'
         data.delete(:fields)
         data.delete(:@context)
-        header "CONTENT_TYPE", "application/json"
         post "/layers", data.to_json
         last_response.status.should == 401
         body_json(last_response).should == { error: "Operation requires authorization"}
       end
 
       it "bert creates layer in wrong domain" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_bert
         data = read_test_data_json 'layer_bert.dierenwinkels.json'
         data.delete(:fields)
         data.delete(:@context)
         data[:name] = 'pipo.dierenwinkels'
-        header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
         post "/layers", data.to_json
         last_response.status.should == 403
-        body_json(last_response).should == { error: "Owner has no access to domain 'pipo'" }
+        body_json(last_response).should == {error: "Owner has no access to domain 'pipo'"}
       end
 
       it "creates layer 'bert.dierenwinkels'" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_bert
         data = read_test_data_json 'layer_bert.dierenwinkels.json'
         data.delete(:fields)
         data.delete(:@context)
-        header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
         post "/layers", data.to_json
         last_response.status.should == 201
         # puts JSON.pretty_generate(body_json(last_response)[:features][0])
@@ -202,7 +201,7 @@ describe CitySDKLD::API do
 
       it "creates layer 'tom.achtbanen'" do
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
         post "/layers", read_test_data('layer_tom.achtbanen.json')
         last_response.status.should == 201
         body_json(last_response)[:features][0][:properties][:name].should == 'tom.achtbanen'
@@ -210,7 +209,7 @@ describe CitySDKLD::API do
 
       it "creates layer 'tom.steden'" do
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
         post "/layers", read_test_data('layer_tom.steden.json')
         last_response.status.should == 201
         body_json(last_response)[:features][0][:properties][:name].should == 'tom.steden'
@@ -218,7 +217,7 @@ describe CitySDKLD::API do
 
       it "creates layer 'rutger.openingstijden'" do
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
         post "/layers", read_test_data('layer_rutger.openingstijden.json')
         last_response.status.should == 201
         body_json(last_response)[:features][0][:properties][:name].should == 'rutger.openingstijden'
@@ -227,26 +226,26 @@ describe CitySDKLD::API do
 
     describe "PATCH /layers" do
       it "edits layer 'bert.dierenwinkels' without authorization" do
-        title = 'Alle dierenwinkels in Nederland - 🐢🐭🐴'
         header "CONTENT_TYPE", "application/json"
+        title = 'Alle dierenwinkels in Nederland - 🐢🐭🐴'
         patch "/layers/bert.dierenwinkels", {title: title}.to_json
         last_response.status.should == 401
-        body_json(last_response).should == { error: "Operation requires owners' authorization" }
+        body_json(last_response).should == {error: "Operation requires correct authorization - must be resource's owner or admin"}
       end
 
       it "edits layer 'bert.dierenwinkels' " do
-        title = 'Alle dierenwinkels in Nederland - 🐢🐭🐴'
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
+        header "X-Auth", $key_bert
+        title = 'Alle dierenwinkels in Nederland - 🐢🐭🐴'
         patch "/layers/bert.dierenwinkels", {title: title}.to_json
         last_response.status.should == 200
         body_json(last_response)[:features][0][:properties][:title].should == title
       end
 
       it "set owner of 'bert.dierenwinkels' to 'rutger'" do
-        owner = 'rutger'
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
+        header "X-Auth", $key_bert
+        owner = 'rutger'
         patch "/layers/bert.dierenwinkels", {owner: owner}.to_json
         last_response.status.should == 200
       end
@@ -258,18 +257,18 @@ describe CitySDKLD::API do
       end
 
       it "sets owner of 'bert.dierenwinkels' to owner that does not exist" do
-        owner = 'jos'
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
+        owner = 'jos'
         patch "/layers/bert.dierenwinkels", {owner: owner}.to_json
         last_response.status.should == 422
         body_json(last_response).should == {error: "Owner does not exist: 'jos'"}
       end
 
       it "sets owner of layer 'bert.dierenwinkels' back to 'bert'" do
-        owner = 'bert'
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
+        owner = 'bert'
         patch "/layers/bert.dierenwinkels", {owner: owner}.to_json
         last_response.status.should == 200
       end
@@ -314,9 +313,9 @@ describe CitySDKLD::API do
       end
 
       it "sets JSON-LD context of layer 'bert.dierenwinkels'" do
-        data = read_test_data_json 'layer_bert.dierenwinkels.json'
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
+        header "X-Auth", $key_bert
+        data = read_test_data_json 'layer_bert.dierenwinkels.json'
         put "/layers/bert.dierenwinkels/@context", data[:@context].to_json
         last_response.status.should == 200
         body_json(last_response).should == data[:@context]
@@ -350,7 +349,7 @@ describe CitySDKLD::API do
         data = read_test_data_json 'layer_bert.dierenwinkels.json'
         data[:fields].each do |field|
           header "CONTENT_TYPE", "application/json"
-          header "X-Auth", $bert_key
+          header "X-Auth", $key_bert
           post "/layers/bert.dierenwinkels/fields", field.to_json
           last_response.status.should == 201
           compare_hash(body_json(last_response), field).should == true
@@ -358,32 +357,32 @@ describe CitySDKLD::API do
       end
 
       it "creates single field for layer 'bert.dierenwinkels'" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_bert
         field = {
           name: "field",
           description: "1, 2, 3, 4, 5!"
         }
-        header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
         post "/layers/bert.dierenwinkels/fields", field.to_json
         last_response.status.should == 201
         body_json(last_response).should == field
       end
 
       it "edits single field 'field' for layer 'bert.dierenwinkels'" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_bert
         field = {
           name: "field",
           description: "1, 2, 3, 4, 5!",
           lang: "nl"
         }
-        header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
         patch "/layers/bert.dierenwinkels/fields/field", {lang: field[:lang]}.to_json
         last_response.status.should == 200
         body_json(last_response).should == field
       end
 
       it "deletes single field 'field' for layer 'bert.dierenwinkels'" do
-        header "X-Auth", $bert_key
+        header "X-Auth", $key_bert
         delete "/layers/bert.dierenwinkels/fields/field"
         last_response.status.should == 204
         last_response.body.should == ''
@@ -403,41 +402,153 @@ describe CitySDKLD::API do
       end
     end
 
-    describe "POST objects" do
+    describe "POST/PATCH objects" do
 
       ######################################################################
       # objects + data:
       ######################################################################
 
       it "creates objects and data on layer 'bert.dierenwinkels'" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_bert
         data = read_test_data_json 'objects_bert.dierenwinkels.json'
         data = {
           type: "FeatureCollection",
           features: data[:features][0..-2]
         }
-        header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
         post "/layers/bert.dierenwinkels/objects", data.to_json
         last_response.status.should == 201
         body_json(last_response).length.should == data[:features].length
       end
 
       it "creates single object with data on layer 'bert.dierenwinkels'" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_bert
         data = read_test_data_json 'objects_bert.dierenwinkels.json'
         data = data[:features][-1]
-        header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
         post "/layers/bert.dierenwinkels/objects", data.to_json
         last_response.status.should == 201
         body_json(last_response).length.should == 1
       end
 
+      it "creates single object with id containing '.'" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_bert
+        data = {
+          type: "Feature",
+          properties: {
+            id: "a.b",
+            title: "Winkel met 'n Punt",
+            data: {
+              icon: "🚤",
+            }
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [4.28741, 52.07106]
+          }
+        }
+        post "/layers/bert.dierenwinkels/objects", data.to_json
+        last_response.status.should == 201
+        get "objects/bert.dierenwinkels.a.b"
+        body_json(last_response)[:features].length.should == 1
+      end
+
+      it "edits data of single object" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_bert
+        data = {
+          type: "Feature",
+          properties: {
+            data: {
+              icon: "🙍",
+            }
+          }
+        }
+        patch "/objects/bert.dierenwinkels.a.b", data.to_json
+        last_response.status.should == 200
+        body_json(last_response)[0].should == {cdk_id: 'bert.dierenwinkels.a.b'}
+        get "objects/bert.dierenwinkels.a.b"
+        body_json(last_response)[:features][0][:properties][:layers][:"bert.dierenwinkels"][:data][:icon].should == "🙍"
+      end
+
+      it "edits title of single object" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_bert
+        data = {
+          type: "Feature",
+          properties: {
+            title: "Winkel met een punt"
+          }
+        }
+        patch "/objects/bert.dierenwinkels.a.b", data.to_json
+        last_response.status.should == 200
+        get "objects/bert.dierenwinkels.a.b"
+        body_json(last_response)[:features][0][:properties][:title].should == "Winkel met een punt"
+      end
+
+      it "edits geometry of single object" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_bert
+        data = {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [4.040404, 52.00025]
+          }
+        }
+        patch "/objects/bert.dierenwinkels.a.b", data.to_json
+        last_response.status.should == 200
+        get "objects/bert.dierenwinkels.a.b"
+        body_json(last_response)[:features][0][:geometry][:coordinates] == [4.040404, 52.00025]
+      end
+
+      it "edits geometry, title and data of single object" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_bert
+        data = {
+          type: "Feature",
+          properties: {
+            title: "Winkel met de Punt",
+            data: {
+              icon: "🚚",
+            }
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [4.444444, 52.525252]
+          }
+        }
+        patch "/objects/bert.dierenwinkels.a.b", data.to_json
+        last_response.status.should == 200
+        get "objects/bert.dierenwinkels.a.b"
+        body_json(last_response)[:features][0].should == {
+          type: "Feature",
+          properties: {
+            cdk_id: "bert.dierenwinkels.a.b",
+            title: "Winkel met de Punt",
+            layer: "bert.dierenwinkels",
+            layers: {
+              :"bert.dierenwinkels" => {
+                data: {
+                  icon: "🚚",
+                }
+              }
+            }
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [4.444444, 52.525252]
+          }
+        }
+      end
+
       it "creates single object without geometry" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_bert
         data = read_test_data_json 'objects_bert.dierenwinkels.json'
         data = data[:features][-1]
         data.delete(:geometry)
-        header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
         post "/layers/bert.dierenwinkels/objects", data.to_json
         last_response.status.should == 422
         body_json(last_response).should == {error: "New object without geometry encountered"}
@@ -462,105 +573,104 @@ describe CitySDKLD::API do
           ]
         }
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
+        header "X-Auth", $key_bert
         post "/layers/bert.dierenwinkels/objects", data.to_json
         body_json(last_response).should == {error: "GeoJSON GeometryCollections are not allowed as object geometry"}
       end
 
       it "creates single object with invalid GeoJSON geometry" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_bert
         data = read_test_data_json 'objects_bert.dierenwinkels.json'
         data = data[:features][-1]
         data[:geometry] = {
           type: "SuperPoint",
           coordinates: [5.16521, 52.22154]
         }
-        header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
         post "/layers/bert.dierenwinkels/objects", data.to_json
         body_json(last_response).should == {error: "Invalid GeoJSON geometry encountered"}
       end
 
       it "creates single object with 3D Point geometry" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_bert
         data = read_test_data_json 'objects_bert.dierenwinkels.json'
         data = data[:features][-1]
         data[:geometry] = {
           type: "Point",
           coordinates: [5.16521, 52.22154, -1]
         }
-        header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
         post "/layers/bert.dierenwinkels/objects", data.to_json
         body_json(last_response).should == {error: "Geometry has Z dimension but column does not"}
       end
 
       it "creates single object with duplicate id" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_bert
         data = read_test_data_json 'objects_bert.dierenwinkels.json'
         data = data[:features][-1]
-        header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
         post "/layers/bert.dierenwinkels/objects", data.to_json
         last_response.status.should == 422
         body_json(last_response).should == {error: "cdk_id must be unique: 'bert.dierenwinkels.3'"}
       end
 
       it "creates single object without id" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_bert
         data = read_test_data_json 'objects_bert.dierenwinkels.json'
         data = data[:features][-1]
         data[:properties].delete(:id)
-        header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
         post "/layers/bert.dierenwinkels/objects", data.to_json
         last_response.status.should == 422
         body_json(last_response).should == {error: "All objects must either have 'id' or 'cdk_id' property"}
       end
 
       it "adds data to cdk_id that doesn't exist" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_bert
         data = read_test_data_json 'objects_bert.dierenwinkels.json'
         data = data[:features][-1]
         data.delete(:geometry)
         data[:properties].delete(:title)
         data[:properties].delete(:id)
         data[:properties][:cdk_id] = '12345'
-        header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
         post "/layers/bert.dierenwinkels/objects", data.to_json
         last_response.status.should == 422
         body_json(last_response).should == {error: "Object not found: '#{data[:properties][:cdk_id]}'"}
       end
 
       it "creates single object without data" do
+        header "CONTENT_TYPE", "application/json"
+        header "X-Auth", $key_bert
         data = read_test_data_json 'objects_bert.dierenwinkels.json'
         data = data[:features][-1]
         data[:properties].delete(:data)
-        header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
         post "/layers/bert.dierenwinkels/objects", data.to_json
         last_response.status.should == 422
         body_json(last_response).should == {error: "Object without data encountered"}
       end
 
-
       it "creates objects and data on layer that doesn't exist" do
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $bert_key
+        header "X-Auth", $key_bert
         post "/layers/bert.bioscopen/objects", read_test_data('objects_bert.dierenwinkels.json')
         last_response.status.should == 404
         body_json(last_response).should == {error: "Layer not found: 'bert.bioscopen'"}
       end
 
       it "creates objects and data on layer 'tom.achtbanen'" do
-        data = read_test_data_json 'objects_tom.achtbanen.json'
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
+        data = read_test_data_json 'objects_tom.achtbanen.json'
         post "/layers/tom.achtbanen/objects", data.to_json
         last_response.status.should == 201
         body_json(last_response).length.should == data[:features].length
       end
 
       it "creates objects and data on layer 'tom.steden'" do
-        data = read_test_data_json 'objects_tom.steden.json'
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
+        data = read_test_data_json 'objects_tom.steden.json'
         post "/layers/tom.steden/objects", data.to_json
         last_response.status.should == 201
         body_json(last_response).length.should == data[:features].length
@@ -577,32 +687,26 @@ describe CitySDKLD::API do
       end
 
       it "adds data on layer 'rutger.openingstijden' to existing objects" do
-        data = read_test_data_json 'objects_rutger.openingstijden.json'
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
+        data = read_test_data_json 'objects_rutger.openingstijden.json'
         post "/layers/rutger.openingstijden/objects", data.to_json
         last_response.status.should == 201
         body_json(last_response).length.should == data[:features].length
       end
 
       it "adds duplicate data on layer 'rutger.openingstijden' to existing objects" do
-        data = read_test_data_json 'objects_rutger.openingstijden.json'
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
+        data = read_test_data_json 'objects_rutger.openingstijden.json'
         post "/layers/rutger.openingstijden/objects", data.to_json
         last_response.status.should == 422
         body_json(last_response).should == {error: "Object already has data on this layer"}
       end
 
-      # TODO: add test to make sure adding data to existing object (with cdk_id) while also
-      # specifying geometry/title is not allowed
-
-      # TODO: add tests:
-      #   - edit data of single object
-      #       curl --data "{\"url\": \"http://vis.com/hond\"}" http://localhost:9292/objects/n46127914/layers/artsholland
-      #       curl -X PUT --data "{\"chips\": \"nee\"}" http://localhost:9292/objects/n46127914/layers/artsholland
-      #       curl --request PATCH --data "{\"url\": \"http://bertspaan.nl/\"}" http://localhost:9292/objects/n46127914/layers/artsholland
-      #   - edit single object's geometry/title
+      # TODO:
+      #   - add test to make sure adding data to existing object (with cdk_id) while also
+      #     specifying geometry/title is not allowed
       #   - edit multiple object's geometry/title (should this even be possible?)
       #   - check JSON-LD and Turtle serializations of multiple objects
       #   - check object-on-layer meta-data: /layers/rutger.openingstijden/objects/bert.dierenwinkels.1
@@ -700,7 +804,6 @@ describe CitySDKLD::API do
         last_response.header['Content-Type'].should == 'application/json'
         body_json(last_response).has_key?(:@context).should == true
       end
-
 
       it "checks if pagination Link headers are set for query on multiple layers" do
         get "/objects?layer=rutger.openingstijden,bert.dierenwinkels&per_page=3&page=2"
@@ -801,7 +904,7 @@ describe CitySDKLD::API do
     describe "DELETE" do
 
       it "deletes single object 'bert.dierenwinkels.1'" do
-        header "X-Auth", $bert_key
+        header "X-Auth", $key_bert
         delete "/objects/bert.dierenwinkels.1"
         last_response.status.should == 204
         last_response.body.should == ''
@@ -816,7 +919,7 @@ describe CitySDKLD::API do
       end
 
       it "deletes data on layer 'rutger.openingstijden' on single object 'bert.dierenwinkels.1'" do
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
         delete "/objects/bert.dierenwinkels.1/layers/rutger.openingstijden"
         last_response.status.should == 204
         last_response.body.should == ''
@@ -829,7 +932,7 @@ describe CitySDKLD::API do
       end
 
       it "deletes layer 'bert.dierenwinkels'" do
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
         delete "/layers/bert.dierenwinkels"
         last_response.status.should == 204
         last_response.body.should == ''
@@ -844,7 +947,7 @@ describe CitySDKLD::API do
       end
 
       it "deletes owner 'rutger'" do
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
         delete "/owners/rutger"
         last_response.status.should == 204
         last_response.body.should == ''
@@ -857,14 +960,14 @@ describe CitySDKLD::API do
       end
 
       it "deletes owner 'bert'" do
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
         delete "/owners/bert"
         last_response.status.should == 204
         last_response.body.should == ''
       end
 
       it "deletes owner 'tom'" do
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
         delete "/owners/tom"
         last_response.status.should == 204
         last_response.body.should == ''

@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require_relative 'serializer.rb'
+require_relative 'geojson.rb'
 
 module CitySDKLD
 

@@ -1,5 +1,6 @@
 {
   "endpoint": {
+    "url": "http://localhost:9292",
     "title": "CitySDK LD API - Amsterdam",
     "site": "http://citysdk.waag.org/",
     "organization": "Waag Society",
@@ -13,6 +14,10 @@
       "type":"Point",
       "coordinates": [4.90032,52.37278]
     }
+  },
+  "owner": {
+    "name": "citysdk",
+     "password": "ChangeMeNow"
   },
   "db": {
     "host": "localhost",

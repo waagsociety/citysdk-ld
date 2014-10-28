@@ -1,44 +1,43 @@
 {
-    "entities": [
-        {
-            "type": "Room",
-            "isPattern": "false",
-            "id": "Room7"
-        }
-    ],
-    "restriction": {
-        "scopes": [
-            {
-                "type": "FIWARE_Location",
-                "value": {
-                    "polygon": {
-                        "inverted": "false",
-                        "vertices": [
-                            {
-                                "latitude": "52.4301",
-                                "longitude": "4.7763"
-                            },
-                            {
-                                "latitude": "52.4259",
-                                "longitude": "5.0317"
-                            },
-                            {
-                                "latitude": "52.2875",
-                                "longitude": "5.0304"
-                            },
-                            {
-                                "latitude": "52.3320",
-                                "longitude": "4.7914"
-                            },
-                            {
-                              "latitude": "52.4301",
-                              "longitude": "4.7763"
-                            }
-                        ]
-                    }
-                }
-            }
-        ]
+  "entities": [
+    {
+      "id": "Room7",
+      "isPattern": "false",
+      "type": "Room"
     }
+  ],
+  "restriction": {
+    "scopes": [
+      {
+        "type": "FIWARE_Location",
+        "value": {
+          "polygon": {
+            "inverted": "false",
+            "vertices": [
+              {
+                "latitude": "52.4301",
+                "longitude": "4.7763"
+              },
+              {
+                "latitude": "52.4259",
+                "longitude": "5.0317"
+              },
+              {
+                "latitude": "52.2875",
+                "longitude": "5.0304"
+              },
+              {
+                "latitude": "52.3320",
+                "longitude": "4.7914"
+              },
+              {
+                "latitude": "52.4301",
+                "longitude": "4.7763"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
 }
-

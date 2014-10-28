@@ -4,10 +4,10 @@
   "description": "OpenStreetMap",
   "category": "geography",
   "subcategory": "base",
-  "data_sources":  [
+  "dataSources": [
     "http://www.openstreetmap.org/"
   ],
   "licence": "http://www.openstreetmap.org/copyright",
-  "rdf_type": "cdk:OSM",
+  "rdf:type": "cdk:OSM",
   "@context": {}
 }

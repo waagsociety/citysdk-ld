@@ -1,105 +1,104 @@
 {
-    "contextElements": [
+  "contextElements": [
+    {
+      "type": "Room",
+      "isPattern": "false",
+      "id": "Room4",
+      "attributes": [
         {
-            "type": "Room",
-            "isPattern": "false",
-            "id": "Room4",
-            "attributes": [
-              {
-                  "name": "temperature",
-                  "type": "centigrade",
-                  "value": "23"
-              },
-              {
-                  "name": "pressure",
-                  "type": "mmHg",
-                  "value": "620"
-              },
-              {
-                 "name": "position",
-                 "type": "coords",
-                 "value": "52.37278, 0.90032",
-                 "metadatas": [
-                   {
-                     "name": "location",
-                     "type": "string",
-                     "value": "WSG84"
-                   }
-                 ]
-               }
-            ]
+          "name": "temperature",
+          "type": "centigrade",
+          "value": "23"
         },
         {
-            "type": "Room",
-            "isPattern": "false",
-            "id": "Room7",
-            "attributes": [
-              {
-                  "name": "temperature",
-                  "type": "centigrade",
-                  "value": "2"
-              },
-              {
-                  "name": "pressure",
-                  "type": "mmHg",
-                  "value": "710"
-              },
-              {
-                 "name": "position",
-                 "type": "coords",
-                 "value": "52.3714,4.8961",
-                 "metadatas": [
-                   {
-                     "name": "location",
-                     "type": "string",
-                     "value": "WSG84"
-                   }
-                 ]
-               }
-              
-            ]
+          "name": "pressure",
+          "type": "mmHg",
+          "value": "620"
         },
         {
-            "type": "Room",
-            "isPattern": "false",
-            "id": "Kamer11",
-            "attributes": [
-              {
-                  "name": "temperature",
-                  "type": "centigrade",
-                  "value": "12"
-              },
-              {
-                  "name": "pressure",
-                  "type": "mmHg",
-                  "value": "711"
-              },
-              {
-                 "name": "position",
-                 "type": "coords",
-                 "value": "52.3714,4.8961",
-                 "metadatas": [
-                   {
-                     "name": "location",
-                     "type": "string",
-                     "value": "WSG84"
-                   }
-                 ]
-               }
-            ]
-        },
-        {
-            "type": "House",
-            "isPattern": "false",
-            "id": "House1",
-            "attributes": [
-              {
-                  "name": "rooms",
-                  "type": "count",
-                  "value": "3"
-              }
-            ]
+          "name": "position",
+          "type": "coords",
+          "value": "52.37278, 0.90032",
+          "metadatas": [
+            {
+              "name": "location",
+              "type": "string",
+              "value": "WSG84"
+            }
+          ]
         }
-    ],
-    "updateAction": "APPEND"
+      ]
+    },
+    {
+      "type": "Room",
+      "isPattern": "false",
+      "id": "Room7",
+      "attributes": [
+        {
+          "name": "temperature",
+          "type": "centigrade",
+          "value": "2"
+        },
+        {
+          "name": "pressure",
+          "type": "mmHg",
+          "value": "710"
+        },
+        {
+          "name": "position",
+          "type": "coords",
+          "value": "52.3714,4.8961",
+          "metadatas": [
+            {
+              "name": "location",
+              "type": "string",
+              "value": "WSG84"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Room",
+      "isPattern": "false",
+      "id": "Kamer11",
+      "attributes": [
+        {
+          "name": "temperature",
+          "type": "centigrade",
+          "value": "12"
+        },
+        {
+          "name": "pressure",
+          "type": "mmHg",
+          "value": "711"
+        },
+        {
+          "name": "position",
+          "type": "coords",
+          "value": "52.3714,4.8961",
+          "metadatas": [
+            {
+              "name": "location",
+              "type": "string",
+              "value": "WSG84"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "House",
+      "isPattern": "false",
+      "id": "House1",
+      "attributes": [
+        {
+          "name": "rooms",
+          "type": "count",
+          "value": "3"
+        }
+      ]
+    }
+  ],
+  "updateAction": "APPEND"
 }

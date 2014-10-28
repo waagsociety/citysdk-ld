@@ -19,7 +19,7 @@ class CDKObjectDatum < Sequel::Model(:object_data)
 
   def self.data_valid?(data)
     # Object data can never be empty
-    
+
     # We are still using postgres's hstore to store data,
     # data should be unnested.
     # The following classes are allowed for value.class:

@@ -45,7 +45,7 @@ module CitySDKLD
             description: layer[:description],
             category: layer[:category],
             organization: layer[:organization],
-            data_sources: layer[:data_sources],
+            dataSources: layer[:data_sources],
             update_rate: layer[:update_rate],
             webservice_url: layer[:webservice_url],
             imported_at: layer[:imported_at],
