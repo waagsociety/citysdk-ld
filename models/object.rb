@@ -335,7 +335,8 @@ class CDKObject < Sequel::Model(:objects)
 
       if feature['geometry']
         set_srid = Sequel.function(:ST_SetSRID, Sequel.function(:ST_GeomFromGeoJSON, feature['geometry'].to_json), feature['crs']['properties']['code'])
-        db_hash[:geom] = Sequel.function(:ST_Transform, set_srid, 4326)
+        force_rhr = Sequel.function(:ST_ForceRHR, set_srid)
+        db_hash[:geom] = Sequel.function(:ST_Transform, force_rhr, 4326)
       end
     else
       if feature['geometry']
