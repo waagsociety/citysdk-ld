@@ -86,7 +86,7 @@ module CitySDKLD
               if @layers[layer][:@context]
 
                 types = [':LayerData']
-                types << @layers[layer][:'rdf:type'] if @layers[layer][:'rdf:type']
+                types << @layers[layer][:rdf_type] if @layers[layer][:rdf_type]
 
                 jsonld = {
                   :@context => @layers[layer][:@context],

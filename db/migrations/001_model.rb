@@ -117,7 +117,7 @@ Sequel.migration do
 
       # Indexes:
       index :layer_id
-      full_text_index :title 
+      full_text_index :title
       full_text_index :cdk_id
       index Sequel.function(:lower, :title)
     end
@@ -160,7 +160,7 @@ Sequel.migration do
       String :type
       String :unit
       String :lang
-      String :equivalentProperty
+      String :equivalent_property
       String :description
     end
 

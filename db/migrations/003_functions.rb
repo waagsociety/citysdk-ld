@@ -92,7 +92,6 @@ Sequel.migration do
     $$ language plpgsql;
     SQL
 
-
   end
 
   down do

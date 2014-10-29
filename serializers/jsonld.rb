@@ -62,7 +62,7 @@ module CitySDKLD
               end
 
               types = [':LayerData']
-              types << @layers[l][:'rdf:type'] if @layers[l][:'rdf:type']
+              types << @layers[l][:rdf_type] if @layers[l][:rdf_type]
 
               layer[:data] = {
                 :@id => ":objects/#{cdk_id}/layers/#{l}",

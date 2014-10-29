@@ -8,11 +8,11 @@ class CDKLayer < Sequel::Model(:layers)
 
   KEY_LAYER_NAMES = "layer_names"
   KEY_LAYER_DEPENDENCIES = "layer_dependencies"
-  
+
   def self.prefixes_valid?(h)
     # Object data can never be empty
     return false if h.class != Hash
-    
+
     # We are still using postgres's hstore to store data,
     # data should be unnested.
     # The following classes are allowed for value.class:
@@ -24,7 +24,7 @@ class CDKLayer < Sequel::Model(:layers)
     # data is valid when not nested
     not nested
   end
-  
+
 
   def self.execute_write(query)
     data = query[:data]
@@ -35,11 +35,11 @@ class CDKLayer < Sequel::Model(:layers)
       'name',
       'title',
       'description',
-      'dataSources',
+      'data_sources',
       'category',
       'subcategory',
       'licence',
-      'rdf:type'
+      'rdf_type'
     ]
 
     optional_keys = [
@@ -57,7 +57,7 @@ class CDKLayer < Sequel::Model(:layers)
     unless (data.keys - (required_keys + optional_keys)).empty?
       query[:api].error!("Incorrect keys found in layer POST data: #{(data.keys - (required_keys + optional_keys)).join(', ')}", 422)
     end
-    
+
     # Convert dependant layer to id
     if data['depends']
       data['depends_on_layer_id'] = id_from_name(data['depends']) || '0'
@@ -79,7 +79,7 @@ class CDKLayer < Sequel::Model(:layers)
     end
     data.delete('owner')
 
-    if(data['rdf_prefixes']) 
+    if(data['rdf_prefixes'])
       if self.prefixes_valid?(data['rdf_prefixes'])
         data['rdf_prefixes'] = Sequel.hstore(data['rdf_prefixes'])
       else
@@ -111,10 +111,8 @@ class CDKLayer < Sequel::Model(:layers)
         query[:api].error!("Cannot create layer, keys are missing in POST data: #{(required_keys - data.keys).join(', ')}", 422)
       end
 
-      # Convert array to pg_array, rename dataSources to data_sources
-      if data['dataSources']
-        data['data_sources'] = Sequel.pg_array(data['dataSources'])
-        data.delete('dataSources')
+      if data['data_sources']
+        data['data_sources'] = Sequel.pg_array(data['data_sources'])
       end
 
       Sequel::Model.db.transaction do
@@ -139,10 +137,8 @@ class CDKLayer < Sequel::Model(:layers)
         owner = CDKOwner.verify_owner_for_layer(query, layer_id)
         data['owner_id'] = owner.admin ? (data['owner_id'] || owner.id) : owner.id
 
-        # Convert array to pg_array, rename dataSources to data_sources
-        if data['dataSources']
-          data['data_sources'] = Sequel.pg_array(data['dataSources'])
-          data.delete('dataSources')
+        if data['data_sources']
+          data['data_sources'] = Sequel.pg_array(data['data_sources'])
         end
 
         Sequel::Model.db.transaction do
@@ -338,7 +334,7 @@ class CDKLayer < Sequel::Model(:layers)
       # Save layer data in memcache without expiration
       key = self.memcached_key(layer[:id].to_s)
       CitySDKLD.memcached_set(key, layer, 0)
-      
+
       names[layer[:name]] = layer[:id]
     end
 

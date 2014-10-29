@@ -3,13 +3,13 @@
   "owner": "tom",
   "title": "Drie grote steden 🏠🏢🏣🏨🏫🏬🏭🏡",
   "description": "Amsterdam, Den Haag en Utrecht",
-  "dataSources": [
+  "data_sources": [
     "http://nl.wikipedia.org/wiki/Den_Haag",
     "http://nl.wikipedia.org/wiki/Utrecht_(stad)",
     "http://nl.wikipedia.org/wiki/Amsterdam"
   ],
   "authoritative": true,
-  "rdf:type": "csdk:City",
+  "rdf_type": "csdk:City",
   "category": "administrative",
   "subcategory": "stats",
   "licence": "unspecified",
@@ -19,7 +19,7 @@
       "type": "",
       "unit": "",
       "lang": "",
-      "equivalentProperty": "",
+      "equivalent_property": "",
       "description": ""
     },
     {
@@ -27,7 +27,7 @@
       "type": "",
       "unit": "",
       "lang": "",
-      "equivalentProperty": "",
+      "equivalent_property": "",
       "description": ""
     }
   ],

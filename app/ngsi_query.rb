@@ -2,7 +2,6 @@
 
 module CitySDKLD
 
-
   class NGSI10
 
     def self.do_query(query)
@@ -82,13 +81,13 @@ module CitySDKLD
     end
 
     def self.updateContext(query)
-      ctResponse = {contextResponses: [], statusCode: {code: "200", reasonPhrase: "OK"}}
+      ct_response = {contextResponses: [], statusCode: {code: "200", reasonPhrase: "OK"}}
       data = query[:data]
       if data['updateAction'] =~ /delete/i
         # delete attributes or contextentities
       else
         data['contextElements'].each do |ce|
-          layer = CDKLayer.where(:'rdf:type' => 'orion:'+ce['type']).or(:'rdf:type' => ce['type']).first
+          layer = CDKLayer.where(rdf_type: 'orion:' + ce['type']).or(rdf_type: ce['type']).first
           if !layer
             layer = self.create_layer(ce, query)
             self.create_object(query,layer,ce)
@@ -100,10 +99,10 @@ module CitySDKLD
               self.create_object(query,layer,ce)
             end
           end
-          ctResponse[:contextResponses] << ce
+          ct_response[:contextResponses] << ce
         end
       end
-      return ctResponse
+      return ct_response
     end
 
     def self.query_one_entity(q)
@@ -128,7 +127,7 @@ module CitySDKLD
       { errorCode: { code: "404", reasonPhrase: "Attribute not found in context element" } }
     end
 
-    def self.get_one_entity(ce,attributes, restriction)
+    def self.get_one_entity(ce, attributes, restriction)
       retvalue = []
       if ce['isPattern'] == true
         pattern = "(.*)\\." + ce['id']
@@ -150,7 +149,7 @@ module CitySDKLD
       retvalue
     end
 
-    def self.get_one_layered_entity(ce,layer,attributes, restriction)
+    def self.get_one_layered_entity(ce, layer, attributes, restriction)
       retvalue = []
       if ce['isPattern'] == true
         pattern = Regexp::quote(layer.name + ".") + ce['id']
@@ -194,49 +193,48 @@ module CitySDKLD
       elm
     end
 
-
     def self.query_contextentity_types(q)
       layer = @count = nil
       @fieldTypes = []
       cetype = q[:params][:cetype]
       attrs = q[:params][:attribute] ? [ q[:params][:attribute] ] : nil
-      ctResponse = {contextResponses: []}
-      layer = CDKLayer.where(:'rdf:type' => 'orion:'+cetype).or(:'rdf:type' => cetype).first
+      ct_response = {contextResponses: []}
+      layer = CDKLayer.where(rdf_type: 'orion:' + cetype).or(rdf_type: cetype).first
       if layer
         self.populate_field_types(layer)
         objects = self.objects_select_filter(CDKObject.where(layer_id: layer.id), nil)
         @count  = CDKObject.where(layer_id: layer.id).count() if @details
         objects.each do |o|
-          ctResponse[:contextResponses] << self.get_one_object({'type'=>cetype}, o, layer, attrs)
+          ctResponse[:contextResponses] << self.get_one_object({'type' => cetype}, o, layer, attrs)
         end
       end
-      return { errorCode: { code: "404", reasonPhrase: "No context elements found" } } if ctResponse[:contextResponses].length == 0
-      ctResponse[:errorCode] = {code: 200, reasonPhrase: "OK", details: "Count: #{@count}" } if @count
-      return ctResponse
+      return { errorCode: { code: "404", reasonPhrase: "No context elements found" } } if ct_response[:contextResponses].length == 0
+      ct_response[:errorCode] = {code: 200, reasonPhrase: "OK", details: "Count: #{@count}" } if @count
+      return ct_response
     end
 
 
     def self.queryContext(query)
       layer = @count = nil
       @fieldTypes = []
-      ctResponse = {contextResponses: []}
+      ct_response = {contextResponses: []}
       data = query[:data]
       attributes = data['attributes']
       data['entities'].each do |ce|
         if ce['type']
-          layer = CDKLayer.where(:'rdf:type' => 'orion:'+ce['type']).or(:'rdf:type' => ce['type']).first
+          layer = CDKLayer.where(rdf_type: 'orion:' + ce['type']).or(rdf_type: ce['type']).first
           if layer
             self.populate_field_types(layer)
-            ctResponse[:contextResponses] += self.get_one_layered_entity(ce,layer,attributes,data['restriction'])
+            ct_response[:contextResponses] += self.get_one_layered_entity(ce, layer, attributes, data['restriction'])
           end
         else
           # typeless query
-          ctResponse[:contextResponses] += self.get_one_entity(ce,attributes,data['restriction'])
+          ctResponse[:contextResponses] += self.get_one_entity(ce, attributes, data['restriction'])
         end
       end
-      return { errorCode: { code: "404", reasonPhrase: "No context elements found" } } if ctResponse[:contextResponses].length == 0
-      ctResponse[:errorCode] = {code: 200, reasonPhrase: "OK", details: "Count: #{@count}" } if @count
-      return ctResponse
+      return { errorCode: { code: "404", reasonPhrase: "No context elements found" } } if ct_response[:contextResponses].length == 0
+      ct_response[:errorCode] = {code: 200, reasonPhrase: "OK", details: "Count: #{@count}" } if @count
+      return ct_response
     end
 
     def self.populate_field_types(l)
@@ -291,19 +289,19 @@ module CitySDKLD
 
     def self.create_layer(data, query)
       layer = {
-        'name' => 'ngsi.'+data['type'].downcase,
-        'title' => data['type'] + " orion ngsi layer",
-        'rdf:type' => 'orion:' + data['type'],
-        'fields' => [],
-        'owner' => "citysdk",
-        'description' => "System-generated, Fi-Ware Orion compatible data layer",
-        'dataSources' => ["NGSI"],
-        'category' => "none",
-        'subcategory' => "",
-        'licence' => "unspecified"
+        name: 'ngsi.'+data['type'].downcase,
+        title: data['type'] + " orion NGSI layer",
+        rdf_type: 'orion:' + data['type'],
+        fields: [],
+        owner: "citysdk",
+        description: "System-generated, Fi-Ware Orion compatible data layer",
+        data_sources: ["NGSI"],
+        category: "none",
+        subcategory: "",
+        licence: "unspecified"
       }
       data['attributes'].each do |a|
-        layer['fields'] << {
+        layer[:fields] << {
           name: a['name'],
           type: a['type'],
           description: ""
@@ -313,7 +311,7 @@ module CitySDKLD
       q[:data] = layer
       q[:method] = :post
       CDKLayer.execute_write(q)
-      CDKLayer.where(:'rdf:type' => 'orion:'+data['type']).first
+      CDKLayer.where(rdf_type: 'orion:' + data['type']).first
     end
 
     def self.polygon(vertices)
@@ -326,7 +324,7 @@ module CitySDKLD
       'POLYGON((' + ret + '))'
     end
 
-    Sequel.function(:ST_SetSRID,p,4326)
+    Sequel.function(:ST_SetSRID, p, 4326)
 
     def self.objects_select_filter(dataset, restriction)
       dataset = dataset.select(:cdk_id, :layer_id, :title,  Sequel.as(Sequel.function(:ST_AsText, Sequel.function(:ST_Centroid, :geom)), :centr))

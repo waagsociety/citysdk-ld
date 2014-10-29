@@ -27,7 +27,7 @@ class CDKField < Sequel::Model(:fields)
       'type',
       'unit',
       'description',
-      'equivalentProperty'
+      'equivalent_property'
     ]
 
     # Make sure POST data contains only valid keys
