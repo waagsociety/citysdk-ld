@@ -41,7 +41,7 @@ class CDKObjectDatum < Sequel::Model(:object_data)
 
     data = query[:data]
     return self.where(true) if data.keys.count == 0
-    if ! data_valid?(data)
+    if !data_valid? data
       query[:api].error!("'data' object in POST data cannot contain arrays or objects", 422)
     end
 
@@ -113,13 +113,13 @@ class CDKObjectDatum < Sequel::Model(:object_data)
 
   def self.db_hash_from_geojson(query, cdk_id, layer_id, feature)
     data = {}
-    if feature['properties'] and feature['properties']['data']
-      data = feature['properties']['data']
+    if feature[:properties] and feature[:properties][:data]
+      data = feature[:properties][:data]
     else
       if layer_id
         layer = CDKLayer.name_from_id(layer_id)
-        if feature['properties'] and feature['properties']['layers'] and feature['properties']['layers'][layer]
-          data = feature['properties']['layers'][layer]
+        if feature[:properties] and feature[:properties][:layers] and feature[:properties][:layers][layer]
+          data = feature[:properties][:layers][layer]
         else
           query[:api].error!("No object data found for object", 422)
         end

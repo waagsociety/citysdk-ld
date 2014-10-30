@@ -12,17 +12,17 @@ class CDKOwner < Sequel::Model(:owners)
     written_owner_id = nil
 
     required_keys = [
-      'name',
-      'email',
-      'website',
-      'fullname',
-      'domains',
-      'organization',
-      'password'
+      :name,
+      :email,
+      :website,
+      :fullname,
+      :domains,
+      :organization,
+      :password
     ]
 
     optional_keys = [
-      'admin'
+      :admin
     ]
 
     # Make sure POST data contains only valid keys
@@ -30,20 +30,20 @@ class CDKOwner < Sequel::Model(:owners)
       query[:api].error!("Incorrect keys found in owner PUT/POST data: #{(data.keys - (required_keys + optional_keys)).join(', ')}", 422)
     end
 
-    if data['password']
-      password = data['password']
+    if data[:password]
+      password = data[:password]
       secure, message = CitySDKLD.password_secure? password
       if secure
-        data['salt'] = Digest::MD5.hexdigest(Random.rand().to_s)
-        data['password'] = Digest::MD5.hexdigest(data['salt'] + password)
+        data[:salt] = Digest::MD5.hexdigest(Random.rand().to_s)
+        data[:password] = Digest::MD5.hexdigest(data[:salt] + password)
       else
         query[:api].error!(message, 422)
       end
     end
 
-    if data['domains']
+    if data[:domains]
       begin
-        data['domains'] = Sequel.pg_array(data['domains'])
+        data[:domains] = Sequel.pg_array(data[:domains])
       rescue
         query[:api].error!('Invalid domains encountered - must be comma-separated list of layer prefixes', 422)
       end
@@ -56,9 +56,9 @@ class CDKOwner < Sequel::Model(:owners)
       # need to be admin to create owners
       self.verify_admin(query)
 
-      owner_id = self.id_from_name data['name']
+      owner_id = self.id_from_name data[:name]
       if owner_id
-        query[:api].error!("Owner already exists: #{data['name']}", 422)
+        query[:api].error!("Owner already exists: #{data[:name]}", 422)
       end
 
       if data.keys.length < required_keys.length
@@ -68,11 +68,11 @@ class CDKOwner < Sequel::Model(:owners)
       written_owner_id = insert(data)
     when :patch
       # update
-      if data['name']
+      if data[:name]
         query[:api].error!('Owner name cannot be changed', 422)
       end
 
-      self.verify_admin(query) if data['admin']
+      self.verify_admin(query) if data[:admin]
 
       owner_id = self.id_from_name query[:params][:owner]
 
@@ -175,7 +175,7 @@ class CDKOwner < Sequel::Model(:owners)
   def self.verify_owner_for_layer(query, layer_id)
     if query[:api].headers['X-Auth']
       owner = self.where(session_key: query[:api].headers['X-Auth']).first
-      layer  = CDKLayer.where(id: layer_id).first
+      layer = CDKLayer.where(id: layer_id).first
       return self.check_session_timeout(query, owner) if owner and (owner[:admin] or (owner[:id] == layer[:owner_id]))
     end
     query[:api].error!("Operation requires correct authorization - must be resource's owner or admin", 401)

@@ -72,7 +72,7 @@ class CDKObject < Sequel::Model(:objects)
 
     CDKOwner.verify_owner_for_layer(query, layer_id)
 
-    unless ["Feature", "FeatureCollection"].include? query[:data]["type"]
+    unless ["Feature", "FeatureCollection"].include? query[:data][:type]
       query[:api].error!("POST data must be GeoJSON Feature or FeatureCollection", 422)
     end
 
@@ -80,70 +80,70 @@ class CDKObject < Sequel::Model(:objects)
     objects = []
     object_data = []
 
-    features = case query[:data]["type"]
+    features = case query[:data][:type]
         when "Feature"
           [query[:data]]
         else
-          query[:data]["features"]
+          query[:data][:features]
         end
 
     query[:api].error!("Request should contain single Feature", 422) if query[:params][:cdk_id] and features.length > 1
 
     features.each do |feature|
       properties = {}
-      properties = feature['properties'] if feature['properties']
+      properties = feature[:properties] if feature[:properties]
 
       if !properties
         if query[:method] == :post
           query[:api].error!("Object without 'properties' encountered", 422)
         end
-      elsif !properties['data'] && !properties['layers']
+      elsif !properties[:data] && !properties[:layers]
         # Objects in PATCH requests do not have to have data, but objects in POST requests do.
         if query[:method] == :post
           query[:api].error!("Object without data encountered", 422)
         end
-      elsif properties['data'] && properties['layers']
+      elsif properties[:data] && properties[:layers]
         query[:api].error!("Object data must be in 'data' object, or in nested 'layers' object - not both", 422)
-      elsif properties['layer']
+      elsif properties[:layer]
         query[:api].error!("Object's layer cannot be set or changed with POST data", 422)
-      elsif not (properties.keys - ['cdk_id', 'id', 'data', 'layers', 'title']).empty?
-        msg = properties['cdk_id'] ? "cdk_id = '#{properties['cdk_id']}'" : "id = '#{properties['id']}'"
+      elsif not (properties.keys - [:cdk_id, :id, :data, :layers, :title]).empty?
+        msg = properties[:cdk_id] ? "cdk_id = '#{properties[:cdk_id]}'" : "id = '#{properties[:id]}'"
         query[:api].error!("Incorrect keys found for object with #{msg}", 422)
       end
 
       cdk_id = nil
-      if properties['id']
+      if properties[:id]
         # Only accepts new objects - objects with 'id' property
         # for POST requests
         query[:api].error!("All objects must have 'cdk_id' property", 422) if query[:method] == :patch
 
-        unless feature['geometry']
+        unless feature[:geometry]
           query[:api].error!("New object without geometry encountered", 422)
         end
 
-        cdk_id = CitySDKLD.cdk_id_from_id query[:params][:layer], properties['id']
+        cdk_id = CitySDKLD.cdk_id_from_id query[:params][:layer], properties[:id]
 
         objects << {
-          id: properties['id'],
+          id: properties[:id],
           cdk_id: cdk_id,
           db_hash: db_hash_from_geojson(query, cdk_id, layer_id, feature)
         }
 
         results << {
-          id: properties['id'],
+          id: properties[:id],
           cdk_id: cdk_id
         }
-      elsif properties['cdk_id'] or query[:params][:cdk_id]
+      elsif properties[:cdk_id] or query[:params][:cdk_id]
 
-        if properties['cdk_id'] and query[:params][:cdk_id]
-          if properties['cdk_id'] != query[:params][:cdk_id]
+        if properties[:cdk_id] and query[:params][:cdk_id]
+          if properties[:cdk_id] != query[:params][:cdk_id]
             query[:api].error!("URL parameter 'cdk_id' and Feature's 'cdk_id' are both present, but not the same", 422)
           end
         end
 
         cdk_id = nil
-        if properties['cdk_id']
-          cdk_id = properties['cdk_id']
+        if properties[:cdk_id]
+          cdk_id = properties[:cdk_id]
         else
           cdk_id = query[:params][:cdk_id]
         end
@@ -166,7 +166,7 @@ class CDKObject < Sequel::Model(:objects)
           query[:api].error!("All objects must have 'cdk_id' property", 422)
         end
       end
-      if feature['properties'] and (feature['properties']['data'] or feature['properties']['layers'])
+      if feature[:properties] and (feature[:properties][:data] or feature[:properties][:layers])
         object_data << {
           cdk_id: cdk_id,
           db_hash: CDKObjectDatum.db_hash_from_geojson(query, cdk_id, layer_id, feature)
@@ -177,9 +177,9 @@ class CDKObject < Sequel::Model(:objects)
     Sequel::Model.db.transaction do
       case query[:method]
       when :post
-        
+
         a = objects.map { |o| o[:db_hash] }
-        
+
         CDKObject.multi_insert(objects.map { |o| o[:db_hash] })
         CDKObjectDatum.multi_insert(object_data.map { |o| o[:db_hash] })
 
@@ -329,21 +329,21 @@ class CDKObject < Sequel::Model(:objects)
       layer_id: layer_id
     }
 
-    if feature['crs'] and
-       feature['crs']['type'] == 'EPSG' and
-       feature['crs']['properties']['code'] != 4326
+    if feature[:crs] and
+       feature[:crs][:type] == 'EPSG' and
+       feature[:crs][:properties]['code'] != 4326
 
-      if feature['geometry']
-        set_srid = Sequel.function(:ST_SetSRID, Sequel.function(:ST_GeomFromGeoJSON, feature['geometry'].to_json), feature['crs']['properties']['code'])
+      if feature[:geometry]
+        set_srid = Sequel.function(:ST_SetSRID, Sequel.function(:ST_GeomFromGeoJSON, feature[:geometry].to_json), feature[:crs][:properties][:code])
         force_rhr = Sequel.function(:ST_ForceRHR, set_srid)
         db_hash[:geom] = Sequel.function(:ST_Transform, force_rhr, 4326)
       end
     else
-      if feature['geometry']
-        db_hash[:geom] = Sequel.function(:ST_SetSRID, Sequel.function(:ST_GeomFromGeoJSON, feature['geometry'].to_json), 4326)
+      if feature[:geometry]
+        db_hash[:geom] = Sequel.function(:ST_SetSRID, Sequel.function(:ST_GeomFromGeoJSON, feature[:geometry].to_json), 4326)
       end
     end
-    db_hash[:title] = feature['properties']['title'] if feature['properties'] and feature['properties']['title']
+    db_hash[:title] = feature[:properties][:title] if feature[:properties] and feature[:properties][:title]
     db_hash
   end
 

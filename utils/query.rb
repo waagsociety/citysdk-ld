@@ -57,23 +57,23 @@ module CitySDKLD
           if query.kind_of? Array
             filters += query
           else
-            api.error!("query parameter should be array of filters", 422)
+            api.error!('query parameter should be array of filters', 422)
           end
         rescue JSON::ParserError
-          api.error!("Error parsing JSON in query parameter", 422)
+          api.error!('Error parsing JSON in query parameter', 422)
         end
       end
 
       # 4.
       post = {}
       if env['api.request.body']
-        post = env['api.request.body']
+        post = JSON.parse(env['api.request.body'].to_json, symbolize_names: true)
       end
 
       # Always return all layers when single object is requested and no
       # layer filter is specified
       if single and resource == :objects and not filters.map {|f| f[:filter ]}.include? :layer
-        filters << CitySDKLD::Filters.create_filter(:layer, {layer: "*"})
+        filters << CitySDKLD::Filters.create_filter(:layer, {layer: '*'})
       end
 
       path = env['PATH_INFO']
@@ -166,7 +166,7 @@ module CitySDKLD
       when :context
         # CDKLayer expects string keys in POST data - not symbols
         # TODO: convert ALL input data from request and filters with symbolize_names?
-        @q[:data] = {"@context" => @q[:data]}
+        @q[:data] = {:@context => @q[:data]}
         CDKLayer.execute_write @q
 
         # TODO: move to Layer model!

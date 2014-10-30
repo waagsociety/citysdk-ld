@@ -22,12 +22,12 @@ class CDKField < Sequel::Model(:fields)
 
     #TODO: type should be a required field
     keys = [
-      'name',
-      'lang',
-      'type',
-      'unit',
-      'description',
-      'equivalent_property'
+      :name,
+      :lang,
+      :type,
+      :unit,
+      :description,
+      :equivalent_property
     ]
 
     # Make sure POST data contains only valid keys
@@ -39,11 +39,11 @@ class CDKField < Sequel::Model(:fields)
     when :post
       # create
 
-      # 'name' must exist in POST data
-      if data['name']
-        field = field_from_name_and_layer_id(data['name'], layer_id)
+      # :name must exist in POST data
+      if data[:name]
+        field = field_from_name_and_layer_id(data[:name], layer_id)
         if field
-          query[:api].error!("Field already exists: #{data['name']}", 422)
+          query[:api].error!("Field already exists: #{data[:name]}", 422)
         end
         CDKField.insert({layer_id: layer_id}.merge(data))
       else
@@ -51,10 +51,10 @@ class CDKField < Sequel::Model(:fields)
       end
 
       written_layer_id = layer_id
-      written_field_name = data['name']
+      written_field_name = data[:name]
 
     when :put, :patch
-      query[:api].error!('Field name cannot be changed', 422) if data['name']
+      query[:api].error!('Field name cannot be changed', 422) if data[:name]
       field = field_from_name_and_layer_id(query[:params][:field], layer_id)
 
       query[:api].error!("Field not found: #{query[:params][:field]}", 404) unless field
