@@ -46,6 +46,14 @@ def compare_hash(h1, h2, skip_recursion = false)
   result
 end
 
+def status_should(last_response, status)
+  if last_response.status != status
+    puts "\nHTTP status = #{last_response.status} (should be #{status}). API's response: \n" +
+          JSON.pretty_generate(body_json(last_response))
+  end
+  last_response.status.should == status
+end
+
 RSpec.configure do |c|
   c.mock_with :rspec
   c.expect_with :rspec
