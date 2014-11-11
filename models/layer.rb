@@ -286,6 +286,10 @@ class CDKLayer < Sequel::Model(:layers)
     layer[:name]
   end
 
+  def self.type_from_id(id)
+    layer = self.get_layer(id)
+    layer[:rdf_type]
+  end
 
   ##########################################################################################
   # Real-time/web service layers:
