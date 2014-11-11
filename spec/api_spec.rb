@@ -679,7 +679,7 @@ describe CitySDKLD::API do
       it "edits data on layer 'tom.steden' of tom.steden.utrecht" do
         data = read_test_data_json 'objects_tom.steden.json'
         header "CONTENT_TYPE", "application/json"
-        header "X-Auth", $citysdk_key
+        header "X-Auth", $key_citysdk
         patch "/objects/tom.steden.utrecht/layers/tom.steden", {"inwoners" => 542322}.to_json
         last_response.status.should == 200
         get "/objects/tom.steden.utrecht"
