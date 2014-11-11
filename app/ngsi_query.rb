@@ -133,6 +133,7 @@ module CitySDKLD
       if ce['isPattern'] == true
         pattern = "(.*)\\." + ce['id']
         objects = self.objects_select_filter(CDKObject.where(cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)), restriction)
+        
         @count = CDKObject.where(cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)).count() if @details
         objects.each do |o|
           layer = CitySDKLD.memcached_get(CDKLayer.memcached_key(o.layer_id.to_s))
@@ -152,7 +153,7 @@ module CitySDKLD
 
     def self.get_one_layered_entity(ce,layer,attributes, restriction)
       retvalue = []
-      if ce['isPattern'] == true
+      if ce['isPattern'] == "true"
         pattern = Regexp::quote(layer.name + ".") + ce['id']
         objects = self.objects_select_filter(CDKObject.where(layer_id: layer.id, cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)), restriction)
         @count  = CDKObject.where(layer_id: layer.id, cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)).count() if @details
@@ -326,7 +327,7 @@ module CitySDKLD
       'POLYGON((' + ret + '))'
     end
 
-    Sequel.function(:ST_SetSRID,p,4326)
+    # Sequel.function(:ST_SetSRID,p,4326)
 
     def self.objects_select_filter(dataset, restriction)
       dataset = dataset.select(:cdk_id, :layer_id, :title,  Sequel.as(Sequel.function(:ST_AsText, Sequel.function(:ST_Centroid, :geom)), :centr))
