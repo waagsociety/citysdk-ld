@@ -130,7 +130,7 @@ module CitySDKLD
 
     def self.get_one_entity(ce,attributes, restriction)
       retvalue = []
-      if ce['isPattern'] == true
+      if (ce['isPattern'] == true) or (ce['isPattern'] == "true")
         pattern = "(.*)\\." + ce['id']
         objects = self.objects_select_filter(CDKObject.where(cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)), restriction)
         
@@ -153,7 +153,7 @@ module CitySDKLD
 
     def self.get_one_layered_entity(ce,layer,attributes, restriction)
       retvalue = []
-      if ce['isPattern'] == "true"
+      if (ce['isPattern'] == true) or (ce['isPattern'] == "true")
         pattern = Regexp::quote(layer.name + ".") + ce['id']
         objects = self.objects_select_filter(CDKObject.where(layer_id: layer.id, cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)), restriction)
         @count  = CDKObject.where(layer_id: layer.id, cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)).count() if @details
@@ -297,7 +297,7 @@ module CitySDKLD
         'rdf_type' => 'orion:' + data['type'],
         'fields' => [],
         'owner' => "citysdk",
-        'description' => "System-generated, Fi-Ware Orion compatible data layer",
+        'description' => "System-generated, Fi-Ware Orion generated data layer",
         'dataSources' => ["NGSI"],
         'category' => "none",
         'subcategory' => "",

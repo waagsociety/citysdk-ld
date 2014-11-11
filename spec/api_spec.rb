@@ -195,7 +195,6 @@ describe CitySDKLD::API do
         data.delete(:@context)
         post "/layers", data.to_json
         last_response.status.should == 201
-        # puts JSON.pretty_generate(body_json(last_response)[:features][0])
         body_json(last_response)[:features][0][:properties][:name].should == 'bert.dierenwinkels'
       end
 
