@@ -88,7 +88,7 @@ module CitySDKLD
         # delete attributes or contextentities
       else
         data['contextElements'].each do |ce|
-          layer = CDKLayer.where(:'rdf:type' => 'orion:'+ce['type']).or(:'rdf:type' => ce['type']).first
+          layer = CDKLayer.where(:rdf_type => 'orion:'+ce['type']).or(:rdf_type => ce['type']).first
           if !layer
             layer = self.create_layer(ce, query)
             self.create_object(query,layer,ce)
@@ -201,7 +201,7 @@ module CitySDKLD
       cetype = q[:params][:cetype]
       attrs = q[:params][:attribute] ? [ q[:params][:attribute] ] : nil
       ctResponse = {contextResponses: []}
-      layer = CDKLayer.where(:'rdf:type' => 'orion:'+cetype).or(:'rdf:type' => cetype).first
+      layer = CDKLayer.where(:rdf_type => 'orion:'+cetype).or(:rdf_type => cetype).first
       if layer
         self.populate_field_types(layer)
         objects = self.objects_select_filter(CDKObject.where(layer_id: layer.id), nil)
@@ -224,7 +224,7 @@ module CitySDKLD
       attributes = data['attributes']
       data['entities'].each do |ce|
         if ce['type']
-          layer = CDKLayer.where(:'rdf:type' => 'orion:'+ce['type']).or(:'rdf:type' => ce['type']).first
+          layer = CDKLayer.where(:rdf_type => 'orion:'+ce['type']).or(:rdf_type => ce['type']).first
           if layer
             self.populate_field_types(layer)
             ctResponse[:contextResponses] += self.get_one_layered_entity(ce,layer,attributes,data['restriction'])
@@ -293,7 +293,7 @@ module CitySDKLD
       layer = {
         'name' => 'ngsi.'+data['type'].downcase,
         'title' => data['type'] + " orion ngsi layer",
-        'rdf:type' => 'orion:' + data['type'],
+        'rdf_type' => 'orion:' + data['type'],
         'fields' => [],
         'owner' => "citysdk",
         'description' => "System-generated, Fi-Ware Orion compatible data layer",
@@ -313,7 +313,7 @@ module CitySDKLD
       q[:data] = layer
       q[:method] = :post
       CDKLayer.execute_write(q)
-      CDKLayer.where(:'rdf:type' => 'orion:'+data['type']).first
+      CDKLayer.where(:rdf_type => 'orion:'+data['type']).first
     end
 
     def self.polygon(vertices)

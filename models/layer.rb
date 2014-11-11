@@ -39,7 +39,7 @@ class CDKLayer < Sequel::Model(:layers)
       'category',
       'subcategory',
       'licence',
-      'rdf:type'
+      'rdf_type'
     ]
 
     optional_keys = [
