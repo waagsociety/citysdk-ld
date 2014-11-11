@@ -193,7 +193,38 @@ describe CitySDKLD::API do
       expect(body_json(last_response)[:contextResponses][0][:contextElement][:id]).to eq("Room4")
     end
 
-  end
+    it "can subscribe to entities" do
+      header "CONTENT_TYPE", "application/json"
+      json = read_test_data_json('ngsi_query.json')
+      json.delete(:restriction)
+      json[:attributes] = [ "temperature" ]      
+      json[:duration] = "P1M"
+      json[:notifyConditions] = [ { type: "ONCHANGE", condValues: ["PT10S"] } ]
+      post "/ngsi10/subscribeContext", json.to_json
+      expect(body_json(last_response)[:errorCode][:code]).to eq("422") # error because no reference
+      
+      json[:reference] = "http://localhost:9292"
+      post "/ngsi10/subscribeContext", json.to_json
+
+      expect(body_json(last_response)[:subscribeResponse][:duration]).to eq("P1M")
+      $sub_id = body_json(last_response)[:subscribeResponse][:subscriptionId]
+    end
+
+    it "posts message in response to change" do
+      header "CONTENT_TYPE", "application/json"
+      header "X-Auth", $citysdk_key
+      post "/ngsi10/updateContext", read_test_data('ngsi_change.json')
+      expect(body_json(last_response)[:statusCode][:code]).to eq("200")
+    end
+
+    it "can remove subscriptions" do
+      header "CONTENT_TYPE", "application/json"
+      post "/ngsi10/unsubscribeContext", { subscriptionId: $sub_id }.to_json
+      expect(body_json(last_response)[:statusCode][:code]).to eq("204")
+    end
+ 
+ 
+   end
 
 end
 

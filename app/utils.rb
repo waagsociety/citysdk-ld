@@ -12,6 +12,7 @@ module CitySDKLD
   I18n.enforce_available_locales = false
 
   MEMCACHED_NAMESPACE = 'citysdk_ld'
+  NGSI_COMPAT = true
 
   ##########################################################################################
   # memcached utilities

@@ -78,6 +78,12 @@ class CDKObjectDatum < Sequel::Model(:object_data)
       if object_datum[:id]
         data = object_datum[:data].merge(data)
         self.where(id: object_datum[:id]).update(data: Sequel.hstore(data))
+        if CitySDKLD::NGSI_COMPAT
+          subs = NGSI_Subscription.where(layer_id: layer_id, cdk_id: query[:params][:cdk_id])
+          subs.each do |s|
+            NGSI_Subscription.post(s,data)
+          end
+        end
       else
         # No data exists for :cdk_id on :layer, abort!
         query[:api].error!("No data exists on layer for: '#{query[:params][:cdk_id]}'", 404)

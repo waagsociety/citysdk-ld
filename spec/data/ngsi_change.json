@@ -1,0 +1,17 @@
+{
+    "contextElements": [
+        {
+            "type": "Room",
+            "isPattern": "false",
+            "id": "Room7",
+            "attributes": [
+              {
+                  "name": "temperature",
+                  "type": "centigrade",
+                  "value": "12"
+              }
+            ]
+        }
+    ],
+    "updateAction": "APPEND"
+}
