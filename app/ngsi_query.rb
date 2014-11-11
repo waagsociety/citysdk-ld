@@ -6,6 +6,9 @@ module CitySDKLD
   class NGSI10
 
     def self.do_query(query)
+      
+      query[:api].error!("Not found", 404) unless NGSI_COMPAT
+      
       @limit   = query[:params][:limit] ? [1000,query[:params][:limit].to_i].min : 20
       @offset  = query[:params][:offset] ? query[:params][:offset].to_i : 0
       @details = (query[:params][:details] and query[:params][:details] == "on") ? true : false
@@ -46,16 +49,78 @@ module CitySDKLD
           return self.updateContext(q)
         when :queryContext
           return self.queryContext(q)
-        when :subscribeContext
-          return { ngsiresult: "not yet implemented: " + q[:path][-1]}
+        when :subscribeContext 
+          return self.subscribeContext(q)
         when :updateContextSubscription
           return { ngsiresult: "not yet implemented: " + q[:path][-1]}
         when :unsubscribeContext
-          return { ngsiresult: "not yet implemented: " + q[:path][-1]}
+          return self.unsubscribeContext(q)
       end
       return { ngsiresult: "unkown command"}
     end
 
+    def self.unsubscribeContext(q)
+      sid = q[:data]['subscriptionId']
+      begin
+        NGSI_Subscription.where( subscription_id: sid ).delete
+      rescue Exception => e
+        return { errorCode: { code: "422", reasonPhrase: "subscriptionId not found" } }
+      end
+      return { subscriptionId: sid, statusCode: {code: '204', reasonPhrase: 'OK'} }
+    end
+
+    def self.get_entity_for_subs(ce,layer)
+      retvalue = []
+      if ce['isPattern'] == true
+        pattern = Regexp::quote(layer.name + ".") + ce['id']
+        objects = CDKObject.select(:cdk_id, :layer_id).where(layer_id: layer.id, cdk_id: Regexp.new(pattern,Regexp::IGNORECASE))
+        objects.each do |o|
+          retvalue << o.to_hash
+        end
+      else
+        cdk_id = CitySDKLD.cdk_id_from_id(layer.name, ce['id'])
+        object = CDKObject.select(:cdk_id, :layer_id).where(cdk_id: cdk_id).first
+        if object
+          retvalue << object.to_hash
+        end
+      end
+      retvalue
+    end
+    
+    
+    require 'digest/sha1'
+    
+    def self.subscribeContext(q)
+      layer = @count = nil
+      @fieldTypes = []
+      num_entities = 0
+      data = q[:data]
+
+      return { errorCode: { code: "422", reasonPhrase: "Missing data in request" } } if 
+        (data['entities'].blank? or data['duration'].blank? or data['reference'].blank? or data['notifyConditions'].blank?)
+      
+      return { errorCode: { code: "422", reasonPhrase: "Time Interval not implemented" } } if 
+        data['notifyConditions'][0]["type"] == 'ONTIMEINTERVAL'
+      
+      sid = Digest::SHA1.hexdigest(Time.now.to_s + data['entities'].to_s)[8..31]
+      
+      data['entities'].each do |ce|
+        if ce['type']
+          layer = CDKLayer.where(rdf_type: 'orion:'+ce['type']).or(rdf_type: ce['type']).first
+          if layer
+            self.populate_field_types(layer) 
+            entities = self.get_entity_for_subs(ce,layer)
+            num_entities += entities.length
+            NGSI_Subscription.new_subscription(entities,data,sid)
+          end
+        end
+      end
+      return { errorCode: { code: "404", reasonPhrase: "No context elements found" } } if num_entities == 0
+      return { subscribeResponse: {subscriptionId: sid, duration: data['duration']}}
+    end
+    
+    def self.updateContextSubscription (q)
+    end
 
     def self.update_attributes_for_entity(q)
       data = q[:data]
