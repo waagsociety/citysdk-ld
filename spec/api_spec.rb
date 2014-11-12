@@ -324,7 +324,6 @@ describe CitySDKLD::API do
     # describe "GET /layers/bert.dierenwinkels/@context" do
     #   it "tries to get RDF/Turtle version of JSON-LD context" do
     #     get "/layers/bert.dierenwinkels/@context", nil, {'HTTP_ACCEPT' => "text/turtle"}
-    #     puts last_response
     #     status_should(last_response, 406)
     #   end
     # end
@@ -520,25 +519,10 @@ describe CitySDKLD::API do
       patch "/objects/bert.dierenwinkels.a.b", data.to_json
       status_should(last_response, 200)
       get "objects/bert.dierenwinkels.a.b"
-      body_json(last_response)[:features][0].should == {
-        type: "Feature",
-        properties: {
-          cdk_id: "bert.dierenwinkels.a.b",
-          title: "Winkel met de Punt",
-          layer: "bert.dierenwinkels",
-          layers: {
-            :"bert.dierenwinkels" => {
-              data: {
-                icon: "🚚",
-              }
-            }
-          }
-        },
-        geometry: {
-          type: "Point",
-          coordinates: [4.444444, 52.525252]
-        }
-      }
+      feature = body_json(last_response)[:features][0]
+      feature[:properties][:title].should == "Winkel met de Punt"
+      feature[:properties][:layers][:'bert.dierenwinkels'][:data][:icon].should == "🚚"
+      feature[:geometry][:coordinates].should == [4.444444, 52.525252]
     end
 
     it "creates single object without geometry" do
@@ -790,11 +774,12 @@ describe CitySDKLD::API do
     ######################################################################
     # Accept header:
     ######################################################################
-    it "uses Accept header to get RDF/Turtle of /objects" do
-      get "/objects", nil, {'HTTP_ACCEPT' => "text/turtle"}
-      status_should(last_response, 200)
-      last_response.header['Content-Type'].should == 'text/turtle'
-    end
+
+    # it "uses Accept header to get RDF/Turtle of /objects" do
+    #   get "/objects", nil, {'HTTP_ACCEPT' => "text/turtle"}
+    #   status_should(last_response, 200)
+    #   last_response.header['Content-Type'].should == 'text/turtle'
+    # end
 
     it "uses Accept header to get JSON-LD of /objects" do
       get "/objects", nil, {'HTTP_ACCEPT' => "application/ld+json"}
@@ -911,7 +896,7 @@ describe CitySDKLD::API do
     it "checks if 'bert.dierenwinkels.1' is moved to layer 'none' and still has data on 'rutger.openingstijden" do
       get "/objects/bert.dierenwinkels.1"
       status_should(last_response, 200)
-      body_json(last_response)[:features][0][:properties][:layer].should == 'none'
+      body_json(last_response)[:features][0][:properties][:layer].should == ':layers/none'
       tot = body_json(last_response)[:features][0][:properties][:layers][:'rutger.openingstijden'][:data][:tot]
       tot.should == '🕙'
     end
@@ -941,7 +926,7 @@ describe CitySDKLD::API do
       status_should(last_response, 200)
       last_response.header["X-Result-Count"].to_i.should == 5
       body_json(last_response)[:features].map {|f| f[:properties][:layer] }.sort.should ==
-        ['none', 'none', 'tom.achtbanen', 'tom.achtbanen', 'tom.achtbanen']
+        [':layers/none', ':layers/none', ':layers/tom.achtbanen', ':layers/tom.achtbanen', ':layers/tom.achtbanen']
     end
 
     it "deletes owner 'rutger'" do
