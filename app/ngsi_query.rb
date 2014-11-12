@@ -5,9 +5,6 @@ module CitySDKLD
   class NGSI10
 
     def self.do_query(query)
-
-      puts query[:data].inspect
-
       @limit = query[:params][:limit] ? [1000, query[:params][:limit].to_i].min : 20
       @offset = query[:params][:offset] ? query[:params][:offset].to_i : 0
       @details = (query[:params][:details] and query[:params][:details] == 'on') ? true : false
