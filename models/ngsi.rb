@@ -32,22 +32,22 @@ class NGSI_Subscription < Sequel::Model(:ngsi_subscriptions)
     return dd
   end
 
-  def self.new_subscription(entities,data,sid)
-    attributes = data['attributes'].is_a?(Array) ? data['attributes'].join(',') : data['attributes']
-    notification = data['notifyConditions']
-    ends_at = get_expiry(data['duration'])
-    r_id = NGSI_Referer.get_id(data['reference'])
-    case notification[0]["type"]
-    when "ONCHANGE"
+  def self.new_subscription(entities, data, sid)
+    attributes = data[:attributes].is_a?(Array) ? data[:attributes].join(',') : data[:attributes]
+    notification = data[:notifyConditions]
+    ends_at = get_expiry(data[:duration])
+    r_id = NGSI_Referer.get_id(data[:reference])
+    case notification[0][:type]
+    when 'ONCHANGE'
         entities.each do |e|
           s = {
-              attributes: attributes,
-              cdk_id: e[:cdk_id],
-              layer_id: e[:layer_id],
-              subscription_id: sid,
-              ends_at: ends_at,
-              referer_id: r_id
-            }
+            attributes: attributes,
+            cdk_id: e[:cdk_id],
+            layer_id: e[:layer_id],
+            subscription_id: sid,
+            ends_at: ends_at,
+            referer_id: r_id
+          }
           insert(s)
         end
     end
@@ -77,8 +77,8 @@ class NGSI_Subscription < Sequel::Model(:ngsi_subscriptions)
             type: type
           },
           statusCode: {
-            code: "200",
-            reasonPhrase: "OK"
+            code: '200',
+            reasonPhrase: 'OK'
           }
         }
         d[:contextResponses] << ce
