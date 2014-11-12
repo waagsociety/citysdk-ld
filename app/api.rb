@@ -4,7 +4,7 @@ module CitySDKLD
 
   class API < Grape::API
 
-    default_format :json
+    default_format :jsonld
     default_error_formatter :json
     version 'v1', using: :header, vendor: 'citysdk-ld'
 
@@ -87,8 +87,10 @@ module CitySDKLD
     end
 
     add_serializer ::CitySDKLD::Serializers::GeoJSONSerializer
-    add_serializer ::CitySDKLD::Serializers::TurtleSerializer
     add_serializer ::CitySDKLD::Serializers::JSONLDSerializer
+
+    # TODO: align JSON-LD and Turtle serializations. For now, Turtle format is disabled
+    #add_serializer ::CitySDKLD::Serializers::TurtleSerializer
 
     # THe API's URI structure uses HTTP verbs for resources:
     # https://developer.github.com/v3/#http-verbs
