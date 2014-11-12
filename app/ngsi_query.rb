@@ -129,9 +129,10 @@ module CitySDKLD
 
     def self.get_one_entity(ce, attributes, restriction)
       retvalue = []
-      if ce['isPattern'] == true
+      if (ce['isPattern'] == true) or (ce['isPattern'] == "true")
         pattern = "(.*)\\." + ce['id']
         objects = self.objects_select_filter(CDKObject.where(cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)), restriction)
+
         @count = CDKObject.where(cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)).count() if @details
         objects.each do |o|
           layer = CitySDKLD.memcached_get(CDKLayer.memcached_key(o.layer_id.to_s))
@@ -151,7 +152,7 @@ module CitySDKLD
 
     def self.get_one_layered_entity(ce, layer, attributes, restriction)
       retvalue = []
-      if ce['isPattern'] == true
+      if (ce['isPattern'] == true) or (ce['isPattern'] == "true")
         pattern = Regexp::quote(layer.name + ".") + ce['id']
         objects = self.objects_select_filter(CDKObject.where(layer_id: layer.id, cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)), restriction)
         @count  = CDKObject.where(layer_id: layer.id, cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)).count() if @details
@@ -179,16 +180,20 @@ module CitySDKLD
         elm[:contextElement][:attributes] << { name: k, value: v, type: @fieldTypes[layer[:id]][k] || 'unknown'} if attributes.blank? or attributes.include?(k)
       end
       if object[:centr] =~ /POINT\(([\d\.]+)\s([\d\.]+)\)/
-        elm[:contextElement][:attributes] << { name: 'geography',
-                                               value: "#{$2}, #{$1}",
-                                               type: 'coords',
-                                               metadatas: [ {
-                                                   name: "location",
-                                                   type: "string",
-                                                   value: "WSG84"
-                                                 }
-                                               ]
-                                              } if attributes.blank?
+        if attributes.blank?
+          elm[:contextElement][:attributes] << {
+            name: 'geography',
+            value: "#{$2}, #{$1}",
+            type: 'coords',
+            metadatas: [
+              {
+                name: "location",
+                type: "string",
+                value: "WSG84"
+              }
+            ]
+          }
+        end
       end
       elm
     end
@@ -212,7 +217,6 @@ module CitySDKLD
       ct_response[:errorCode] = {code: 200, reasonPhrase: "OK", details: "Count: #{@count}" } if @count
       return ct_response
     end
-
 
     def self.queryContext(query)
       layer = @count = nil
@@ -289,7 +293,7 @@ module CitySDKLD
 
     def self.create_layer(data, query)
       layer = {
-        name: 'ngsi.'+data['type'].downcase,
+        name: 'ngsi.' + data['type'].downcase,
         title: data['type'] + " orion NGSI layer",
         rdf_type: 'orion:' + data['type'],
         fields: [],
@@ -324,10 +328,8 @@ module CitySDKLD
       'POLYGON((' + ret + '))'
     end
 
-    Sequel.function(:ST_SetSRID, p, 4326)
-
     def self.objects_select_filter(dataset, restriction)
-      dataset = dataset.select(:cdk_id, :layer_id, :title,  Sequel.as(Sequel.function(:ST_AsText, Sequel.function(:ST_Centroid, :geom)), :centr))
+      dataset = dataset.select(:cdk_id, :layer_id, :title, Sequel.as(Sequel.function(:ST_AsText, Sequel.function(:ST_Centroid, :geom)), :centr))
       if restriction
         restriction['scopes'].each do |s|
           if s["type"] == "FIWARE_Location"

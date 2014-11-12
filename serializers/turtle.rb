@@ -46,7 +46,7 @@ module CitySDKLD
             @result << "<layers/#{l}/fields/#{field[:id]}>"
             @result << "    :definedOnLayer <layers/#{l}> ;"
 
-            @result << "    rdf:type #{field[:type]} ;" if field[:type]
+            @result << "    rdf_type #{field[:type]} ;" if field[:type]
             @result << "    rdfs:description #{field[:description].to_json} ;" if field[:description]
             @result << "    xsd:language #{field[:lang].to_json} ;" if field[:lang]
             @result << "    owl:equivalentProperty #{field[:eqprop]} ;" if field[:eqprop]
