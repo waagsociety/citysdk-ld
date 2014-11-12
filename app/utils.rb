@@ -163,18 +163,10 @@ end
 # Additional functions
 ##########################################################################################
 
+### debugging; log anything in JSON pretty format
 def jsonlog(o)
-  a = case o.class
-      when Array 
-        {array: o}
-      when String
-        {string: o}
-      when Hash
-        o
-      else
-        {obj: o}
-      end
-      puts JSON.pretty_generate(a)
+  a = case o.class.to_s
+  puts JSON.pretty_generate({ a => o })
 end
 
 
