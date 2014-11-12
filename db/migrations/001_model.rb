@@ -166,9 +166,29 @@ Sequel.migration do
 
     add_alphanumeric_name_constraint :fields
 
+    ######################################################################
+    # FI-Ware specific:
+    ######################################################################
+
+    create_table! :ngsi_subscriptions do
+      String :cdk_id, null: false
+      String :attributes
+      String :subscription_id, null: false
+      integer :layer_id
+      integer :referer_id
+      timestamptz :ends_at, null: false, default: :now.sql_function
+    end
+
+    create_table! :ngsi_referers do
+      column :id, 'serial', primary_key: true, unique: true
+      String :url, null: false
+    end
+
   end
 
   down do
+    drop_table? :ngsi_referers, cascade: true
+    drop_table? :ngsi_subscriptions, cascade: true
     drop_table? :objects, cascade: true
     drop_table? :object_data, cascade: true
     drop_table? :fields, cascade: true
@@ -176,4 +196,5 @@ Sequel.migration do
     drop_table? :owners, cascade: true
     drop_table? :layers, cascade: true
   end
+
 end

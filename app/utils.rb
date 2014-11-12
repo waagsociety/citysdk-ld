@@ -12,6 +12,7 @@ module CitySDKLD
   I18n.enforce_available_locales = false
 
   MEMCACHED_NAMESPACE = 'citysdk_ld'
+  NGSI_COMPAT = true
 
   # hard-coded list of RDF prefixes, used by JSON-LD and Turtle serializers
   PREFIXES = {
@@ -175,19 +176,9 @@ end
 # Additional functions
 ##########################################################################################
 
-# For debugging purposes
+# For debugging purposes; log anything in JSON pretty format
 def jsonlog(o)
-  a = case o.class
-      when Array
-        {array: o}
-      when String
-        {string: o}
-      when Hash
-        o
-      else
-        {obj: o}
-      end
-  puts JSON.pretty_generate(a)
+  puts JSON.pretty_generate({ o.class.to_s => o })
 end
 
 class Object
