@@ -165,8 +165,7 @@ end
 
 ### debugging; log anything in JSON pretty format
 def jsonlog(o)
-  a = case o.class.to_s
-  puts JSON.pretty_generate({ a => o })
+  puts JSON.pretty_generate({ o.class.to_s => o })
 end
 
 
