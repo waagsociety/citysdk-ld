@@ -3,41 +3,39 @@
 require 'spec_helper'
 include Rack::Test::Methods
 
-
 describe CitySDKLD::API do
 
   it "can get a session key for owner 'citysdk'" do
     header "CONTENT_TYPE", "application/json"
     get "/session?name=citysdk&password=ChangeMeNow"
-    last_response.status.should == 200
-    $citysdk_key = body_json(last_response)[:session_key]
-    $citysdk_key.should_not == nil
+    status_should(last_response, 200)
+    $key_citysdk = body_json(last_response)[:session_key]
+    $key_citysdk.should_not == nil
   end
 
   describe "NGSI10" do
     it "can create objects of existing and non-existing type" do
       header "CONTENT_TYPE", "application/json"
-      header "X-Auth", $citysdk_key
+      header "X-Auth", $key_citysdk
       post "/ngsi10/updateContext", read_test_data('ngsi_update.json')
-      last_response.status.should == 201
+      status_should(last_response, 201)
     end
 
     it "can update existing objects" do
       header "CONTENT_TYPE", "application/json"
-      header "X-Auth", $citysdk_key
+      header "X-Auth", $key_citysdk
       json = read_test_data_json('ngsi_update.json')
       json[:contextElements] = [json[:contextElements][1]]
       json[:contextElements][0][:attributes][0][:value] = "234";
       post "/ngsi10/updateContext", json.to_json
-      last_response.status.should == 201
+      status_should(last_response, 201)
       get "/objects/ngsi.room.room7"
       body_json(last_response)[:features][0][:properties][:layers][:'ngsi.room'][:data][:temperature].should == "234"
     end
 
-
     it "can query for existing objects" do
       header "CONTENT_TYPE", "application/json"
-      header "X-Auth", $citysdk_key
+      header "X-Auth", $key_citysdk
       json = read_test_data_json('ngsi_query.json')
       json.delete(:restriction)
       post "/ngsi10/queryContext", json.to_json
@@ -47,7 +45,7 @@ describe CitySDKLD::API do
 
     it "correctly handles queries for objects of non-existing types" do
       header "CONTENT_TYPE", "application/json"
-      header "X-Auth", $citysdk_key
+      header "X-Auth", $key_citysdk
       json = read_test_data_json('ngsi_query.json')
       json[:entities][0][:type] = "nonexistantLayer"
       post "/ngsi10/queryContext", json.to_json
@@ -56,7 +54,7 @@ describe CitySDKLD::API do
 
     it "correctly handles queries for non-existing objects" do
       header "CONTENT_TYPE", "application/json"
-      header "X-Auth", $citysdk_key
+      header "X-Auth", $key_citysdk
       json = read_test_data_json('ngsi_query.json')
       json[:entities][0][:id] = "nonexistantObject"
       post "/ngsi10/queryContext", json.to_json
@@ -65,7 +63,7 @@ describe CitySDKLD::API do
 
     it "can query for objects through reg-exps" do
       header "CONTENT_TYPE", "application/json"
-      header "X-Auth", $citysdk_key
+      header "X-Auth", $key_citysdk
       json = read_test_data_json('ngsi_query.json')
       json[:entities][0][:id] = "r.*"
       json[:entities][0][:isPattern] = true
@@ -82,7 +80,7 @@ describe CitySDKLD::API do
 
     it "can perform typeless queries" do
       header "CONTENT_TYPE", "application/json"
-      header "X-Auth", $citysdk_key
+      header "X-Auth", $key_citysdk
       json = read_test_data_json('ngsi_query.json')
       json[:entities][0][:id] = ".*"
       json[:entities][0][:isPattern] = true
@@ -125,7 +123,7 @@ describe CitySDKLD::API do
     it "can update attibutes for an entity" do
       path = "/ngsi10/contextEntities/Kamer11/attributes/"
       header "CONTENT_TYPE", "application/json"
-      header "X-Auth", $citysdk_key
+      header "X-Auth", $key_citysdk
       get path + "pressure"
       data = body_json(last_response)
       expect(data[:attributes][0][:value]).to eq("711")
