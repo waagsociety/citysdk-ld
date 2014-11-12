@@ -13,6 +13,19 @@ module CitySDKLD
 
   MEMCACHED_NAMESPACE = 'citysdk_ld'
 
+  # hard-coded list of RDF prefixes, used by JSON-LD and Turtle serializers
+  PREFIXES = {
+    dc: 'http://purl.org/dc/elements/1.1/',
+    rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+    rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+    owl: 'http://www.w3.org/2002/07/owl#',
+    xsd: 'http://www.w3.org/2001/XMLSchema#',
+    org: 'http://www.w3.org/ns/org#',
+    foaf: 'http://xmlns.com/foaf/0.1/',
+    dcat: 'http://www.w3.org/ns/dcat#',
+    geos: 'http://www.opengis.net/ont/geosparql#'
+  }
+
   ##########################################################################################
   # memcached utilities
   ##########################################################################################
@@ -176,7 +189,6 @@ def jsonlog(o)
       end
   puts JSON.pretty_generate(a)
 end
-
 
 class Object
   def deep_copy
