@@ -6,6 +6,9 @@ module CDKCommands
   # as webservice; returning 'data' json object
   def self.process_command(command,data,obj,params)
     case command
+    when 'gtfs.routes.stops'
+      route_id = obj[:layers]["gtfs.routes"][:data]["route_id"]
+      return self.stops_for_route(route_id,obj,params)
     when 'gtfs.stops.now'
       stop_id = obj[:layers]["gtfs.stops"][:data]["stop_id"]
       tzdiff = params['tz'] ? -60 * (Time.now.utc_offset / 3600 + params['tz'].to_i) : 0
@@ -13,8 +16,8 @@ module CDKCommands
     when 'gtfs.stops.schedule'
       stop_id = obj[:layers]["gtfs.stops"][:data]["stop_id"]
       return self.schedule_for_stop(stop_id)
-    when 'gtfs.lines.schedule'
-      route_id = obj[:layers]["gtfs.lines"][:data]["route_id"]
+    when 'gtfs.routes.schedule'
+      route_id = obj[:layers]["gtfs.routes"][:data]["route_id"]
       return self.schedule_for_line(route_id,obj[:cdk_id][-1], params)
     else
     end
@@ -39,14 +42,24 @@ module CDKCommands
     id
   end
 
+  # http://0.0.0.0:9292/objects/gtfs.routes.waterbus.15627.1?layer=gtfs.routes.stops
+  def self.stops_for_route(route_id, object, params)
+    res = []
+    direction = object[:cdk_id][-1]
+    stops = Sequel::Model.db.fetch("select * from stops_for_line('#{route_id}',#{direction})").all
+    stops.to_a.each do |s|
+      res << {name: s[:name], cdk_id: 'gtfs.stops.' + "#{s[:stop_id].downcase.gsub(/\W/,'.')}" }
+    end
+    object[:data] = {stops: res}
+  end
 
   def self.now_for_stop(stop_id, tz)
     h = {}
     a = Sequel::Model.db.fetch("SELECT * FROM stop_now('#{stop_id}','#{tz}')").all
     a.to_a.each do |t|
       aname = t[:agency_id]
-      key = "gtfs.line.#{aname.downcase.gsub(/\W/,'')}.#{t[:route_name].gsub(/\W/,'')}.#{t[:direction_id]}"
-      mckey = "gtfs.line.#{t[:route_id]}-#{t[:direction_id]}"
+      key = "gtfs.route.#{aname.downcase.gsub(/\W/,'')}.#{t[:route_name].gsub(/\W/,'')}.#{t[:direction_id]}"
+      mckey = "gtfs.route.#{t[:route_id]}-#{t[:direction_id]}"
       if h[key].nil?
         h[key] = {
           cdk_id: key,
@@ -60,9 +73,9 @@ module CDKCommands
       h[key][:times] << self.get_realtime(mckey,stop_id,t[:departure])
       h[key][:times].uniq!
 
-      # line = Object.where(:cdk_id=>key).first
-      # if line
-      #   members = line.members.to_a
+      # route = Object.where(:cdk_id=>key).first
+      # if route
+      #   members = route.members.to_a
       #   lstops = Object.where(:nodes__id => members).all
       #   lstops = lstops.sort_by { |a| members.index(a.values[:id]) }
       #   seen_current = false
@@ -89,7 +102,7 @@ module CDKCommands
       a = Sequel::Model.db.fetch("SELECT * FROM departs_from_stop('#{stop_id}', #{day})").all
       a.to_a.each do |t|
         aname = self.get_agency_name(t[:agency_id])
-        key = "gtfs.line.#{aname.downcase.gsub(/\W/,'')}.#{t[:route_name].gsub(/\W/,'')}-#{t[:direction_id]}"
+        key = "gtfs.route.#{aname.downcase.gsub(/\W/,'')}.#{t[:route_name].gsub(/\W/,'')}-#{t[:direction_id]}"
         if h[key].nil?
           h[key] = {
             cdk_id: key,
@@ -113,7 +126,7 @@ module CDKCommands
     }
   end
 
-  def self.schedule_for_line(route_id,direction,params)
+  def self.schedule_for_route(route_id,direction,params)
     h = {}
 
     stops = []
@@ -125,7 +138,7 @@ module CDKCommands
 
     # TODO: Use Sequel to insert query parameters
     a = Sequel::Model.db.fetch("SELECT * FROM line_schedule('#{route_id}', #{direction}, #{day})").all
-    mckey = "gtfs.line.#{route_id}-#{direction}"
+    mckey = "gtfs.route.#{route_id}-#{direction}"
 
     a.to_a.each do |t|
       key = "gtfs.stop.#{t[:stop_id].downcase.gsub(/\W/,'.')}"
@@ -139,7 +152,7 @@ module CDKCommands
 
 
     h[0] = {
-      line: line.cdk_id,
+      route: route.cdk_id,
       date: d,
       trips: t.sort do |a,b|
         a[0][1] <=> b[0][1]
