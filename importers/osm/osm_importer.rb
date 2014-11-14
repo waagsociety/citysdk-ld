@@ -56,7 +56,7 @@ unless osm_schema_exists and options[:keep]
   SQL
 
   # Use osm2pgsql to read data from osm file into database
-  osm2pgsql = "osm2pgsql --slim -j -d #{config[:db][:database]} -H #{config[:db][:host]} -l -C6000 -U postgres #{options[:osm_filename]}"
+  osm2pgsql = "export PGPASS=#{config[:db][:password]}; osm2pgsql --slim -j -d #{config[:db][:database]} -H #{config[:db][:host]} -l -C6000 -U postgres #{options[:osm_filename]}"
   unless system osm2pgsql
     puts "Executing osm2pgsql failed... Is osm2pgsql installed?"
     exit
