@@ -60,6 +60,7 @@ class CDKLayer < Sequel::Model(:layers)
     # Convert dependant layer to id
     if data[:depends]
       data[:depends_on_layer_id] = id_from_name(data[:depends]) || '0'
+      data.delete(:depends)
     end
 
     # Convert context to JSON
