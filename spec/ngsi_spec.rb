@@ -203,7 +203,7 @@ describe CitySDKLD::API do
       # error because no reference
       body_json(last_response)[:errorCode][:code].should == '422'
 
-      json[:reference] = 'http://localhost:9292'
+      json[:reference] = 'http://0.0.0.0:9797'
       post '/ngsi10/subscribeContext', json.to_json
 
       body_json(last_response)[:subscribeResponse][:duration].should == 'P1M'
@@ -212,7 +212,7 @@ describe CitySDKLD::API do
 
     it "posts message in response to change" do
       header 'CONTENT_TYPE', 'application/json'
-      header 'X-Auth', $citysdk_key
+      header 'X-Auth', $key_citysdk
       post '/ngsi10/updateContext', read_test_data('ngsi_change.json')
       body_json(last_response)[:statusCode][:code].should == '200'
     end

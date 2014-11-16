@@ -91,7 +91,7 @@ class NGSI_Subscription < Sequel::Model(:ngsi_subscriptions)
         connection = Faraday.new(url: ref[:url])
         response = connection.post do |req|
           req.url ''
-          req.body = d.to_json
+          req.body = d.to_json + "\r\n"
 
           # open/read timeout in seconds
           req.options[:timeout] = 5
