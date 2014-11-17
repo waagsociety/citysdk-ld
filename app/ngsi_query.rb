@@ -12,6 +12,7 @@ module CitySDKLD
       @limit = query[:params][:limit] ? [1000,query[:params][:limit].to_i].min : 20
       @offset = query[:params][:offset] ? query[:params][:offset].to_i : 0
       @details = (query[:params][:details] and query[:params][:details] == 'on') ? true : false
+      @count = 0
       case query[:method]
         when :post
           return self.post(query)
@@ -88,7 +89,8 @@ module CitySDKLD
     end
 
     def self.subscribe_context(q)
-      layer = @count = nil
+      layer = nil
+      @count = 0
       @field_types = []
       num_entities = 0
       data = q[:data]
@@ -103,8 +105,7 @@ module CitySDKLD
 
       data[:entities].each do |ce|
         if ce[:type]
-          layer = CDKLayer.where(rdf_type: 'orion:' + ce[:type]).or(rdf_type: ce[:type]).first
-          if layer
+          CDKLayer.where(rdf_type: 'orion:' + ce[:type]).or(rdf_type: ce[:type]).each do |layer|
             self.populate_field_types(layer)
             entities = self.get_entity_for_subs(ce,layer)
             num_entities += entities.length
@@ -196,7 +197,7 @@ module CitySDKLD
         pattern = "(.*)\\." + ce[:id]
         objects = self.objects_select_filter(CDKObject.where(cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)), restriction)
 
-        @count = CDKObject.where(cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)).count() if @details
+        @count += CDKObject.where(cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)).count() if @details
         objects.each do |o|
           layer = CitySDKLD.memcached_get(CDKLayer.memcached_key(o.layer_id.to_s))
           self.populate_field_types(layer)
@@ -215,10 +216,11 @@ module CitySDKLD
 
     def self.get_one_layered_entity(ce,layer,attributes, restriction)
       retvalue = []
+      
       if (ce[:isPattern] == true) or (ce[:isPattern] == 'true')
         pattern = Regexp::quote(layer.name + '.') + ce[:id]
         objects = self.objects_select_filter(CDKObject.where(layer_id: layer.id, cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)), restriction)
-        @count  = CDKObject.where(layer_id: layer.id, cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)).count() if @details
+        @count  += CDKObject.where(layer_id: layer.id, cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)).count() if @details
         objects.each do |o|
           retvalue << self.get_one_object(ce, o, layer, attributes)
         end
@@ -265,16 +267,16 @@ module CitySDKLD
     end
 
     def self.query_context_entity_types(q)
-      layer = @count = nil
+      layer = nil
+      @count = 0
       @field_types = []
       cetype = q[:params][:cetype]
       attrs = q[:params][:attribute] ? [ q[:params][:attribute] ] : nil
       ct_response = {contextResponses: []}
-      layer = CDKLayer.where(rdf_type: 'orion:' + cetype).or(rdf_type: cetype).first
-      if layer
+      CDKLayer.where(rdf_type: 'orion:' + cetype).or(rdf_type: cetype).each do |layer|
         self.populate_field_types(layer)
         objects = self.objects_select_filter(CDKObject.where(layer_id: layer.id), nil)
-        @count  = CDKObject.where(layer_id: layer.id).count() if @details
+        @count += CDKObject.where(layer_id: layer.id).count() if @details
         objects.each do |o|
           ct_response[:contextResponses] << self.get_one_object({type: cetype}, o, layer, attrs)
         end
@@ -285,15 +287,15 @@ module CitySDKLD
     end
 
     def self.query_context(query)
-      layer = @count = nil
+      layer = nil
+      @count = 0
       @field_types = []
       ct_response = {contextResponses: []}
       data = query[:data]
       attributes = data[:attributes]
       data[:entities].each do |ce|
         if ce[:type]
-          layer = CDKLayer.where(rdf_type: 'orion:' + ce[:type]).or(rdf_type: ce[:type]).first
-          if layer
+          CDKLayer.where(rdf_type: 'orion:' + ce[:type]).or(rdf_type: ce[:type]).each do |layer|
             self.populate_field_types(layer)
             ct_response[:contextResponses] += self.get_one_layered_entity(ce, layer, attributes, data[:restriction])
           end
@@ -309,7 +311,7 @@ module CitySDKLD
 
     def self.populate_field_types(l)
       # cache field types to reduce DB queries
-      return if @field_types[l[:id] || l[:id]]
+      return if @field_types[ l[:id] ]
       layer = CitySDKLD.memcached_get(CDKLayer.memcached_key(l[:id].to_s))
       @field_types[l[:id]] = {}
       layer[:fields].each do |f|
