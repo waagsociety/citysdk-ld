@@ -48,7 +48,7 @@ module CitySDKLD
       #   4. filters from POST JSON
 
       # 2.
-      filters = filters_from_params resource, method, params
+      filters = filters_from_params(resource, method, params)
 
       # 3.
       if params[:query]

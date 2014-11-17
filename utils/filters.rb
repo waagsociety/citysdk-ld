@@ -128,10 +128,13 @@ module CitySDKLD
         dataset.where(object_id: Sequel.function(:cdk_id_to_internal, params[:cdk_id]))
       when :layers
         # Return all layers with data about single objects
-        subselect = CDKObjectDatum
+        subselect1 = CDKObjectDatum
             .select(:layer_id)
             .where(object_id: Sequel.function(:cdk_id_to_internal, params[:cdk_id]))
-        dataset.where(id: subselect)
+        subselect2 = CDKLayer
+            .select(:id)
+            .where(depends_on_layer_id: subselect1)
+        dataset.where(id: subselect1).or(id: subselect2)
       end
     end
 
@@ -140,6 +143,7 @@ module CitySDKLD
     PAGINATE_MAX_PAGE = 100
     PAGINATE_MAX_PER_PAGE = 1000
     PAGINATE_INFINITY = 1_000_000_000
+    
     def self.paginate(dataset, params, query)
       page = PAGINATE_DEFAULT_PAGE
       per_page = PAGINATE_DEFAULT_PER_PAGE
@@ -183,7 +187,7 @@ module CitySDKLD
           end
         end
       end
-
+      
       # Get layers dependent on current layers, and get dependency hash
       source_layer_ids, target_layer_ids, deps_hash = CDKLayer.get_dependent(layer_ids)
 
@@ -203,23 +207,22 @@ module CitySDKLD
           source_layer_ids.each do |layer_id|
             dataset = object_data_joins(dataset, query, layer_id)
           end
-
           layer_ids.each do |layer_id|
             # Only join when not layer is not virtual
             unless deps_hash[layer_id]
               dataset = object_data_joins(dataset, query, layer_id)
             end
           end
-
         end
       when :layers
         dataset = dataset.where(id: layer_ids)
-      when :data, :layer_on_object, :fields
+      when :data  
+        dataset = dataset.where(layer_id: layer_ids + source_layer_ids)
+      when :layer_on_object, :fields
         dataset = dataset.where(layer_id: layer_ids)
       when :owners
         dataset = dataset.where(id: CDKLayer.select(:owner_id).where(id: layer_ids))
       end
-
       dataset
     end
 
