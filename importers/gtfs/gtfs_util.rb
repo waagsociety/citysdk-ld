@@ -19,7 +19,7 @@ module GTFS_Import
       end
 
       $EP_url  = config[:endpoint][:url]
-      $EP_user = config[:owner][:user]
+      $EP_user = config[:owner][:name]
       $EP_pass = config[:owner][:password]
     
       $DB_host = config[:db][:database]
