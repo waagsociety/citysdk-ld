@@ -9,7 +9,8 @@ module Sequel
 
       data = nil
       layers = {}
-
+      
+      
       case query[:resource]
       when :objects
         objects = self.to_hash
@@ -91,6 +92,7 @@ module Sequel
 
         data = layer_ids.map { |layer_id| CDKLayer.get_layer(layer_id) }
       when :data
+        #TODO take care of virtual layers
         data = self.all.map { |d| CDKObjectDatum.make_hash(d.values, {cdk_id: params[:cdk_id]}, query)[:data] }
       when :layer_on_object
         data = self.all.map { |d| CDKObjectDatum.layer_on_object(d.values) }
