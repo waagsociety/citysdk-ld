@@ -155,6 +155,9 @@ GEM
       rubyzip
       websocket (~> 1.0.4)
     sequel (4.4.0)
+    sequel_pg (1.6.11)
+      pg (>= 0.8.0)
+      sequel (>= 3.39.0)
     slop (3.5.0)
     sshkit (1.5.1)
       colorize
@@ -216,6 +219,7 @@ DEPENDENCIES
   rubocop (= 0.20.0)
   selenium-webdriver (= 2.32.1)
   sequel (~> 4.4.0)
+  sequel_pg
   stringex
   yajl-ruby
   zip (~> 2.0.2)
