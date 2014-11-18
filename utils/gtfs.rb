@@ -237,8 +237,6 @@ __END__
             lines = Object.where("members @> '{ #{stop.id} }' ").eager_graph(:node_data).where(:node_id => :nodes__id)
             lines = lines.all.map { |a| a.values.merge(:node_data=>a.node_data.map{|al| al.values}) }
 
-            puts lines.inspect
-
             return {
               :status => 'success',
               :pages => 1,

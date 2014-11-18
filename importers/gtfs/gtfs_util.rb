@@ -21,11 +21,11 @@ module GTFS_Import
       $EP_url  = config[:endpoint][:url]
       $EP_user = config[:owner][:name]
       $EP_pass = config[:owner][:password]
-    
+
       $DB_host = config[:db][:database]
       $DB_user = config[:db][:user]
       $DB_pass = config[:db][:password]
-    
+
       $api = nil
       $postgres = nil
     rescue Exception => e
@@ -33,8 +33,8 @@ module GTFS_Import
       exit!(-1)
     end
   end
-  
-  
+
+
   def self.connect_db
     begin
       get_config() if $DB_host.nil?
@@ -44,7 +44,7 @@ module GTFS_Import
       exit!(-1)
     end
   end
-  
+
 
   def self.do_log(s)
     File.open($logFile,'a') do |fd|
