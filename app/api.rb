@@ -34,8 +34,8 @@ module CitySDKLD
       @database.extension :pg_array
       @database.extension :pg_range
       @database.extension :pg_hstore
-      @database.extension(:pg_streaming)
-      @database.stream_all_queries = true
+      # @database.extension(:pg_streaming)
+      # @database.stream_all_queries = true
 
       Sequel::Model.db.extension :pagination
 
