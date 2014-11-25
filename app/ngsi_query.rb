@@ -12,6 +12,7 @@ module CitySDKLD
       @limit = query[:params][:limit] ? [1000,query[:params][:limit].to_i].min : 20
       @offset = query[:params][:offset] ? query[:params][:offset].to_i : 0
       @details = (query[:params][:details] and query[:params][:details] == 'on') ? true : false
+      @base = App.get_config[:endpoint][:base_uri]
       @count = 0
       case query[:method]
         when :post
@@ -235,14 +236,14 @@ module CitySDKLD
     end
 
     def self.get_one_object(ce, object, layer, attributes)
-      elm = {contextElement: {attributes: [], id: object[:title], isPattern: false, type: ce[:type]}, statusCode: {code: '200', reasonPhrase: 'OK'}}
+      
+      elm = {contextElement: {attributes: [], id: @base+object[:cdk_id], isPattern: false, type: ce[:type]}, statusCode: {code: '200', reasonPhrase: 'OK'}}
       odatum = CDKObjectDatum.get_from_object_and_layer(object.cdk_id, layer[:id])
       odatum[:data].each do |k,v|
         begin
           v = JSON.parse(v, symbolize_names: true)
         rescue
         end
-
         if attributes.blank? or attributes.include?(k)
           elm[:contextElement][:attributes] << { name: k, value: v, type: @field_types[layer[:id]][k] || 'unknown'}
         end
