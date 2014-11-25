@@ -17,12 +17,15 @@
   },
   "owner": {
     "name": "citysdk",
-     "password": "ChangeMeNow"
+    "password": "ChangeMeNow"
   },
   "db": {
     "host": "localhost",
     "database": "citysdk-ld",
     "user": "postgres",
     "password": "postgres"
+  },
+  "osm": {
+      "cache_size": 6000
   }
 }

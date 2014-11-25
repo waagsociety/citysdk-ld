@@ -66,8 +66,12 @@ def osm2pgsql(options, osm_db_config)
   end
 
   # Use osm2pgsql to read data from osm file into database
-  osm2pgsql = "export PGPASS=#{osm_db_config[:password]}; osm2pgsql --slim -j -d #{osm_db_config[:database]} -H #{osm_db_config[:host]} -l -C6000 -U #{osm_db_config[:user]} #{options[:osm_filename]}"
-  unless system osm2pgsql
+  cache_size = osm_db_config[:cache_size] or 6000
+  export = "export PGPASS=#{osm_db_config[:password]}"
+  osm2pgsql = "osm2pgsql --slim -j -d #{osm_db_config[:database]} -H #{osm_db_config[:host]}"
+      + " -l -C#{cache_size} -U #{osm_db_config[:user]} #{options[:osm_filename]}"
+
+  unless system "#{export}; #{osm2pgsql}"
     puts "Executing osm2pgsql failed... Is osm2pgsql installed?"
     exit
   end
