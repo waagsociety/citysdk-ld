@@ -217,7 +217,7 @@ module CitySDKLD
 
     def self.get_one_layered_entity(ce,layer,attributes, restriction)
       retvalue = []
-      
+
       if (ce[:isPattern] == true) or (ce[:isPattern] == 'true')
         pattern = Regexp::quote(layer.name + '.') + ce[:id]
         objects = self.objects_select_filter(CDKObject.where(layer_id: layer.id, cdk_id: Regexp.new(pattern,Regexp::IGNORECASE)), restriction)
@@ -236,8 +236,8 @@ module CitySDKLD
     end
 
     def self.get_one_object(ce, object, layer, attributes)
-      
-      elm = {contextElement: {attributes: [], id: @base+object[:cdk_id], isPattern: false, type: ce[:type]}, statusCode: {code: '200', reasonPhrase: 'OK'}}
+
+      elm = {contextElement: {attributes: [], id: @base + object[:cdk_id], isPattern: false, type: ce[:type]}, statusCode: {code: '200', reasonPhrase: 'OK'}}
       odatum = CDKObjectDatum.get_from_object_and_layer(object.cdk_id, layer[:id])
       odatum[:data].each do |k,v|
         begin
