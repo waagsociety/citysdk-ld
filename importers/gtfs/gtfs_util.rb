@@ -35,10 +35,11 @@ module GTFS_Import
   end
 
 
-  def self.connect_db
+  def self.connect
     begin
       get_config() if $DB_host.nil?
-      $postgres = PGconn.new('localhost', '5432', nil, nil, $DB_host, $DB_user, $DB_pass)
+      $postgres = PGconn.new('localhost', '5432', nil, nil, $DB_host, $DB_user, $DB_pass) if $postgres.nil?
+      $api = API.new($EP_url) if $api.nil?
     rescue Exception => e
       $stderr.puts("Could not connect to database...\n#{e.message}")
       exit!(-1)

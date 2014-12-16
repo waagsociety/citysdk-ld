@@ -61,7 +61,7 @@ end
 
 
 begin
-  GTFS_Import::connect_db()
+  GTFS_Import::connect()
   GTFS_Import::do_log("Create gtfs schema...")
   $postgres.transaction do
     $postgres.exec("drop schema if exists gtfs cascade; create schema gtfs;")
@@ -71,6 +71,7 @@ begin
     end
     GTFS_Import::add_utility_functions()
   end
+  GTFS_Import::make_clear_layers()
 rescue Exception => e
   puts e.message
 ensure

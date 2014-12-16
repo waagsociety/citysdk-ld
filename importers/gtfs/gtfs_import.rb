@@ -410,7 +410,7 @@ def do_stops
       }
     }
     stop.delete('geometry')
-    stop["parent_station"] = "gtfs.stops.#{stop['parent_station'].downcase.gsub(/\W/,'.')}"
+    stop["parent_station"] = stop['parent_station'].blank? ? nil : "gtfs.stops.#{stop['parent_station'].downcase.gsub(/\W/,'.')}"
     node[:properties][:data] = stop
     
     $api.create_object(node)
@@ -528,8 +528,7 @@ end
 
 
 begin
-  
-  GTFS_Import::connect_db()
+  GTFS_Import::connect
   GTFS_Import::do_log("Starting update...")
 
   $postgres.transaction do
@@ -545,15 +544,11 @@ begin
 
   GTFS_Import::do_log("\tCommited copy gtfs.")
 
-  
-  
-  $api = API.new($EP_url)
   $api.batch_size = 1000
   $api.set_layer('gtfs.stops')
   $api.authenticate($EP_user,$EP_pass)
 
   GTFS_Import::make_clear_layers($api)
-  
 
   $postgres.transaction do
     begin

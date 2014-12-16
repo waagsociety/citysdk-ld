@@ -1,7 +1,12 @@
 module GTFS_Import
 
   # make the gtfs layers if they exist, clear them (or not)
-  def self.make_clear_layers(api, clear=true)
+  def self.make_clear_layers(clear=true)
+    GTFS_Import::connect
+    if true == $api.authenticate($EP_user,$EP_pass)
+      puts "Error authenticating with API"
+    end
+
     begin
       ret = api.get('/layers/gtfs.stops')
       a = api.delete('/layers/gtfs.stops/objects') if clear
@@ -49,18 +54,41 @@ module GTFS_Import
 
   end
 
-  @@gtfs_layers = {
-    stops: {
-      name: "gtfs.stops",
-      owner: "citysdk",
-      title: "PTStops",
-      description: "Public transport stops and stations.",
-      data_sources: ["http://gtfs.ovapi.nl/new/gtfs-nl.zip"],
-      category: "mobility",
-      subcategory: "public_transport",
-      rdf_type: "gtfs:Stop",
-      rdf_prefixes: {
-        gtfs: 'http://vocab.gtfs.org/terms#'
+
+# http://api1.dev/objects/gtfs.routes.arr.19529.0/layers/gtfs.routes.stops
+# http://api1.dev/objects/gtfs.routes.cxx.19242.1
+# http://api1.dev/layers/gtfs.routes.stops/objects
+# http://api1.dev/layers/gtfs.routes/objects/gtfs.routes.arr.19529.0
+# http://api1.dev/layers/gtfs.routes.stops/objects/gtfs.routes.cxx.19242.1
+  
+@@gtfs_layers = {
+  stops: {
+    name: "gtfs.stops",
+    owner: "citysdk",
+    title: "PTStops",
+    description: "Public transport stops and stations.",
+    data_sources: ["http://gtfs.ovapi.nl/new/gtfs-nl.zip"],
+    category: "mobility",
+    subcategory: "public_transport",
+    rdf_type: "gtfs:Stop",
+    rdf_prefixes: {gtfs: 'http://vocab.gtfs.org/terms#'},
+    licence: "CC0",
+    fields: [
+      {
+        name: "wheelchair_boarding",
+        type: 'gtfs:wheelchairBoardingStatus',
+        equivalent_property: 'gtfs:wheelchairBoarding',
+        description: "0: no info; 1: at least on vehicle supports wheelchair boarding; 2: not possible"
+      },
+      {
+        name: "location_type",
+        type: "xsd:integer",
+        description: "0: stop; 1: station"
+      },
+      {
+        name: "stop_id",
+        type: "xsd:string",
+        description: "unique id for stop"
       },
       licence: "CC0",
       fields: [
