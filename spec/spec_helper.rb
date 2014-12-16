@@ -4,9 +4,6 @@ require 'rack/test'
 ENV["RACK_ENV"] = 'test'
 require File.expand_path("../../config/environment", __FILE__)
 
-require File.expand_path("../../config/environment", __FILE__)
-
-
 config = JSON.parse(File.read("./config.test.json"), symbolize_names: true)
 $base_uri = config[:endpoint][:base_uri]
 
