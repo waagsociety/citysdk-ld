@@ -8,7 +8,8 @@ module CDKCommands
     case command
     when 'gtfs.routes.stops'
       route_id = obj[:layers]["gtfs.routes"][:data]["route_id"]
-      return self.stops_for_route(route_id,obj,params)
+      data[:data] = self.stops_for_route(route_id,obj,params)
+      return
     when 'gtfs.stops.now'
       stop_id = obj[:layers]["gtfs.stops"][:data]["stop_id"]
       tzdiff = params['tz'] ? -60 * (Time.now.utc_offset / 3600 + params['tz'].to_i) : 0
@@ -50,7 +51,7 @@ module CDKCommands
     stops.to_a.each do |s|
       res << {name: s[:name], cdk_id: 'gtfs.stops.' + "#{s[:stop_id].downcase.gsub(/\W/,'.')}" }
     end
-    object[:data] = {stops: res}
+    {stops: res}
   end
 
   def self.now_for_stop(stop_id, tz)

@@ -141,20 +141,21 @@ class CDKObjectDatum < Sequel::Model(:object_data)
     }
   end
 
-  def self.make_hash(nd, object, query)
-    layer_id = nd[:layer_id]
+  def self.make_hash(new_data, object, query)
+    layer_id = new_data[:layer_id]
 
-    nd.delete(:id)
-    nd.delete(:object_id)
-    nd.delete(:layer_id)
-    nd.delete(:created_at)
-    nd.delete(:updated_at)
+    new_data.delete(:id)
+    new_data.delete(:object_id)
+    new_data.delete(:layer_id)
+    new_data.delete(:created_at)
+    new_data.delete(:updated_at)
 
     if CDKLayer.is_webservice? layer_id
-      nd[:data] = WebService.load(layer_id, object, nd[:data], query)
+      # new_data[:data] = WebService.load(layer_id, object, new_data[:data], query)
+      new_data = WebService.load(layer_id, object, new_data[:data], query)
     end
 
-    nd
+    new_data
   end
 
 end

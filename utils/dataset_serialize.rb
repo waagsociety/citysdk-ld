@@ -10,10 +10,10 @@ module Sequel
       data = nil
       layers = {}
       
-      
       case query[:resource]
       when :objects
-        objects = self.to_hash
+        # to_hash does the DB query!!
+        objects = self.to_hash 
 
         if params[:cdk_id] and objects.keys.length == 0
           query[:api].error!("Object not found: '#{params[:cdk_id]}'", 404)
@@ -21,6 +21,7 @@ module Sequel
 
         layer_ids = []
         object_data = []
+        deps_object_data = {}
         layer_sources = query[:internal][:source_layer_ids] || []
 
         if (query[:internal].key? :layer_ids or query[:internal].key? :data_layer_ids) and objects.keys.length > 0
@@ -28,13 +29,25 @@ module Sequel
           if query[:internal][:layer_ids] != :*
             layer_ids += query[:internal][:layer_ids] if query[:internal].key? :layer_ids
             layer_ids += query[:internal][:data_layer_ids] if query[:internal][:data_layer_ids]
-
             layer_ids.uniq!
             dataset = dataset.where(layer_id: layer_ids + layer_sources)
           end
           object_data = dataset.all.map { |d| d.values }
+          
+          # for each object in result set, find dependant virtual layers, if there are any
+          if query[:internal][:layer_ids] == :*
+            object_data.each do |object_datum|
+              if query[:internal][:deps_hash].values.include?(object_datum[:layer_id])
+                object_id = object_datum[:object_id]
+                unless deps_object_data.include? object_id
+                  deps_object_data[object_id] = []
+                end
+                deps_object_data[object_id] << query[:internal][:deps_hash].key(object_datum[:layer_id])   
+              end
+            end
+          end
         end
-
+    
         if object_data.length > 0
           data = {}
           object_data.each do |d|
@@ -48,6 +61,16 @@ module Sequel
             data[object_id][:layers][layer_name] = CDKObjectDatum.make_hash(d, data[object_id], query)
           end
 
+          if query[:internal][:layer_ids] == :*
+            deps_object_data.each do |object_id,target_layer_ids|
+              target_layer_ids.each do |target_layer_id|
+                layer_name = CDKLayer.name_from_id(target_layer_id)
+                data[object_id][:layers][layer_name] = CDKObjectDatum.make_hash({layer_id: target_layer_id, data: {}}, data[object_id], query)
+                # jsonlog(data[object_id])
+              end
+            end
+          end
+          
           # add the 'virtual, target layers'
           if query[:internal][:target_layer_ids] and query[:internal][:source_layer_ids]
             query[:internal][:target_layer_ids].each do |layer_id|
@@ -78,6 +101,12 @@ module Sequel
         layer_ids.uniq.each do |layer_id|
           layer = CDKLayer.get_layer layer_id
           layers[layer[:name]] = layer
+        end
+        deps_object_data.each_value do |o|
+          o.each do |l|
+            layer = CDKLayer.get_layer(l)
+            layers[layer[:name]] = layer if layers[layer[:name]].nil?
+          end
         end
 
       when :layers

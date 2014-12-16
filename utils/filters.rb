@@ -177,7 +177,10 @@ module CitySDKLD
 
     def self.layer(dataset, params, query)
       layer_ids = []
-      unless params[:layer] == '*' and query[:resource] == :objects
+      
+      if params[:layer] == '*' and query[:resource] == :objects
+        ;
+      else
         params[:layer].split(',').each do |layer_name|
           layer_id = CDKLayer.id_from_name(layer_name)
           if layer_id
@@ -200,20 +203,23 @@ module CitySDKLD
         else
           # Set query internal parameter
           query[:internal][:layer_ids] = layer_ids
-          query[:internal][:source_layer_ids] = source_layer_ids
-          query[:internal][:target_layer_ids] = target_layer_ids
+        end
 
-          # join all layers that others depend on
-          source_layer_ids.each do |layer_id|
+        query[:internal][:source_layer_ids] = source_layer_ids
+        query[:internal][:target_layer_ids] = target_layer_ids
+        query[:internal][:deps_hash] = deps_hash
+
+        # join all layers that others depend on
+        source_layer_ids.each do |layer_id|
+          dataset = object_data_joins(dataset, query, layer_id)
+        end
+        layer_ids.each do |layer_id|
+          # Only join when not layer is not virtual
+          unless deps_hash[layer_id]
             dataset = object_data_joins(dataset, query, layer_id)
           end
-          layer_ids.each do |layer_id|
-            # Only join when not layer is not virtual
-            unless deps_hash[layer_id]
-              dataset = object_data_joins(dataset, query, layer_id)
-            end
-          end
         end
+
       when :layers
         dataset = dataset.where(id: layer_ids)
       when :data  
