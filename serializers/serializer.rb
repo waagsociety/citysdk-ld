@@ -20,7 +20,7 @@ module CitySDKLD
     # 6        0.000001   0.111 m
     # 7        0.0000001  1.11 cm
     # 8        0.00000001 1.11 mm
-    COORDINATE_PRECISION = 6
+    COORDINATE_PRECISION = 7
 
     class Serializer
       #########################################################################
