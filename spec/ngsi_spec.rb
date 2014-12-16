@@ -103,6 +103,7 @@ describe CitySDKLD::API do
       body_json(last_response)[:attributes][0][:value].should == "234"
     end
 
+    
     it "can query for context entity types" do
       header "CONTENT_TYPE", "application/json"
       get "/ngsi10/contextEntityTypes/Room"
@@ -152,7 +153,7 @@ describe CitySDKLD::API do
       json[:restriction][:scopes][0][:value][:polygon][:inverted] = true
       post "/ngsi10/queryContext", json.to_json
       expect(body_json(last_response)[:contextResponses].length).to be(1)
-      body_json(last_response)[:contextResponses][0][:contextElement][:id].should == "Room4"
+      body_json(last_response)[:contextResponses][0][:contextElement][:id].should == $base_uri + "ngsi.room.room4"
     end
 
     it "can query for objects within radius from a point" do
@@ -188,7 +189,7 @@ describe CitySDKLD::API do
       }
       post "/ngsi10/queryContext", json.to_json
       expect(body_json(last_response)[:contextResponses].length).to be(1)
-      body_json(last_response)[:contextResponses][0][:contextElement][:id].should == "Room4"
+      body_json(last_response)[:contextResponses][0][:contextElement][:id].should == $base_uri + "ngsi.room.room4"
     end
 
     it "can subscribe to entities" do

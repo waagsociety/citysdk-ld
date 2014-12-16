@@ -8,6 +8,7 @@ require File.expand_path("../../config/environment", __FILE__)
 
 
 config = JSON.parse(File.read("./config.test.json"), symbolize_names: true)
+$base_uri = config[:endpoint][:base_uri]
 
 # Expects the user who executes `rspec` to also have postgres login rights - without password
 system "psql postgres -c 'DROP DATABASE IF EXISTS \"#{config[:db][:database]}\"'"
