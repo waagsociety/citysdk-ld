@@ -1,37 +1,30 @@
 {
-  "name": "tom.steden",
-  "owner": "tom",
-  "title": "Drie grote steden 🏠🏢🏣🏨🏫🏬🏭🏡",
-  "description": "Amsterdam, Den Haag en Utrecht",
-  "data_sources": [
-    "http://nl.wikipedia.org/wiki/Den_Haag",
-    "http://nl.wikipedia.org/wiki/Utrecht_(stad)",
-    "http://nl.wikipedia.org/wiki/Amsterdam"
-  ],
-  "authoritative": true,
-  "rdf_type": "csdk:City",
-  "category": "administrative",
-  "subcategory": "stats",
-  "licence": "unspecified",
-  "fields": [
-    {
-      "name": "naam",
-      "type": "",
-      "unit": "",
-      "lang": "",
-      "equivalent_property": "",
-      "description": ""
-    },
-    {
-      "name": "inwoners",
-      "type": "",
-      "unit": "",
-      "lang": "",
-      "equivalent_property": "",
-      "description": ""
-    }
-  ],
-  "@context": {
-    "vis": "koek"
+    "name": "steden.inw",
+    "owner": "citysdk",
+    "title": "Inwoners",
+    "description": "Test",
+    "data_sources": [
+      "http://nl.wikipedia.org/wiki/Den_Haag",
+      "http://nl.wikipedia.org/wiki/Utrecht_(stad)",
+      "http://nl.wikipedia.org/wiki/Amsterdam"
+    ],
+    "category": "civic",
+    "subcategory": "stats",
+    "rdf_type": "cdk:test",
+    "rdf_prefixes": {},
+    "licence": "CC0",
+    "depends": "tom.steden",
+    "webservice_url": "http://0.0.0.0:9696/",
+    "fields": [
+      {
+        "name": "inw",
+        "type": "xsd:integer",
+        "unit": "cdk:enum",
+        "lang": "en",
+        "equivalent_property": "",
+        "description": ""
+      }
+    ],
+    "context": {}
   }
-}
+

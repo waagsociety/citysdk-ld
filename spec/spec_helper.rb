@@ -55,6 +55,23 @@ end
 $post_data = {}
 
 Thread.new do
+  server = TCPServer.new 9696
+  loop do
+    Thread.start(server.accept) do |client|
+      l = client.readpartial(3000)
+      $post_data = JSON.parse(l.split("\r\n")[-1], symbolize_names: true)
+      puts $post_data
+      client.puts "HTTP/1.0 200 OK\r\n"
+      client.puts "Content-Type: text/html"
+      client.puts "\r\n"
+      client.puts '{"inw":"10"}' + "\r\n"
+      client.close
+    end
+  end
+end
+
+
+Thread.new do
   server = TCPServer.new 9797
   loop do
     Thread.start(server.accept) do |client|
