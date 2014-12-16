@@ -1,15 +1,15 @@
 # encoding: UTF-8
 
-class NGSI_Referer < Sequel::Model(:ngsi_referers)
+class NGSI_Referrer < Sequel::Model(:ngsi_referrers)
 
   require 'faraday'
 
-  def self.get_id(referer)
-    n = NGSI_Referer.where(url: referer).first
+  def self.get_id(referrer)
+    n = NGSI_Referrer.where(url: referrer).first
     if n
       return n[:id]
     end
-    return insert(url: referer)
+    return insert(url: referrer)
   end
 
 end
@@ -36,7 +36,7 @@ class NGSI_Subscription < Sequel::Model(:ngsi_subscriptions)
     attributes = data[:attributes].is_a?(Array) ? data[:attributes].join(',') : data[:attributes]
     notification = data[:notifyConditions]
     ends_at = get_expiry(data[:duration])
-    r_id = NGSI_Referer.get_id(data[:reference])
+    r_id = NGSI_Referrer.get_id(data[:reference])
     case notification[0][:type]
     when 'ONCHANGE'
         entities.each do |e|
@@ -46,7 +46,7 @@ class NGSI_Subscription < Sequel::Model(:ngsi_subscriptions)
             layer_id: e[:layer_id],
             subscription_id: sid,
             ends_at: ends_at,
-            referer_id: r_id
+            referrer_id: r_id
           }
           insert(s)
         end
@@ -56,7 +56,7 @@ class NGSI_Subscription < Sequel::Model(:ngsi_subscriptions)
 
   def self.post(subscription, data)
     type = CDKLayer.type_from_id(subscription[:layer_id])
-    ref  = NGSI_Referer.where(id: subscription[:referer_id]).first
+    ref  = NGSI_Referrer.where(id: subscription[:referrer_id]).first
 
     d = {
       subscriptionId: subscription[:subscription_id],
