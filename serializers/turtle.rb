@@ -68,7 +68,7 @@
 #               @result << "    :createdOnLayer <layers/#{layer}> ."
 #               #@result << "    dc:created \"<object datum created date>\"^^xsd:date ."
 #
-#               if @layers[layer][:@context]
+#               if @layers[layer][:context]
 #
 #                 types = [':LayerData']
 #                 types << @layers[layer][:rdf_type] if @layers[layer][:rdf_type]
@@ -129,7 +129,7 @@
 #           # - authoritative
 #           # - rdf_type
 #           # - data_sources
-#           # - @context
+#           # - context
 #           # - update_rate
 #           # - webservice_url
 #           # - sample_url

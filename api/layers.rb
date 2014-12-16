@@ -40,12 +40,12 @@ module CitySDKLD
         end
 
         desc 'Return JSON-LD context of single layer'
-        get '/@context' do
+        get '/context' do
           do_query :context, true
         end
 
         desc 'Overwrite JSON-LD context of single layer'
-        put '/@context' do
+        put '/context' do
           do_query :context, true
         end
 

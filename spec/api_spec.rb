@@ -169,7 +169,7 @@ describe CitySDKLD::API do
       header "CONTENT_TYPE", "application/json"
       data = read_test_data_json 'layer_bert.dierenwinkels.json'
       data.delete(:fields)
-      data.delete(:@context)
+      data.delete(:context)
       post "/layers", data.to_json
       status_should(last_response, 401)
       body_json(last_response).should == { error: "Operation requires authorization"}
@@ -180,7 +180,7 @@ describe CitySDKLD::API do
       header "X-Auth", $key_bert
       data = read_test_data_json 'layer_bert.dierenwinkels.json'
       data.delete(:fields)
-      data.delete(:@context)
+      data.delete(:context)
       data[:name] = 'pipo.dierenwinkels'
       post "/layers", data.to_json
       status_should(last_response, 403)
@@ -192,7 +192,7 @@ describe CitySDKLD::API do
       header "X-Auth", $key_bert
       data = read_test_data_json 'layer_bert.dierenwinkels.json'
       data.delete(:fields)
-      data.delete(:@context)
+      data.delete(:context)
       post "/layers", data.to_json
       status_should(last_response, 201)
       body_json(last_response)[:features][0][:properties][:name].should == 'bert.dierenwinkels'
@@ -291,7 +291,7 @@ describe CitySDKLD::API do
     end
   end
 
-  describe "@context" do
+  describe "context" do
     ######################################################################
     # context:
     ######################################################################
@@ -299,13 +299,13 @@ describe CitySDKLD::API do
 
     it "gets JSON-LD context of layer 'tom.achtbanen'" do
       data = read_test_data_json 'layer_tom.achtbanen.json'
-      get "/layers/tom.achtbanen/@context"
+      get "/layers/tom.achtbanen/context"
       status_should(last_response, 200)
-      body_json(last_response).should == data[:@context]
+      body_json(last_response).should == data[:context]
     end
 
     it "gets JSON-LD context of layer 'bert.dierenwinkels'" do
-      get "/layers/bert.dierenwinkels/@context"
+      get "/layers/bert.dierenwinkels/context"
       status_should(last_response, 200)
       body_json(last_response).should == {}
     end
@@ -314,14 +314,14 @@ describe CitySDKLD::API do
       header "CONTENT_TYPE", "application/json"
       header "X-Auth", $key_bert
       data = read_test_data_json 'layer_bert.dierenwinkels.json'
-      put "/layers/bert.dierenwinkels/@context", data[:@context].to_json
+      put "/layers/bert.dierenwinkels/context", data[:context].to_json
       status_should(last_response, 200)
-      body_json(last_response).should == data[:@context]
+      body_json(last_response).should == data[:context]
     end
 
     # TODO: this test still fails!
     # Serialization should only be attemped when content type matches possible output
-    # describe "GET /layers/bert.dierenwinkels/@context" do
+    # describe "GET /layers/bert.dierenwinkels/context" do
     #   it "tries to get RDF/Turtle version of JSON-LD context" do
     #     get "/layers/bert.dierenwinkels/@context", nil, {'HTTP_ACCEPT' => "text/turtle"}
     #     status_should(last_response, 406)

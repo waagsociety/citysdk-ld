@@ -9,8 +9,7 @@ module Sequel
 
       data = nil
       layers = {}
-      
-      
+
       case query[:resource]
       when :objects
         objects = self.to_hash

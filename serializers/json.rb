@@ -49,7 +49,7 @@ module CitySDKLD
             update_rate: layer[:update_rate],
             webservice_url: layer[:webservice_url],
             imported_at: layer[:imported_at],
-            :@context => layer[:@context],
+            context: layer[:context],
             geom: layer[:geojson] ? layer[:geojson] : nil
           }
           result[:depends] = CDKLayer::name_from_id(layer[:depends_on_layer_id]) if (layer[:depends_on_layer_id] and layer[:depends_on_layer_id] != 0)

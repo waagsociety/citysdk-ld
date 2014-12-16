@@ -56,9 +56,9 @@ module CitySDKLD
                 :@type => ':LayerOnObject'
               }.merge layer
 
-              context = "http://#{@query[:host]}/layers/#{l}/@context"
+              context = "http://#{@query[:host]}/layers/#{l}/context"
               if first
-                context = @layers[l][:@context] if @layers[l][:@context]
+                context = @layers[l][:context] if @layers[l][:context]
               end
 
               types = [':LayerData']
