@@ -166,12 +166,12 @@ module CitySDKLD
       when :context
         # CDKLayer expects string keys in POST data - not symbols
         # TODO: convert ALL input data from request and filters with symbolize_names?
-        @q[:data] = {:@context => @q[:data]}
+        @q[:data] = {context: @q[:data]}
         CDKLayer.execute_write @q
 
         # TODO: move to Layer model!
         layer_id = CDKLayer.id_from_name(@q[:params][:layer])
-        context = CDKLayer.get_layer(layer_id)[:@context] rescue {}
+        context = CDKLayer.get_layer(layer_id)[:context] rescue {}
         data = {
           resource: @q[:resource],
           data: context ? context : {},
@@ -213,7 +213,6 @@ module CitySDKLD
     end
 
     def read
-
       dataset = nil
       data = nil
       case @q[:resource]
@@ -249,7 +248,7 @@ module CitySDKLD
         unless layer_id
           @q[:api].error!("Layer not found: #{@q[:params][:layer]}", 404)
         end
-        context = CDKLayer.get_layer(layer_id)[:@context] rescue {}
+        context = CDKLayer.get_layer(layer_id)[:context] rescue {}
         data = {
           resource: @q[:resource],
           data: context ? context : {},

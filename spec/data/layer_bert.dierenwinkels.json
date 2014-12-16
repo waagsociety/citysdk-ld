@@ -29,7 +29,7 @@
       "description": "Shop's date of opening"
     }
   ],
-  "@context": {
+  "context": {
     "sinds": "dc:date"
   }
 }

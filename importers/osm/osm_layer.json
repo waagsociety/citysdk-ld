@@ -9,5 +9,5 @@
   ],
   "licence": "http://www.openstreetmap.org/copyright",
   "rdf_type": "cdk:OSM",
-  "@context": {}
+  "context": {}
 }
