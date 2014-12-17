@@ -147,8 +147,8 @@ describe CitySDKLD::API do
       get "/owners"
       status_should(last_response, 200)
       data = body_json(last_response)
-      data.length.should == expected_owners.length
-      (data.map { |owner| owner[:name] } - expected_owners).blank?.should == true
+      data[:owners].length.should == expected_owners.length
+      (data[:owners].map { |owner| owner[:name] } - expected_owners).blank?.should == true
     end
 
     it "gets owner that doesn't exist" do
@@ -260,7 +260,7 @@ describe CitySDKLD::API do
     it "owner of 'bert.dierenwinkels' should not be rutger" do
       get '/layers/bert.dierenwinkels/owners'
       status_should(last_response, 200)
-      body_json(last_response)[0][:name].should == 'bert'
+      body_json(last_response)[:owners][0][:name].should == 'bert'
     end
 
     it "sets owner of 'bert.dierenwinkels' to owner that does not exist" do
@@ -347,7 +347,7 @@ describe CitySDKLD::API do
       data = read_test_data_json 'layer_tom.achtbanen.json'
       get "/layers/tom.achtbanen/fields"
       status_should(last_response, 200)
-      body_json(last_response).length.should == data[:fields].length
+      body_json(last_response)[:fields].length.should == data[:fields].length
     end
 
     it "creates multiple fields for layer 'bert.dierenwinkels'" do
@@ -397,7 +397,7 @@ describe CitySDKLD::API do
       data = read_test_data_json 'layer_bert.dierenwinkels.json'
       get "/layers/bert.dierenwinkels/fields"
       status_should(last_response, 200)
-      body_json(last_response).length.should == data[:fields].length
+      body_json(last_response)[:fields].length.should == data[:fields].length
     end
 
     it "gets 'lengte' field of layer 'tom.achtbanen'" do
@@ -672,8 +672,7 @@ describe CitySDKLD::API do
       patch "/objects/tom.steden.utrecht/layers/tom.steden", {inwoners: 542322}.to_json
       status_should(last_response, 200)
       get "/objects/tom.steden.utrecht"
-      jsonlog body_json(last_response)
-      # body_json(last_response)[:features][0][:properties][:layers][:'tom.steden'][:data][:inwoners].should == "542322"
+      body_json(last_response)[:features][0][:properties][:layers][:'tom.steden'][:data][:inwoners].should == "542322"
     end
 
     it "adds data on layer 'rutger.openingstijden' to existing objects" do
@@ -869,8 +868,8 @@ describe CitySDKLD::API do
     it "gets owners of layer 'tom.achtbanen'" do
       get "/layers/tom.achtbanen/owners"
       status_should(last_response, 200)
-      body_json(last_response).length.should == 1
-      body_json(last_response)[0][:name].should == 'tom'
+      body_json(last_response)[:owners].length.should == 1
+      body_json(last_response)[:owners][0][:name].should == 'tom'
     end
 
     it "gets layers of owner 'tom'" do

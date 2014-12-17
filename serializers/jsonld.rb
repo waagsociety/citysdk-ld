@@ -13,7 +13,6 @@ module CitySDKLD
       CONTENT_TYPE = 'application/ld+json'
 
       def finish
-
         case @resource
         when :objects
           @result = {
@@ -71,6 +70,7 @@ module CitySDKLD
               }.merge layer[:data]
 
               feature[:properties][:layers][l] = layer
+
             end
           end
 

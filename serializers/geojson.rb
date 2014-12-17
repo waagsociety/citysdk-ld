@@ -14,7 +14,7 @@ module CitySDKLD
       def start
         @env["api.format"] = "json"
 
-        unless [:context, :data].include? @resource
+        if [:objects, :layers, :endpoints].include? @resource
           @result = {
             type: "FeatureCollection",
             features: []
@@ -78,7 +78,7 @@ module CitySDKLD
       end
 
       def object_write_result
-        singular_plural
+        @result = @data
       end
 
       def owners

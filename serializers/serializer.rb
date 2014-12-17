@@ -28,7 +28,11 @@ module CitySDKLD
       #########################################################################
 
       def singular_plural
-        @result = @query[:single] ? @data[0] : @data
+        @result = if @query[:single]
+          @data[0]
+        else
+          { @resource => @data }
+        end
       end
 
       def serialize(object, env)
