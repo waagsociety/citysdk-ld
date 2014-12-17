@@ -1,7 +1,8 @@
 #GTFS importer
 
-The GTFS importer adds one of more GTFS feeds to the database.
+The GTFS importer adds one or more GTFS feeds to the database.
 If there's only one feed to add, do a *reset*, then an *import*.
+The *import* command expects an unzipped GTFS folder that you've downloaded.
 
 When there's multiple feeds to import, do the *reset* once, then multiple *imports*.<br/>
 Updating feeds is not supported.
