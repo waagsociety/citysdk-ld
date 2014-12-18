@@ -1,6 +1,6 @@
 {
   "endpoint": {
-    "url": "http://localhost:9292",
+    "url": "http://localhost:9292/",
     "title": "CitySDK LD API - Amsterdam",
     "site": "http://citysdk.waag.org/",
     "organization": "Waag Society",
@@ -26,6 +26,6 @@
     "password": "postgres"
   },
   "osm": {
-      "cache_size": 6000
+    "cache_size": 6000
   }
 }

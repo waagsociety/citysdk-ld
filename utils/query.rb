@@ -155,17 +155,14 @@ module CitySDKLD
       data = nil
       case @q[:resource]
       when :objects
-        data = CDKObject.execute_write @q
         data = {
           resource: :object_write_result,
-          data: data,
+          data: CDKObject.execute_write(@q),
           query: @q
         }
       when :layers
         dataset = CDKLayer.execute_write @q
       when :context
-        # CDKLayer expects string keys in POST data - not symbols
-        # TODO: convert ALL input data from request and filters with symbolize_names?
         @q[:data] = {context: @q[:data]}
         CDKLayer.execute_write @q
 

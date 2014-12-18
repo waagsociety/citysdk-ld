@@ -247,6 +247,17 @@ class CDKLayer < Sequel::Model(:layers)
 
   def self.make_hash(l)
     l[:context] = JSON.parse(l[:context], symbolize_names: true) if l[:context]
+    if not l[:context]
+      l[:context] = {}
+    end
+
+    if not l[:context].has_key? :@vocab
+      # Add null vocab, to make sure JSON-LD serialization of objects queries
+      # will not use the results top-most JSON-LD context's @vocab
+      # in the LayerData object
+      l[:context][:@vocab] = nil
+    end
+
     l[:wkt] = l[:wkt].round_coordinates(CitySDKLD::Serializers::COORDINATE_PRECISION) if l[:wkt]
     l[:geojson] = JSON.parse(l[:geojson].round_coordinates(CitySDKLD::Serializers::COORDINATE_PRECISION), symbolize_names: true) if l[:geojson]
     l[:fields] = CDKField.where(layer_id: l[:id]).all.map { |f| CDKField.make_hash(f.to_hash) }
