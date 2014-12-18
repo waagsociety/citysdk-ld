@@ -60,15 +60,15 @@ module CitySDKLD
               update_rate: layer[:update_rate],
               webservice_url: layer[:webservice_url],
               imported_at: layer[:imported_at],
-              owner: layer[:owner].delete_if { |k, v| v.nil? },
-              fields: layer[:fields],
+              owner: layer[:owner][:name],
+              fields: layer[:fields].map { |field| field[:name] } ,
               context: layer[:context]
             },
             geometry: layer[:geojson] ? layer[:geojson] : {}
           }
           feature.delete_if { |k, v| v.nil? }
           feature[:properties].delete_if { |k, v| v.nil? }
-          feature[:properties][:depends] = CDKLayer::name_from_id(layer[:depends_on_layer_id]) if (layer[:depends_on_layer_id] and layer[:depends_on_layer_id] != 0)
+          feature[:properties][:dependsOn] = CDKLayer::name_from_id(layer[:depends_on_layer_id]) if (layer[:depends_on_layer_id] and layer[:depends_on_layer_id] != 0)
           @result[:features] << feature
         end
       end
