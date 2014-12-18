@@ -141,7 +141,15 @@ class CDKObjectDatum < Sequel::Model(:object_data)
     }
   end
 
+
+
   def self.make_hash(new_data, object, query)
+    # object is current object being 'assembled'
+    # 
+    
+    # jsonlog({new_data: new_data})
+    # jsonlog({object: object})
+    
     layer_id = new_data[:layer_id]
 
     new_data.delete(:id)
@@ -151,10 +159,8 @@ class CDKObjectDatum < Sequel::Model(:object_data)
     new_data.delete(:updated_at)
 
     if CDKLayer.is_webservice? layer_id
-      # new_data[:data] = WebService.load(layer_id, object, new_data[:data], query)
-      new_data = WebService.load(layer_id, object, new_data[:data], query)
+      new_data[:data] = WebService.load(layer_id, object, new_data[:data], query)
     end
-
     new_data
   end
 

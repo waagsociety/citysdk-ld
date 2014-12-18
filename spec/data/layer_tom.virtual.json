@@ -14,7 +14,7 @@
     "rdf_prefixes": {},
     "licence": "CC0",
     "depends": "tom.steden",
-    "webservice_url": "http://0.0.0.0:9696/",
+    "webservice_url": "http://127.0.0.1:7654/steden.inw",
     "fields": [
       {
         "name": "inw",

@@ -6,7 +6,6 @@ require 'socket'
 require 'tempfile'
 require 'getoptlong'
 require './gtfs_util.rb'
-require './gtfs_layers.rb'
 
 $newDir = ''
 $prefix = ''
