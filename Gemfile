@@ -41,4 +41,5 @@ group :test do
   gem "rspec-core"
   gem "rspec-expectations"
   gem "rspec-mocks"
+  gem "sinatra", '1.4.5'
 end

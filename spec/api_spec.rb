@@ -672,8 +672,7 @@ describe CitySDKLD::API do
       patch "/objects/tom.steden.utrecht/layers/tom.steden", {inwoners: 542322}.to_json
       status_should(last_response, 200)
       get "/objects/tom.steden.utrecht"
-      jsonlog body_json(last_response)
-      # body_json(last_response)[:features][0][:properties][:layers][:'tom.steden'][:data][:inwoners].should == "542322"
+      body_json(last_response)[:features][0][:properties][:layers][:'tom.steden'][:data][:inwoners].should == "542322"
     end
 
     it "adds data on layer 'rutger.openingstijden' to existing objects" do

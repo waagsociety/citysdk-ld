@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'rack/test'
 
+
 ENV["RACK_ENV"] = 'test'
 require File.expand_path("../../config/environment", __FILE__)
 
@@ -16,6 +17,13 @@ system "psql \"#{config[:db][:database]}\" -c 'CREATE EXTENSION pg_trgm'"
 
 # Run migrations - initialize tables, constants and functions
 system "cd db && ruby run_migrations.rb test"
+
+# if not fork
+#   system "ruby #{File.dirname(__FILE__)}/webserv.rb -p 7654"
+#   puts "eruit!!!!"
+#   sleep(10)
+#   exit(0)
+# end
 
 def app
   CitySDKLD::API
@@ -50,40 +58,6 @@ def status_should(last_response, status)
           JSON.pretty_generate(body_json(last_response))
   end
   last_response.status.should == status
-end
-
-$post_data = {}
-
-Thread.new do
-  server = TCPServer.new 9696
-  loop do
-    Thread.start(server.accept) do |client|
-      l = client.readpartial(3000)
-      $post_data = JSON.parse(l.split("\r\n")[-1], symbolize_names: true)
-      puts $post_data
-      client.puts "HTTP/1.0 200 OK\r\n"
-      client.puts "Content-Type: text/html"
-      client.puts "\r\n"
-      client.puts '{"inw":"10"}' + "\r\n"
-      client.close
-    end
-  end
-end
-
-
-Thread.new do
-  server = TCPServer.new 9797
-  loop do
-    Thread.start(server.accept) do |client|
-      puts ''
-      l = client.readpartial(3000)
-      $post_data = JSON.parse(l.split("\r\n")[-1], symbolize_names: true)
-      client.puts "HTTP/1.0 200 OK\r\n"
-      client.puts "Content-Type: text/html"
-      client.puts "\r\n"
-      client.close
-    end
-  end
 end
 
 

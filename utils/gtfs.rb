@@ -19,39 +19,12 @@ module CDKCommands
       return self.schedule_for_stop(stop_id)
     when 'gtfs.routes.schedule'
       route_id = obj[:layers]["gtfs.routes"][:data]["route_id"]
-      return self.schedule_for_line(route_id,obj[:cdk_id][-1], params)
+      return self.schedule_for_line(obj, params[:day]||0)
+    when 'gtfs.stops.routes'
+      stop_id = obj[:layers]["gtfs.stops"][:data]["stop_id"]
+      return self.routes_for_stop(stop_id)
     else
     end
-  end
-
-  def self.get_realtime(key,stop_id,deptime)
-    rt = CitySDKLD.memcached_get("#{stop_id}!!#{key}!!#{deptime}")
-    if rt
-      return "#{rt} (#{deptime})"
-    end
-    deptime
-  end
-
-  @@agency_names = {}
-  def self.get_agency_name(id)
-    return @@agency_names[id] if(@@agency_names[id])
-    res = Sequel::Model.db.fetch("select agency_name from gtfs.agency where agency_id = '#{id}'")
-    res.to_a.each do |t|
-      @@agency_names[id] = t[:agency_name]
-      return @@agency_names[id]
-    end
-    id
-  end
-
-  # http://0.0.0.0:9292/objects/gtfs.routes.waterbus.15627.1?layer=gtfs.routes.stops
-  def self.stops_for_route(route_id, object, params)
-    res = []
-    direction = object[:cdk_id][-1]
-    stops = Sequel::Model.db.fetch("select * from stops_for_line('#{route_id}',#{direction})").all
-    stops.to_a.each do |s|
-      res << {name: s[:name], cdk_id: 'gtfs.stops.' + "#{s[:stop_id].downcase.gsub(/\W/,'.')}" }
-    end
-    {stops: res}
   end
 
   def self.now_for_stop(stop_id, tz)
@@ -63,7 +36,7 @@ module CDKCommands
       mckey = "gtfs.route.#{t[:route_id]}-#{t[:direction_id]}"
       if h[key].nil?
         h[key] = {
-          cdk_id: key,
+          route: key,
           times: [],
           headsign: t[:headsign],
           route_id: t[:route_id],
@@ -95,6 +68,19 @@ module CDKCommands
     }
   end
 
+
+
+
+  # def self.routes_for_stop(stop_id)
+  #   a = Sequel::Model.db.fetch("SELECT * FROM rlines_for_stop('#{stop_id}')").all
+  #   a.to_a.each do |t|
+  #     key = "gtfs.route.#{t[:agency_id].gsub(/\W/,'')}.#{t[:route_id].gsub(/\W/,'')}.#{t[:direction_id]}".downcase
+  #     jsonlog(t)
+  #   end
+  # end
+
+
+
   def self.schedule_for_stop(stop_id)
     h = {}
     t = Time.now
@@ -106,12 +92,12 @@ module CDKCommands
         key = "gtfs.route.#{aname.downcase.gsub(/\W/,'')}.#{t[:route_name].gsub(/\W/,'')}-#{t[:direction_id]}"
         if h[key].nil?
           h[key] = {
-            cdk_id: key,
-            day: {},
+            route: key,
             headsign: t[:headsign],
             route_id: t[:route_id],
             route_name: t[:route_name],
-            route_type: t[:route_type]
+            route_type: t[:route_type],
+            day: {}
           }
         end
         if(h[key][:day][d].nil?)
@@ -125,6 +111,79 @@ module CDKCommands
     return {
       results: r
     }
+  end
+
+
+  
+  def self.schedule_for_line(obj, day)
+    
+    g = obj[:layers]['gtfs.routes']
+    
+    if(g)
+      h = {}
+      stops = []
+      trips = {}
+
+      d = ( Time.now+86400 * day.to_i ).strftime("%a %-d %b")
+      a = Sequel::Model.db.fetch("select * from line_schedule('#{g[:data]['route_id']}', #{obj[:cdk_id][-1]}, #{day})").all
+      mckey = "gtfs.route.#{g[:data]['route_id']}-#{obj[:cdk_id][-1]}"
+
+      a.to_a.each do |t|
+        key = "gtfs.stop.#{t[:stop_id].downcase.gsub(/\W/,'.')}"
+        trips[t[:trip_id]] = [] if trips[t[:trip_id]].nil?
+        trips[t[:trip_id]] << { stop: key, time: self.get_realtime(mckey,t[:stop_id],t[:departure_time]) }
+      end
+
+      t = []
+      trips.each_value do |v| t << v end
+
+      h[0] = {
+        :route => obj[:cdk_id],
+        :date => d,
+        :trips => t.sort do |a,b|
+          a[0][1] <=> b[0][1]
+        end
+      }
+
+      r = []
+      h.each_value do |v| r << v end
+      return {
+        :status => 'success',
+        :pages => 1,
+        :results => r
+      }
+    end
+  end
+  
+
+  def self.get_realtime(key,stop_id,deptime)
+    rt = CitySDKLD.memcached_get("#{stop_id}!!#{key}!!#{deptime}")
+    if rt
+      return "#{rt} (#{deptime})"
+    end
+    deptime
+  end
+
+  @@agency_names = {}
+  def self.get_agency_name(id)
+    return @@agency_names[id] if(@@agency_names[id])
+    res = Sequel::Model.db.fetch("select agency_name from gtfs.agency where agency_id = '#{id}'")
+    res.to_a.each do |t|
+      @@agency_names[id] = t[:agency_name]
+      return @@agency_names[id]
+    end
+    id
+  end
+
+  # http://0.0.0.0:9292/objects/gtfs.routes.waterbus.15627.1?layer=gtfs.routes.stops
+  def self.stops_for_route(route_id, object, params)
+    res = []
+    direction = object[:cdk_id][-1]
+    stops = Sequel::Model.db.fetch("select * from stops_for_line('#{route_id}',#{direction})").all
+    stops.to_a.each do |s|
+      res << {name: s[:name], cdk_id: 'gtfs.stops.' + "#{s[:stop_id].downcase.gsub(/\W/,'.')}" }
+    end
+    {stops: res}
   end
 
   def self.schedule_for_route(route_id,direction,params)
@@ -184,47 +243,6 @@ __END__
     end
 
 
-    def self.schedule_for_line(line, day)
-      g = line.get_layer('gtfs')
-      if(g)
-        h = {}
-
-        stops = []
-        trips = {}
-
-        d = ( Time.now+86400 * day.to_i ).strftime("%a %-d %b")
-
-        a = Sequel::Model.db.fetch("select * from line_schedule('#{g[:data]['route_id']}', #{line.cdk_id[-1]}, #{day})").all
-        mckey = "gtfs.line.#{g[:data]['route_id']}-#{line.cdk_id[-1]}"
-
-        a.to_a.each do |t|
-          key = "gtfs.stop.#{t[:stop_id].downcase.gsub(/\W/,'.')}"
-          stops << key if !stops.include?(key)
-          trips[t[:trip_id]] = [] if trips[t[:trip_id]].nil?
-          trips[t[:trip_id]] << [ key, self.get_realtime(mckey,t[:stop_id],t[:departure_time]) ]
-        end
-
-        t = []
-        trips.each_value do |v| t << v end
-
-
-        h[0] = {
-          :line => line.cdk_id,
-          :date => d,
-          :trips => t.sort do |a,b|
-            a[0][1] <=> b[0][1]
-          end
-        }
-
-        r = []
-        h.each_value do |v| r << v end
-        return {
-          :status => 'success',
-          :pages => 1,
-          :results => r
-        }.to_json
-      end
-    end
 
     def self.process_stop?(n,params)
       ['ptlines','schedule','now'].include?(params[:cmd])

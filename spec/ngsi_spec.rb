@@ -204,7 +204,7 @@ describe CitySDKLD::API do
       # error because no reference
       body_json(last_response)[:errorCode][:code].should == '422'
 
-      json[:reference] = 'http://0.0.0.0:9797'
+      json[:reference] = 'http://127.0.0.1:7654/ngsi'
       post '/ngsi10/subscribeContext', json.to_json
 
       body_json(last_response)[:subscribeResponse][:duration].should == 'P1M'
