@@ -182,18 +182,12 @@ class CDKObject < Sequel::Model(:objects)
 
         CDKObject.multi_insert(objects.map { |o| o[:db_hash] })
         CDKObjectDatum.multi_insert(object_data.map { |o| o[:db_hash] })
-
-        # New objects are inserted, so new layer bounding box is computed by DB trigger
-        # New bounding boxs needs to be loaded in memcached cache:
-        CDKLayer.update_layer_hash layer_id
       when :patch
 
-        update_layer_hash = false
         objects.each do |object|
           update_hash = {}
           update_hash[:title] = object[:db_hash][:title] if object[:db_hash][:title]
           if object[:db_hash][:geom]
-            update_layer_hash = true
             update_hash[:geom] = object[:db_hash][:geom]
           end
 
@@ -223,12 +217,6 @@ class CDKObject < Sequel::Model(:objects)
             end
           end
         end
-
-        # Only update layer hashes if object geometries were changed
-        if update_layer_hash
-          CDKLayer.update_layer_hash layer_id
-        end
-
       end
     end
 
