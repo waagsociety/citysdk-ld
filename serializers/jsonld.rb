@@ -42,6 +42,35 @@ module CitySDKLD
           }.merge @result
 
           jsonld_fields
+        when :data
+          # single data object
+          endpoint_data = CitySDKLD.get_endpoint_data(@query)
+          @result = {
+            :@context => @layers.values[0][:context],
+            :@id => "#{endpoint_data[:url]}objects/#{@query[:params][:cdk_id]}/layers/#{@query[:params][:layer]}",
+            :@type => [
+              "#{endpoint_data[:base_uri]}LayerData",
+              @layers.values[0][:rdf_type]
+            ]
+          }.merge @result
+        when :layer_on_object
+          # single layer_on_data object
+          endpoint_data = CitySDKLD.get_endpoint_data(@query)
+          @result = {
+            :@context => create_default_context({
+              created_at: "dcat:issued",
+              updated_at: "dcat:modified"
+            }),
+            :@id => "layers/#{@query[:params][:layer]}/objects/#{@query[:params][:cdk_id]}",
+            :@type => "LayerOnObject"
+          }.merge @result
+        when :endpoints
+          # single endpoint object in features array
+          @result = {
+            :@context => create_endpoint_context
+          }.merge @result
+
+          jsonld_endpoints
         end
 
         super
@@ -105,6 +134,7 @@ module CitySDKLD
             "layers/#{feature[:properties][:name]}/fields/#{field}"
           end
 
+          feature[:properties][:category] = "cdk:Category#{feature[:properties][:category].capitalize}"
           feature[:properties][:owner] = "owners/#{feature[:properties][:owner]}"
 
           if feature[:properties].has_key? :dependsOn
@@ -151,17 +181,21 @@ module CitySDKLD
         end
       end
 
-      # def layer_on_object
-      #   # TODO: use
-      #   #:imported_at => 'dcat:modified'
-      # end
+      def jsonld_endpoints
+        endpoint_data = CitySDKLD.get_endpoint_data(@query)
+        @result[:features][0][:properties] = {
+          :@id => endpoint_data[:url],
+          :@type => 'Endpoint'
+        }.merge @result[:features][0][:properties]
+      end
 
       def create_default_context(context)
           # Add LD prefixes
         endpoint_data = CitySDKLD.get_endpoint_data(@query)
         {
           :@base => endpoint_data[:url],
-          :@vocab => endpoint_data[:base_uri]
+          :@vocab => endpoint_data[:base_uri],
+          cdk: endpoint_data[:base_uri]
         }.merge(CitySDKLD::PREFIXES).merge(context)
       end
 
@@ -188,7 +222,6 @@ module CitySDKLD
 
       def create_layer_context
         create_default_context({
-          title: 'dcat:title',
           features: '_:features',
           properties: '_:properties',
           name: 'rdfs:label',
@@ -204,10 +237,9 @@ module CitySDKLD
           dependsOn: {
             :@type => '@id'
           },
-          # TODO:
-          # category: {
-          #   :@type => '@id'
-          # },
+          category: {
+            :@type => '@id'
+          },
           rdf_type: {
             :@id => 'layerOnObjectType',
             :@type => '@id'
@@ -223,12 +255,12 @@ module CitySDKLD
 
       def create_owner_context
         create_default_context({
-          name: "rdfs:label",
-          fullname: "foaf:name",
-          email: "foaf:mbox",
-          admin: "isAdmin",
-          website: "foaf:homepage",
-          organization: "organizationName",
+          name: 'rdfs:label',
+          fullname: 'foaf:name',
+          email: 'foaf:mbox',
+          admin: 'isAdmin',
+          website: 'foaf:homepage',
+          organization: 'organizationName',
           owners: '_:owners'
         })
       end
@@ -247,6 +279,31 @@ module CitySDKLD
           fields: '_:fields'
         })
       end
+
+      def create_endpoint_context
+        endpoint_data = CitySDKLD.get_endpoint_data(@query)
+        @result = {
+          :@context => create_default_context({
+            features: '_:features',
+            properties: '_:properties',
+            name: 'rdfs:label',
+            title: 'dc:title',
+            description: 'dc:description',
+            geometry: nil,
+            urls: nil,
+            type: nil,
+            url: 'endpointUrl',
+            swagger: 'swaggerUrl',
+            base_uri: 'baseUri',
+            organization: 'organizationName',
+            homepage: 'foaf:homepage',
+            email: 'foaf:mbox',
+            github: 'githubUrl',
+            wiki: 'wikiUrl'
+          })
+        }.merge @result
+      end
+
     end
   end
 end
