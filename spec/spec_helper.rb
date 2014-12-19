@@ -18,12 +18,24 @@ system "psql \"#{config[:db][:database]}\" -c 'CREATE EXTENSION pg_trgm'"
 # Run migrations - initialize tables, constants and functions
 system "cd db && ruby run_migrations.rb test"
 
-# if not fork
-#   system "ruby #{File.dirname(__FILE__)}/webserv.rb -p 7654"
-#   puts "eruit!!!!"
-#   sleep(10)
-#   exit(0)
-# end
+
+def makeTestWebServer
+  return Thread.new do
+    server = TCPServer.new 7654
+    loop do
+      Thread.start(server.accept) do |client|
+        l = client.readpartial(3000)
+        $post_data = JSON.parse(l.split("\r\n")[-1], symbolize_names: true)
+        puts
+        puts $post_data
+        client.puts "HTTP/1.0 200 OK\r\n"
+        client.puts "Content-Type: text/html"
+        client.puts "\r\n"
+        client.close
+      end
+    end
+  end
+end
 
 def app
   CitySDKLD::API
@@ -64,4 +76,10 @@ end
 RSpec.configure do |c|
   c.mock_with :rspec
   c.expect_with :rspec
+  c.before(:all) do
+   $webserver = makeTestWebServer();
+  end
+  c.after(:all) do
+   Thread.kill($webserver)
+  end
 end
