@@ -1,10 +1,11 @@
 {
   "endpoint": {
     "url": "http://localhost:9292/",
+    "name": "ams",
     "title": "CitySDK LD API - Amsterdam",
-    "site": "http://citysdk.waag.org/",
+    "description": "CitySDK LD API - Amsterdam, hosted by Waag Society",
+    "homepage": "http://citysdk.waag.org/",
     "organization": "Waag Society",
-    "homepage": "http://waag.org/en",
     "email": "citysdk@waag.org",
     "location": "Amsterdam, The Netherlands",
     "github": "https://github.com/waagsociety/citysdk-ld",
