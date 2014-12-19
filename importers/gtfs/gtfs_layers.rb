@@ -3,8 +3,9 @@ module GTFS_Import
   # make the gtfs layers if they exist, clear them (or not)
   def self.make_clear_layers(clear=true)
     GTFS_Import::connect
-    if true == $api.authenticate($EP_user,$EP_pass)
+    if not $api.authenticate($EP_user,$EP_pass)
       puts "Error authenticating with API"
+      exit!(-1)
     end
 
     begin
