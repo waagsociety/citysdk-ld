@@ -13,7 +13,7 @@ module Sequel
       case query[:resource]
       when :objects
         # to_hash does the DB query!!
-        objects = self.to_hash 
+        objects = self.to_hash
 
         if params[:cdk_id] and objects.keys.length == 0
           query[:api].error!("Object not found: '#{params[:cdk_id]}'", 404)
@@ -33,7 +33,7 @@ module Sequel
             dataset = dataset.where(layer_id: layer_ids + layer_sources)
           end
           object_data = dataset.all.map { |d| d.values }
-          
+
           # for each object in result set, find dependant virtual layers, if there are any
           if query[:internal][:layer_ids] == :*
             object_data.each do |object_datum|
@@ -42,12 +42,12 @@ module Sequel
                 unless deps_object_data.include? object_id
                   deps_object_data[object_id] = []
                 end
-                deps_object_data[object_id] << query[:internal][:deps_hash].key(object_datum[:layer_id])   
+                deps_object_data[object_id] << query[:internal][:deps_hash].key(object_datum[:layer_id])
               end
             end
           end
         end
-    
+
         if object_data.length > 0
           data = {}
           object_data.each do |d|
@@ -70,7 +70,7 @@ module Sequel
               end
             end
           end
-          
+
           # add the 'virtual, target layers'
           if query[:internal][:target_layer_ids] and query[:internal][:source_layer_ids]
             query[:internal][:target_layer_ids].each do |layer_id|
@@ -121,7 +121,10 @@ module Sequel
 
         data = layer_ids.map { |layer_id| CDKLayer.get_layer(layer_id) }
       when :data
-        #TODO take care of virtual layers
+        layer_id = CDKLayer.id_from_name(params[:layer])
+        layers = {
+          params[:layer] => CDKLayer.get_layer(layer_id)
+        }
         data = self.all.map { |d| CDKObjectDatum.make_hash(d.values, {cdk_id: params[:cdk_id]}, query)[:data] }
       when :layer_on_object
         data = self.all.map { |d| CDKObjectDatum.layer_on_object(d.values) }
