@@ -9,23 +9,23 @@ module GTFS_Import
     end
 
     begin
-      ret = api.get('/layers/gtfs.stops')
-      a = api.delete('/layers/gtfs.stops/objects') if clear
+      ret = $api.get('/layers/gtfs.stops')
+      a = $api.delete('/layers/gtfs.stops/objects') if clear
     rescue CitySDK::HostException => e
-      api.post("/layers",@@gtfs_layers[:stops])
+      $api.post("/layers",@@gtfs_layers[:stops])
     end
 
     begin
-      ret = api.get('/layers/gtfs.routes')
-      api.delete('/layers/gtfs.routes/objects') if clear
+      ret = $api.get('/layers/gtfs.routes')
+      $api.delete('/layers/gtfs.routes/objects') if clear
     rescue CitySDK::HostException
-      api.post("/layers",@@gtfs_layers[:routes])
+      $api.post("/layers",@@gtfs_layers[:routes])
     end
 
     begin
-      ret = api.get('/layers/gtfs.routes.stops')
+      ret = $api.get('/layers/gtfs.routes.stops')
     rescue CitySDK::HostException
-      api.post("/layers",@@gtfs_layers[:routes_stops])
+      $api.post("/layers",@@gtfs_layers[:routes_stops])
     end
 
     begin
