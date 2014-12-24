@@ -237,7 +237,7 @@ class CDKOwner < Sequel::Model(:owners)
       organization: o[:organization],
       admin: o[:admin],
     }.delete_if{ |_, v| v.nil? or v == '' }
-    h[:domains] = o[:domains].join(', ') if (q and self.self_or_admin?(q,o[:name]))
+    h[:domains] = o[:domains].join(', ') if (o[:domains] and q and self.self_or_admin?(q,o[:name]))
     h
   end
 
