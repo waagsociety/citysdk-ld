@@ -53,7 +53,6 @@ module CitySDKLD
               category: layer[:category],
               subcategory: layer[:subcategory],
               rdf_type: layer[:rdf_type],
-              rdf_prefixes: layer[:rdf_prefixes],
               licence: layer[:licence],
               organization: layer[:organization],
               data_sources: layer[:data_sources],

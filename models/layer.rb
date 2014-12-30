@@ -48,7 +48,6 @@ class CDKLayer < Sequel::Model(:layers)
       :depends,
       :context,
       :fields,
-      :rdf_prefixes,
       :owner
     ]
 
@@ -78,14 +77,6 @@ class CDKLayer < Sequel::Model(:layers)
       data[:owner_id] = owner_id
     end
     data.delete(:owner)
-
-    if(data[:rdf_prefixes])
-      if self.prefixes_valid?(data[:rdf_prefixes])
-        data[:rdf_prefixes] = Sequel.hstore(data[:rdf_prefixes])
-      else
-        query[:api].error!('rdf_prefixes are not a key-value hash', 422)
-      end
-    end
 
     if data[:category]
       owner = CDKOwner.where(session_key: query[:api].headers['X-Auth']).first

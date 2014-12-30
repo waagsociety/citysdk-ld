@@ -11,7 +11,6 @@
     "category": "civic",
     "subcategory": "stats",
     "rdf_type": "cdk:test",
-    "rdf_prefixes": {},
     "licence": "CC0",
     "depends": "tom.steden",
     "webservice_url": "http://127.0.0.1:7654/steden.inw",

@@ -82,7 +82,6 @@ Sequel.migration do
       String  :description
       String  :subcategory
       String  :rdf_type
-      column  :rdf_prefixes, 'hstore'
       column  :data_sources, 'text[]'
       String  :licence
       bool    :authoritative, default: false

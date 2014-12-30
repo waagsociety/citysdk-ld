@@ -56,7 +56,7 @@ module GTFS_Import
 
   end
 
-  
+
 @@gtfs_layers = {
   stops: {
     name: "gtfs.stops",
@@ -67,9 +67,10 @@ module GTFS_Import
     category: "mobility",
     subcategory: "public_transport",
     rdf_type: "gtfs:Stop",
-    rdf_prefixes: {gtfs: 'http://vocab.gtfs.org/terms#'},
     licence: "CC0",
-    context: {},
+    context: {
+      gtfs: 'http://vocab.gtfs.org/terms#'
+    },
     fields: [
         {
           name: "wheelchair_boarding",
@@ -109,7 +110,6 @@ module GTFS_Import
       category: "mobility",
       subcategory: "public_transport",
       rdf_type: "gtfs:Route",
-      rdf_prefixes: {gtfs: 'http://vocab.gtfs.org/terms#'},
       licence: "CC0",
       fields: [
         {
@@ -153,6 +153,7 @@ module GTFS_Import
         }
       ],
       context: {
+        gtfs: 'http://vocab.gtfs.org/terms#'
       }
     },
 
@@ -165,14 +166,13 @@ module GTFS_Import
       category: "mobility",
       subcategory: "public_transport",
       rdf_type: "gtfs:Stop",
-      rdf_prefixes: {
-        gtfs: 'http://vocab.gtfs.org/terms#'
-      },
       licence: "CC0",
       depends: "gtfs.routes",
       webservice_url: "CDK://gtfs.routes.stops",
       fields: [],
-      context: {}
+      context: {
+        gtfs: 'http://vocab.gtfs.org/terms#'
+      }
     },
 
     routes_schedule: {
@@ -184,14 +184,13 @@ module GTFS_Import
       category: "mobility",
       subcategory: "public_transport",
       rdf_type: "cdk:Schedule",
-      rdf_prefixes: {
-        gtfs: 'http://vocab.gtfs.org/terms#'
-      },
       licence: "CC0",
       depends: "gtfs.routes",
       webservice_url: "CDK://gtfs.routes.schedule",
       fields: [],
-      context: {}
+      context: {
+        gtfs: 'http://vocab.gtfs.org/terms#'
+      }
     },
 
     stops_schedule: {
@@ -203,16 +202,15 @@ module GTFS_Import
       category: "mobility",
       subcategory: "public_transport",
       rdf_type: "cdk:Schedule",
-      rdf_prefixes: {
-        gtfs: 'http://vocab.gtfs.org/terms#'
-      },
       licence: "CC0",
       depends: "gtfs.stops",
       webservice_url: "CDK://gtfs.stops.schedule",
       fields: [],
-      context: {}
+      context: {
+        gtfs: 'http://vocab.gtfs.org/terms#'
+      }
     },
-    
+
     stops_routes: {
       name: "gtfs.stops.routes",
       owner: "citysdk",
@@ -222,16 +220,15 @@ module GTFS_Import
       category: "mobility",
       subcategory: "public_transport",
       rdf_type: "gtfs:Route",
-      rdf_prefixes: {
-        gtfs: 'http://vocab.gtfs.org/terms#'
-      },
       licence: "CC0",
       depends: "gtfs.stops",
       webservice_url: "CDK://gtfs.stops.routes",
       fields: [],
-      context: {}
+      context: {
+        gtfs: 'http://vocab.gtfs.org/terms#'
+      }
     },
-    
+
     stops_now: {
       name: "gtfs.stops.now",
       owner: "citysdk",
@@ -241,17 +238,16 @@ module GTFS_Import
       category: "mobility",
       subcategory: "public_transport",
       rdf_type: "cdk:StopNow",
-      rdf_prefixes: {
-        gtfs: 'http://vocab.gtfs.org/terms#'
-      },
       licence: "CC0",
       depends: "gtfs.stops",
       webservice_url: "CDK://gtfs.stops.now",
       fields: [],
-      context: {}
+      context: {
+        gtfs: 'http://vocab.gtfs.org/terms#'
+      }
     }
 
-    
+
   }
 
 end
