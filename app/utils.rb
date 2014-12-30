@@ -24,7 +24,9 @@ module CitySDKLD
     org: 'http://www.w3.org/ns/org#',
     foaf: 'http://xmlns.com/foaf/0.1/',
     dcat: 'http://www.w3.org/ns/dcat#',
-    geos: 'http://www.opengis.net/ont/geosparql#'
+    geos: 'http://www.opengis.net/ont/geosparql#',
+    dbpedia: "http://dbpedia.org/resource/",
+    :'dbpedia-owl' => "http://dbpedia.org/ontology/"
   }
 
   ##########################################################################################
