@@ -10,10 +10,6 @@
   "subcategory": "shops",
   "rdf_type": "dbpedia:Shop",
   "licence": "MIT License",
-  "rdf_prefixes": {
-    "pet": "http://petvoc.org",
-    "petf": "http://purl.org/petfood/terms#"
-  },
   "fields": [
     {
       "name": "type",

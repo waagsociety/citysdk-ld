@@ -230,7 +230,6 @@ module CitySDKLD
           geometry: nil,
           type: nil,
           context: nil,
-          rdf_prefixes: nil,
           owner: {
             :@type => '@id'
           },
