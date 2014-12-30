@@ -2,7 +2,7 @@
 
 module CDKCommands
 
-  # process internal commands, CSDK://<command>
+  # process internal commands, CDK://<command>
   # as webservice; returning 'data' json object
   def self.process_command(command,data,obj,params)
     case command
@@ -114,11 +114,11 @@ module CDKCommands
   end
 
 
-  
+
   def self.schedule_for_line(obj, day)
-    
+
     g = obj[:layers]['gtfs.routes']
-    
+
     if(g)
       h = {}
       stops = []
@@ -154,7 +154,7 @@ module CDKCommands
       }
     end
   end
-  
+
 
   def self.get_realtime(key,stop_id,deptime)
     rt = CitySDKLD.memcached_get("#{stop_id}!!#{key}!!#{deptime}")
