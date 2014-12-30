@@ -272,7 +272,10 @@ module CitySDKLD
             :@id => 'fieldType',
             :@type => '@id'
           },
-          unit: 'unit',
+          unit: {
+            :@id => 'fieldUnit',
+            :@type => '@id'
+          },
           lang: 'dc:language',
           equivalent_property: 'owl:equivalentProperty',
           description: 'dc:description',
