@@ -2,8 +2,11 @@
 
 require 'json'
 require 'sequel'
-require 'faraday'
 require 'optparse'
+require 'citysdk'
+include CitySDK
+
+# ============================ Parse command line arguments ============================
 
 options = {}
 OptionParser.new do |opts|
@@ -14,7 +17,7 @@ OptionParser.new do |opts|
   end
 
   options[:remove] = false
-  opts.on("-r", "--remove", "Remove OpenStreetMap data DB after import") do |r|
+  opts.on("-r", "--remove", "Remove OpenStreetMap database after import") do |r|
     options[:remove] = r
   end
 
@@ -23,8 +26,28 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-env = 'development'
-config = JSON.parse(File.read("#{File.dirname(__FILE__)}/../../config.#{env}.json"), symbolize_names: true)
+# ============================ Get endpoint and owner credentials ============================
+
+if ENV.has_key? 'CITYSDK_CONFIG' and ENV['CITYSDK_CONFIG'].length
+  config_path = ENV['CITYSDK_CONFIG']
+else
+  puts "CITYSDK_CONFIG environment variable not set,"
+  puts "CITYSDK_CONFIG should contain path of CitySDK LD API configuration file"
+  exit!(-1)
+end
+
+config = nil
+begin
+  config = JSON.parse(File.read(config_path), {symbolize_names: true})
+rescue Exception => e
+  puts <<-ERROR
+  Error loading CitySDK configuration file...
+  Please set CITYSDK_CONFIG environment variable, or pass configuration file as a command line parameter
+  Error message: #{e.message}
+  ERROR
+  exit!(-1)
+end
+
 osm_db_config = config[:db]
 osm_db_config[:database] = 'osm'
 
@@ -36,10 +59,12 @@ if options[:osm_database]
   osm_db_config[:database] = options[:osm_database]
 end
 
+# ==================================== Connect to OSM database ======================================
+
 database = Sequel.connect "postgres://#{osm_db_config[:user]}:#{osm_db_config[:password]}@#{osm_db_config[:host]}/#{osm_db_config[:database]}", encoding: 'UTF-8'
 database.extension :pg_hstore
-database.extension :pg_streaming
-database.stream_all_queries = true
+# database.extension :pg_streaming
+# database.stream_all_queries = true
 
 osm_tables = [
   'planet_osm_line',
@@ -52,6 +77,8 @@ osm_tables = [
 ]
 
 count_osm_tables = database[:pg_class].where(relname: osm_tables).count
+
+# ================================== Function which runs osm2pgsql ====================================
 
 def osm2pgsql(options, osm_db_config)
   # Check if OSM file exists and is valid
@@ -77,66 +104,28 @@ def osm2pgsql(options, osm_db_config)
   end
 end
 
-def write_objects(conn, osm_layer, objects)
-  geojson = {
-    type: 'FeatureCollection',
-    features: objects
-  }
-  response = conn.post do |req|
-    req.url "/layers/#{osm_layer}/objects"
-    req.headers['Content-Type'] = 'application/json'
-    req.body = geojson.to_json
-  end
-  if response.status != 201
-    puts "HTTP status #{response.status}: " + JSON.parse(response.body)['error']
-  end
-  response
-end
-
 def import_osm(database, config, options)
+
+  # ==================================== Connect to API ======================================
+
+  api = API.new(config[:endpoint][:url])
+  if not api.authenticate(config[:owner][:name], config[:owner][:password])
+    puts 'Error authenticating with API'
+    exit!(-1)
+  end
+  api.set_layer 'osm'
+
   owner = config[:owner]
   osm_layer = JSON.parse(File.read("#{File.dirname(__FILE__)}/osm_layer.json"), symbolize_names: true)
   osm_layer[:owner] = config[:owner][:name]
 
-  conn = Faraday.new(url: config[:endpoint][:url])
-
-  # Check if owner exists in CitySDK LD API endpoint
-  resp = conn.get "/owners/#{owner[:name]}"
-  if resp.status != 200
-    puts "Owner not found: '#{owner[:name]}'"
-    exit
+  puts "Deleting layer 'osm' and objects, if layer already exists..."
+  begin
+    api.delete("/layers/osm")
+  rescue CitySDK::HostException => e
   end
-
-  # Authenticate!
-  resp = conn.get "/session?name=#{owner[:name]}&password=#{owner[:password]}"
-  if resp.status.between? 200, 299
-    json = JSON.parse resp.body, symbolize_names: true
-    if json.has_key? :session_key
-      conn.headers['X-Auth'] = json[:session_key]
-    else
-      raise Exception.new 'Invalid credentials'
-    end
-  else
-    raise Exception.new resp.body
-  end
-
-  # Delete osm layer in API
-  resp = conn.delete "/layers/#{osm_layer[:name]}"
-  unless [204, 404].include? resp.status
-    puts "Error deleting layer '#{osm_layer[:name]}'"
-    exit
-  end
-
-  # Create new, empty osm layer
-  response = conn.post do |req|
-    req.url '/layers'
-    req.headers['Content-Type'] = 'application/json'
-    req.body = osm_layer.to_json
-  end
-  if response.status != 201
-    puts "Error creating layer '#{osm_layer[:name]}'"
-    exit
-  end
+  puts "Creating layer 'osm'"
+  api.post("/layers", osm_layer)
 
   osm_tables = [
     {table: 'planet_osm_point', id_prefix: 'n'},
@@ -157,12 +146,10 @@ def import_osm(database, config, options)
     WHERE osm_id > 0
   SQL
 
-  batch_size = 50
   osm_tables.each do |osm_table|
-    objects = []
     count = 0
-    database.fetch(select % [osm_table[:table]]).stream.all do |row|
-      objects << {
+    database.fetch(select % [osm_table[:table]]).use_cursor.each do |row|
+      feature = {
         type: "Feature",
         properties: {
           id: "#{osm_table[:id_prefix]}#{row[:id]}",
@@ -171,20 +158,20 @@ def import_osm(database, config, options)
         },
         geometry: JSON.parse(row[:geometry])
       }
-      if objects.length >= batch_size
-        response = write_objects conn, osm_layer[:name], objects
-        count += batch_size
-        puts "Table: #{osm_table[:table]}, objects: #{count}, status: #{response.status}"
-        objects = []
+
+      api.create_object feature
+      count += 1
+
+      if count % 500 == 0
+        puts "Table: #{osm_table[:table]}, objects: #{count}"
       end
     end
-    write_objects conn, osm_layer[:name], objects if objects.length > 0
   end
 
   if options[:remove]
-    # database.run <<-SQL
-    #   DROP SCHEMA IF EXISTS osm CASCADE;
-    # SQL
+    database.run <<-SQL
+      DROP SCHEMA IF EXISTS osm CASCADE;
+    SQL
   end
 end
 
