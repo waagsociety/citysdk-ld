@@ -1,12 +1,15 @@
-{% include header.html %}
-<div class="col_7" >
-{{content}}
-</div>
-<div class=" col_1"></div>
-<div class=" col_4  gridsmaller">
-{% capture info_content %}
-{% include info.md %}
-{% endcapture %}
-{{ info_content | markdownify }}
-</div>
-{% include footer.html %}
+<!DOCTYPE html>
+<html lang="en">
+{% include head.html %}
+<body>
+  {% include header.html %}
+  <section>
+  <div class="container">
+    <div class="row">
+      {{ content }}
+    </div>
+  </div>
+  </section>
+  {% include footer.html %}
+</body>
+</html>

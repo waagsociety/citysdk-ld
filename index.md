@@ -1,19 +1,15 @@
 ---
-layout: home
-title: Home
-published: true
 ---
-
-# Endpoint Amsterdam
-**_adding scalability to real-time open data_**
-
-This webservice offers unified and direct access to open data from government, commercial and crowd sources alike. This open interface is adopted as standard by 6 European cities in the Project CitySDK.
 
 A list of available data in this endpoint can be seen via [data]({{ site.baseurl }}/data) and the [map viewer]({{ site.baseurl }}/map).
 
-## How to join?
-
-Would your city like to open up its data and services to a big European developer community by joining CitySDK? Get in touch with the [owners]({{ site.data.endpoint.email }}) of this endpoint or the project management of CitySDK at [Forum Virium Helsinki](http://www.citysdk.eu/partners/forum-virium/).
+<ul class="apps">
+{% for app in site.data.endpoint.apps limit: 5 %}
+<li style="background-image: url({{ site.baseurl }}/apps/{{ app.name }}.png)">
+  <a href="{{ site.baseurl}}/apps#{{ app.name }}">{{ app.title }}</a>
+</li>
+{% endfor %}
+</ul>
 
 ## Project CitySDK
 

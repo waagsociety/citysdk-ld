@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.4, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="323.667px" height="139.336px" viewBox="0 0 323.667 139.336" enable-background="new 0 0 323.667 139.336"
+	 xml:space="preserve">
+<g>
+	<path fill="#939F5B" d="M8.667,8.667v122.002h122.001V8.667H8.667z M122.001,122.001H17.333V17.333h104.668V122.001z"/>
+	<rect x="26" y="26" fill="#939F5B" width="23.334" height="23.334"/>
+	<rect x="58" y="26" fill="#939F5B" width="23.335" height="23.334"/>
+	<rect x="90.001" y="26" fill="#939F5B" width="23.334" height="23.334"/>
+	<rect x="26" y="90" fill="#939F5B" width="23.334" height="23.335"/>
+	<rect x="26" y="58" fill="#939F5B" width="23.334" height="23.334"/>
+	<rect x="58" y="90" fill="#939F5B" width="23.335" height="23.335"/>
+	<rect x="58" y="58" fill="#939F5B" width="23.335" height="23.334"/>
+	<rect x="90.001" y="90" fill="#939F5B" width="23.334" height="23.335"/>
+	<rect x="90.001" y="58" fill="#939F5B" width="23.334" height="23.334"/>
+</g>
+<text transform="matrix(1 0 0 1 135.3535 49.3345)" fill="#939F5B" font-family="'OpenSans-Bold'" font-size="32.8153">CitySDK</text>
+<text transform="matrix(1 0 0 1 135.3535 113.335)" fill="#939F5B" font-family="'OpenSans-Light'" font-size="32.8153">API</text>
+<text transform="matrix(1 0 0 1 135.3535 81.3345)" fill="#939F5B" font-family="'OpenSans'" font-size="32.8153">Linked Data</text>
+</svg>

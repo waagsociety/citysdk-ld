@@ -1,0 +1,218 @@
+---
+---
+
+#map-container  {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  top: 100px;
+
+  border-top-color: #d0dbe1; /*#CE2027;*/
+  border-top-width: 2px;
+  border-top-style: solid;
+}
+
+//@media all and (max-width: 768px) {
+//  #output {
+//    top: 295px;
+//  }
+//}
+
+#map {
+	height: 100%;
+	width: 100%;
+}
+
+#floatbox {
+  box-shadow: 0px 0px 15px rgba(50,50,50,0.1);
+  border-color: #d0dbe1; /*rgba(206, 32, 39, 0.4); #CE2027;*/
+  border-width: 1px;
+  border-style: solid;
+
+  background: white;
+
+  display: block;
+  /*overflow: auto;*/
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  bottom: 20px;
+  width: 450px;
+  opacity: 0.93;
+  z-index: 10;
+}
+
+code#objectdata {
+  background: white;
+
+  top: 0;
+  bottom: 0px;
+  left: 0;
+  right: 0;
+
+  position: absolute;
+
+	overflow-x: hidden;
+	overflow-y: auto;
+
+  white-space: pre-wrap;
+
+  padding: 0.8em;
+  line-height: 1em;
+  color: black;
+
+  border-bottom-color: #d0dbe1; /*#CE2027;*/
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+
+}
+
+
+
+#urlinp {
+  float: right;
+  padding-right: 10px;
+}
+
+#map-url-input {
+  position: relative;
+  top: -21px;
+  padding: 5px;
+  line-height: 1.4;
+}
+
+
+pre code .attribute,
+code#objectdata .attribute {
+  color: #444;
+}
+
+pre code .literal,
+code#objectdata .literal {
+  color: #5ABA47;
+}
+
+pre code .string,
+code#objectdata .string {
+  color: #CE2027;
+}
+
+pre code .number,
+code#objectdata .number {
+  color: #488BC9;
+}
+
+.leaflet-container .leaflet-control-attribution {
+  opacity: 0.5;
+}
+
+#map-url-input table {
+  background-color: white;
+  border-color: #C0C0C0 #D9D9D9 #D9D9D9;
+  border-radius: 1px 1px 1px 1px;
+  border-right: 1px solid #D9D9D9;
+  border-style: solid;
+  border-width: 1px;
+  z-index: 14;
+  position: relative;
+}
+
+#map-url-input table td {
+  padding: 0px;
+  border-bottom: 1px dotted #DDDDDD;
+  font-size: 0.9em;
+  text-align: left;
+}
+
+#map-url-input table td.endpoint {
+  color: #888;
+  padding-left: 2px;
+  display: block;
+  padding-right: 4px !important;
+}
+
+#map-url-input td #url {
+  border: medium none;
+}
+
+#map-url-input td #url,
+#map-url-input td .url {
+  position: relative;
+  left: -3px;
+  outline: none;
+  font-family: 'Ubuntu', sans-serif !important;
+  font-size: 100% !important;
+}
+
+#map-url-input #url:focus {
+  outline: none;
+}
+
+#map-url-input table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#map-url-input table td.minimize {
+  white-space: nowrap;
+	width: 1%;
+}
+
+#map-url-input table td.fill {
+  width: 99%;
+}
+
+#map-url-input table td.fill input{
+  width: 99%;
+}
+
+#map-url-input table tr td:first-child {
+  padding-left: 5px;
+}
+
+tr.dropdown:hover {
+  background-color: rgba(206, 32, 39, 0.1);/* #CE2027;*/
+}
+
+tr.dropdown td {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  cursor: hand;
+  cursor: pointer;
+}
+
+button {
+  cursor: hand;
+  cursor: pointer;
+}
+
+tr.last_history {
+    border-bottom: 1px solid #d0dbe1; /*#CE2027;*/
+}
+
+tr.example td {
+  color: #555;
+}
+
+#busy {
+	width: 18px;
+	height: 18px;
+}
+
+button.button_up,
+button.button_down {
+  width: 16px;
+  height: 16px;
+  display: block;
+  border: none;
+  text-decoration: none;
+}
+
+button.button_down {
+  background: white url('{{ site.baseurl }}/img/button_down.png') no-repeat scroll center 5px;
+}
+
+button.button_up {
+  background: white url('{{ site.baseurl }}/img/button_up.png') no-repeat scroll center 5px;
+}

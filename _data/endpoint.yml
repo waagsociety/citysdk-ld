@@ -1,18 +1,20 @@
+title       : CitySDK Linked Data API
 endpoint    : http://api.citysdk.waag.org/
 github      : https://github.com/waagsociety/citysdk-ld
-wiki		: https://github.com/waagsociety/citysdk-ld/wiki
+wiki		    : https://github.com/waagsociety/citysdk-ld/wiki
 organization: Waag Society
 homepage    : http://waag.org/en
 email       : citysdk@waag.org
 cms         : http://cms.citysdk.waag.org/
-title       : Amsterdam
-location    : The Netherlands
+location    : Amsterdam, The Netherlands
+jsonldplaygr: "http://json-ld.org/playground/index.html#startTab=tab-normalized&json-ld="
+geojsonio   : "http://geojson.io/#data=data:text/x-url,"
 map         :
   zoom    : 10
   geometry:
     lat: 52.35
     lon: 5.39
-tiles       : "http://tiles.citysdk.waag.org/v2/citysdk/{z}/{x}/{y}.png"
+tiles       : http://otile2.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png
 
 datasets    :
   - url  : http://gtfs.ovapi.nl/
@@ -27,66 +29,55 @@ datasets    :
   - url  : http://download.geofabrik.de/europe/netherlands.html
     title: OpenStreetMap
 
-appgallery:
+apps:
+  - name       : buildings
+    title      : Buildings in the Netherlands by year of construction
+    url        : http://code.waag.org/buildings/
+    description: "Map showing all 9,866,539 buildings in the Netherlands, shaded according to their year of construction."
+
   - title      : Parking Widget Amsterdam
     url        : http://parkeerwidget.yume.nl/widget/
-    icon       : pwid.png
     description: "This widget gives travellers to Amsterdam insight in the associated travel time and costs for the last mile to destination for different parking options in the city."
 
   - title      : Parking API Amsterdam
     url        : http://divvapi.parkshark.nl/
-    icon       : papi.png
     description: "This API will return costs and recommendations for visiting any destination in Amsterdam."
 
   - title      : Source Code for Parking API Amsterdam
     url        : https://github.com/jonathanrcarter/divv-amsterdam-parkingapi
-    icon       : papi.png
     description: "Source code on GitHub for Parking API."
 
   - title      : Now
     url        : http://citysdk.waag.org/now/
-    icon       : now.png
     description: "This simple web app offers Public Transport departure times in your immediate vicinity (real-time where available). The web app works in Amsterdam, Helsinki Manchester, Tampere (Fi)."
 
   - title      : City Navigator
     url        : http://dev.hsl.fi/navigator-proto/
-    icon       : hel.png
     description: "HSL Navigator is a fully open-source service based solely on open data."
 
   - title      : Tree Spotter (iOS, Android)
     url        : http://bomenapp.nl/
-    icon       : tre.png
     description: "Trees in Dutch Cities (Amsterdam, The Hague, Utrecht a.o.), for iOS and Android."
 
   - title      : City Dashboard
     url        : http://citydashboard.waag.org
-    icon       : cit.png
     description: "Gives a view of the pulse of the city by showing all real-time data streams."
 
   - title      : Open Data Globe
     url        : http://citysdk.waag.org/visualisation/
-    icon       : ope.png
     description: "The dynamics of European cities are made visible in the Open Data Globe, based on available data
   sets in CitySDK."
 
-  - title      : Buildings in the Netherlands by year of construction
-    url        : http://citysdk.waag.org/buildings/
-    icon       : bui.png
-    description: "A map showing all 9,866,539 buildings in the Netherlands, shaded according to year of construction."
-
   - title      : Agricutural land use (crops) in the Netherlands
     url        : https://waagsociety.github.io/mansholt/
-    icon       : agr.png
     description: "Map made for an exhibition on Sicco Mansholt, European Agricultural policy and its influence on land use."
 
   - title      : User Generated data
     url        : http://www.verbeterdebuurt.nl/
-    icon       : use.png
     description: "Apps like Verbeter de Buurt and <a href='http://www.buurtvitaal.nl/'>Buurt Vitaal</a> generate data for this endpoint by collecting citizen reports and publicizing these via an Open311 interface."
 
   - title      : Penalty Radar
     url        : http://boeteradar.2coolmonkeys.nl/
-    icon       : papi.png
     description: "Penalty Radar shows speeds on Dutch highways, and calculates the fines that could have been collected by police."
 
 examples    :

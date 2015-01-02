@@ -28,8 +28,6 @@ jekyll serve --watch --baseurl ''
 
 The website will be available at [http://localhost:4000/](http://localhost:4000/).
 
-##
-
 ## jekyll-hook
 
 If you wish to use your own server to deploy the CitySDK LD API website, you can use [jekyll-hook](https://github.com/developmentseed/jekyll-hook) to listen to [GitHub webhooks](https://developer.github.com/webhooks/). Every time a file changes in your repository, GitHub will connect to jekyll-hook running on your server, and you can pull, compile and deploy the newest version of the website.
