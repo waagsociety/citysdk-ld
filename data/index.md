@@ -37,7 +37,7 @@ http://json-ld.org/playground/index.html#startTab=tab-normalized&json-ld=http://
           if (d.sample_url) {
             sample_url = d.sample_url;
           }
-          return '{{ site.baseurl }}/map#' + sample_url;
+          return '{{ site.baseurl }}/map-viewer/#' + sample_url;
         });
 
       li.append("a")
