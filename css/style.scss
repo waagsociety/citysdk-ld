@@ -1,18 +1,26 @@
----
----
+/* http://coolors.co/313715-d16014-939f5c-bbce8a-e2f9b8 */
 
+<<<<<<< HEAD
 $color1: {{ site.data.style.color1 }};
 $color2: {{ site.data.style.color2 }};
 $color3: {{ site.data.style.color3 }};
 $color4: {{ site.data.style.color4 }};
 $color5: {{ site.data.style.color5 }};
+=======
+$brand-color: #2da09a;
+$link-color: #d16014;
+$tiny-margin: 0.5rem;
+$standard-margin: 1rem;
+$big-margin: 1.5rem;
+$bigger-margin: 2rem;
+>>>>>>> 24cce34535512fcfd55da071cca68a8a49e244d8
 
 a {
-  color: $color2;
+  color: $link-color;
 }
 
 a:hover {
-  color: $color2;
+  color: rgba($link-color, .8);
 }
 
 a:active, a:focus {
@@ -20,40 +28,37 @@ a:active, a:focus {
   -moz-outline-style:none;
 }
 
-header {
-  border-top-style: solid;
-  border-top-width: 7px;
-  border-top-color: $color2;
+.mainNav{
+	margin-bottom: $big-margin;
 }
-
 nav {
-  margin-top: 7px;
+  margin-top: $big-margin;
   font-weight: 500;
 }
 
 .row.no-bottom-margin {
-  margin-bottom: 1rem;
+  margin-bottom: $standard-margin;
 }
 
 #logo-wide {
-  margin-top: 2px;
+  margin-top: 11px;
 }
 
 header a,
 header a:visited {
   text-decoration: none;
-  color: $color3;
+  color: $brand-color;
 }
 
 header a:hover {
   text-decoration: underline;
-  color: $color3;
+  color: $brand-color;
 }
 
 header ul {
   margin: 2px 0 0;
   padding: 0;
-  font-size: 27px;
+  font-size: 1.5rem;
   list-style-type: none;
   float: right;
 }
@@ -64,7 +69,7 @@ header ul li {
 }
 
 #github {
-  background-color: $color3;
+  background-color: $brand-color;
   color: white;
   border-radius: 5px;
   padding: 7px 14px;
@@ -76,8 +81,8 @@ header ul li {
 }
 
 footer {
-  padding-top: 17px;
-  background-color: $color1;
+  padding-top: 40px;
+  background-color: $brand-color;
   color: white;
   font-weight: 200;
   font-size: 18px;
@@ -149,4 +154,40 @@ ul.apps li a {
 
 #layers td {
   border-bottom: none;
+}
+
+/* ANIMATION */
+
+.animated {
+  animation-duration: 1s;
+  animation-fill-mode: both;
+}
+
+.animated.infinite {
+  animation-iteration-count: infinite;
+}
+
+.animated.hinge {
+  animation-duration: 2s;
+}
+
+.hidden {
+  opacity: 0;
+}
+
+.visible {
+  opacity: 1;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.fadeIn {
+  animation-name: fadeIn;
 }
