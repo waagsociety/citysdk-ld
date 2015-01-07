@@ -26,10 +26,11 @@ body {
 
 a {
   color: $link-color;
+	transition: color 0.5s ease-in-out;
 }
 
 a:hover {
-  color: rgba($link-color, .8);
+  color: rgba($link-color, .75);
 }
 
 a:active, a:focus {
@@ -103,7 +104,7 @@ footer a:hover {
 }
 
 footer ul {
-  list-style-image: url('{{ site.baseurl }}/images/bullet.png');
+	list-style: square;
 }
 
 .octocat {
@@ -112,7 +113,7 @@ footer ul {
   top: -1px;
   width: 16px;
   height: 16px;
-  background-image: url('{{ site.baseurl }}/images/octocat.png');
+  background-image: url('{{ site.baseurl }}/images/octocat.svg');
   margin-right: 10px;
 }
 
