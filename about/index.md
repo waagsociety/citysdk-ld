@@ -1,5 +1,5 @@
 ---
-layout: default
+title: About
 ---
 
 korte intro, en misschien gebouwenkaart etc
@@ -58,10 +58,6 @@ Independent of file format, refresh rate or granularity open data is easily acce
 ## Which datasets are available in this API?
 
 Via the menu link [Data]({{ site.baseurl }}/data) you can access a list with all datasets, with a direct link to a sample query in JSON and a map view.
-
-## Can you add dataset X?
-
-Yes, probably. Datasets need to be open and have a geolocation. You can send an [e-mail](mailto:{{ site.data.endpoint.email }}) to request the addition of a dataset. You can also ask for an account and add the dataset yourself using our (basic) CMS or API.
 
 ## Who maintains the CitySDK LD codebase?
 

@@ -255,7 +255,7 @@ var endpoint  = "{{ site.data.endpoint.endpoint }}",
 //       }
 //     });
 //
-//     $("#map-url-input table").on("click", "tr.dropdown", function(event){
+//     $("#urls table").on("click", "tr.dropdown", function(event){
 //       var url = $(this).attr("data-url");
 //       var isExample = $(this).attr("data-example");
 //       hideDropdown();
@@ -329,11 +329,11 @@ var endpoint  = "{{ site.data.endpoint.endpoint }}",
 //
 //   function setButtonType(selector, type) {
 //     if (type === "up") {
-//       $(selector).removeClass("button_down");
-//       $(selector).addClass("button_up");
+//       $(selector).removeClass("button-down");
+//       $(selector).addClass("button-up");
 //     } else { // type === "down"
-//       $(selector).removeClass("button_up");
-//       $(selector).addClass("button_down");
+//       $(selector).removeClass("button-up");
+//       $(selector).addClass("button-down");
 //     }
 //   }
 //

@@ -3,11 +3,10 @@ title: Map
 layout: map
 d3: true
 ---
-
 <div class="container">
   <div class="row">
-    <div id="map-url-input">
-     <table>
+    <div id="urls">
+     <table id="urls-input">
        <tr>
          <td class="minimize endpoint">
            {{ site.data.endpoint.endpoint }}
@@ -19,11 +18,14 @@ d3: true
            <div id="busy"></div>
          </td>
          <td class="minimize">
-           <button id="show-dropdown" type="button" class="button_down"></button>
+           <button id="show-dropdown" type="button" class="button-down"></button>
          </td>
        </tr>
-       <tr class="hidden" id="before_history"></tr>
-       <tr class="hidden" id="before_examples"></tr>
+       </div>
+       <table id="urls-history">
+       </table>
+       <table id="urls-examples">
+       </table>
      </table>
     </div>
   </div>
@@ -41,9 +43,7 @@ d3: true
       latLng = [{{ site.data.endpoint.map.geometry.lat }}, {{ site.data.endpoint.map.geometry.lon }}],
       zoom = {{ site.data.endpoint.map.zoom }};
 
-      // Links metGeoJSON.io en JSONld
-//
-//     //hljs.initHighlightingOnLoad();
+      hljs.initHighlightingOnLoad();
 //
 //     var spinnerOpts = {
 //       lines: 12, // The number of lines to draw
@@ -88,7 +88,7 @@ d3: true
   map.setView(latLng, zoom);
 
   var lineStyle = {
-    color: "#CE2027",
+    color: "{{ site.data.style.color2 }}",
     weight: 3,
     opacity: 0.90
   };
@@ -123,8 +123,7 @@ d3: true
   // CitySDK API data
   // ================================================================================
 
-  function loadCitySDKData(url, isExample) {
-    console.log(url);
+  function getData(url, isExample) {
     hideDropdown();
 
     if (!url) {
@@ -164,7 +163,12 @@ d3: true
         setDropdownHistory();
       }
 
-      cdkLayer.addData(data);
+      cdkLayer.addData({
+        type: "FeatureCollection",
+        features: data.features.filter(function(feature) {
+          return feature.geometry && feature.geometry.coordinates;
+        })
+      });
       formatResult(data);
 
       //spinner.stop();
@@ -177,16 +181,17 @@ d3: true
       // and resize the width to include floatbox width
 
        var dataBounds = cdkLayer.getBounds();
-       var southWest = dataBounds.getSouthWest();
-       var northEast = dataBounds.getNorthEast();
-       // TODO: Dit is dus NIET goed. Ik moet hier nog 'ns even goed over na gaan denken. Nu naar bed. Daag!
-
-       var lngScale = 0;//$("#map").width() / (($("#map").width() - ($("#floatbox").width() + 30)));
-
-       map.fitBounds([
-         [southWest.lat, southWest.lng],
-         [northEast.lat, (northEast.lng - southWest.lng) * lngScale + southWest.lng]
-       ]);
+       // var southWest = dataBounds.getSouthWest();
+       // var northEast = dataBounds.getNorthEast();
+       // // TODO: Dit is dus NIET goed. Ik moet hier nog 'ns even goed over na gaan denken. Nu naar bed. Daag!
+       //
+       // var lngScale = d3.select("#map").style('width') / ((d3.select("#map").style('width') - (d3.select("#floatbox").style('width') + 30)));
+       //
+       // map.fitBounds([
+       //   [southWest.lat, southWest.lng],
+       //   [northEast.lat, (northEast.lng - southWest.lng) * lngScale + southWest.lng]
+       // ]);
+       map.fitBounds(dataBounds);
 
     });
   }
@@ -194,7 +199,7 @@ d3: true
   d3.select("#url").on('keyup', function() {
     if(d3.event.keyCode == 13){
       var url = d3.select("#url").property('value');
-      loadCitySDKData(url, false);
+      getData(url, false);
     }
   });
 
@@ -203,8 +208,8 @@ d3: true
   }
 
   function setObjectData(json) {
-    //$('#objectdata').html(JSON.stringify(json, undefined, 2));
-    //$('#objectdata').each(function(i, e) {hljs.highlightBlock(e)});
+    d3.select('#objectdata').html(JSON.stringify(json, undefined, 2));
+    d3.select('#objectdata').each(function(i, e) {hljs.highlightBlock(e)});
   }
 
   // ================================================================================
@@ -216,12 +221,12 @@ d3: true
       var hash = window.location.hash;
       if (hash.length > 1) {
         var url = hash.substring(1);
-        if (url.substring(0, endpoint.length) == endpoint) {
-          //$("#url").val(url.substring(endpoint.length + 1));
+        if (url.substring(0, endpoint.length) === endpoint) {
+          d3.select("#url").property('val', url.substring(endpoint.length + 1));
         } else {
-          //$("#url").val(url);
+          d3.select("#url").property('val', url);
         }
-        loadCitySDKData(url, false);
+        getData(url, false);
       }
     }
     disableHashChange = false;
@@ -230,15 +235,16 @@ d3: true
   // Call functions on page load:
   window.onhashchange();
 
+  // TODO:
   //$('#url').focus();
-//
-//     // ================================================================================
-//     // Combobox functions
-//     // ================================================================================
-//
-//     $('td.endpoint').click(function() {
-//       $('#url').focus();
-//     });
+
+  // ================================================================================
+  // Combobox functions
+  // ================================================================================
+
+  d3.select('td.endpoint').on('click', function() {
+    //$('#url').focus();
+  });
 //
 //     $("#show-dropdown").click(function() {
 //       var n = $("tr.dropdown.hidden").length;
@@ -249,12 +255,12 @@ d3: true
 //       }
 //     });
 //
-//     $("#map-url-input table").on("click", "tr.dropdown", function(event){
+//     $("#urls table").on("click", "tr.dropdown", function(event){
 //       var url = $(this).attr("data-url");
 //       var isExample = $(this).attr("data-example");
 //       hideDropdown();
 //       $("#url").val(url);
-//       loadCitySDKData(url, isExample === "true");
+//       getData(url, isExample === "true");
 //     });
 //
 //     $(document).mouseup(function (e) {
@@ -269,63 +275,60 @@ d3: true
 //       setButtonType("#show-dropdown", "up");
 //     }
 //
-    function hideDropdown() {
-      //$(".dropdown").addClass("hidden");
-      //setButtonType("#show-dropdown", "down");
+  function hideDropdown() {
+    d3.select(".dropdown").classed("hidden", true);
+    setButtonType("#show-dropdown", "down");
+  }
+
+  function addDropdownExamples() {
+    // // Jekyll inserts examples from endpoint.yml:
+    // // TODO: read examples from examples.json instead!?
+    var examples = [
+      {% for example in site.data.endpoint.examples %}
+      {
+        url: "{{ example.url }}",
+        title: "{{ example.title }}"
+      },
+      {% endfor %}
+    ];
+
+    d3.select('#urls-examples').selectAll('tr').data(examples)
+        .enter().append('tr').html(function(d) { return d.title; });
+
+
+
+  }
+
+  function addHistory(url) {
+    var index = urlHistory.indexOf(url);
+    if (index >= 0) {
+      urlHistory.splice(index, 1);
     }
-
-    function addDropdownExamples() {
-
-      // // Jekyll inserts examples from endpoint.yml:
-      // // TODO: read examples from examples.json instead!
-      // var examples = [
-      //   {% for example in site.data.endpoint.examples %}
-      //   {
-      //     url: "{{ example.url }}",
-      //     title: "{{ example.title }}"
-      //   },
-      //   {% endfor %}
-      // ];
-      //
-      // $.each(examples.slice(0).reverse(), function() {
-      //   var tr = "<tr class=\"example hidden dropdown\" data-example=\"true\" data-url=\"" + this.url + "\"><td colspan=\"5\">" + this.title + "</td></tr>";
-      //   //$('#input table').append($(tr));
-      //   $(tr).insertAfter($('#before_examples'));
-      //});
-
+    urlHistory.push(url);
+    if (urlHistory.length > 10) {
+      urlHistory.shift();
     }
+  }
 
-    function addHistory(url) {
-      var index = urlHistory.indexOf(url);
-      if (index >= 0) {
-        urlHistory.splice(index, 1);
-      }
-      urlHistory.push(url);
-
-      if (urlHistory.length > 10) {
-        urlHistory.shift();
-      }
-    }
-
-    function setDropdownHistory() {
-      // $('tr.history').remove();
-      // $.each(urlHistory.slice(0, -1), function(index) {
-      //   var cls = "history hidden dropdown";
-      //   if (index == 0) {
-      //     cls += " last_history";
-      //   }
-      //   var tr = "<tr class=\"" + cls + "\" data-url=\"" + this + "\"><td class=\"minimize endpoint\">{{ site.data.endpoint.endpoint }}</td><td class=\"fill\" colspan=\"4\"><span class=\"url\">" + this + "</span></td></tr>";
-      //   $(tr).insertAfter($('#before_history'));
-      // });
-    }
+  function setDropdownHistory() {
+    // $('tr.history').remove();
+    // $.each(urlHistory.slice(0, -1), function(index) {
+    //   var cls = "history hidden dropdown";
+    //   if (index == 0) {
+    //     cls += " last_history";
+    //   }
+    //   var tr = "<tr class=\"" + cls + "\" data-url=\"" + this + "\"><td class=\"minimize endpoint\">{{ site.data.endpoint.endpoint }}</td><td class=\"fill\" colspan=\"4\"><span class=\"url\">" + this + "</span></td></tr>";
+    //   $(tr).insertAfter($('#before_history'));
+    // });
+  }
 
   function setButtonType(selector, type) {
     if (type === "up") {
-      //$(selector).removeClass("button_down");
-      //$(selector).addClass("button_up");
+      d3.select(selector).classed("button-down", false);
+      d3.select(selector).classed("button-up", true);
     } else { // type === "down"
-      //$(selector).removeClass("button_up");
-      //$(selector).addClass("button_down");
+      d3.select(selector).classed("button-up", false);
+      d3.select(selector).classed("button-down", true);
     }
   }
 

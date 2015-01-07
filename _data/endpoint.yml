@@ -1,14 +1,15 @@
 title       : CitySDK Linked Data API
+#endpoint    : http://localhost:9292/
 endpoint    : http://api.citysdk.waag.org/
 github      : https://github.com/waagsociety/citysdk-ld
 wiki		    : https://github.com/waagsociety/citysdk-ld/wiki
 organization: Waag Society
 homepage    : http://waag.org/en
 email       : citysdk@waag.org
-cms         : http://cms.citysdk.waag.org/
 location    : Amsterdam, The Netherlands
-jsonldplaygr: "http://json-ld.org/playground/index.html#startTab=tab-normalized&json-ld="
-geojsonio   : "http://geojson.io/#data=data:text/x-url,"
+data-links  :
+  json-ld : "http://json-ld.org/playground/index.html#startTab=tab-normalized&json-ld="
+  geojson : "http://geojson.io/#data=data:text/x-url,"
 map         :
   zoom    : 10
   geometry:
@@ -24,7 +25,7 @@ datasets    :
     title: Amsterdam infrastructure and transportation data
 
   - url  : http://www.kadaster.nl/bag
-    title: Dutch addresses and buildings
+    title: Dutch address, postcode and building data
 
   - url  : http://download.geofabrik.de/europe/netherlands.html
     title: OpenStreetMap
@@ -34,6 +35,19 @@ apps:
     title      : Buildings in the Netherlands by year of construction
     url        : http://code.waag.org/buildings/
     description: "Map showing all 9,866,539 buildings in the Netherlands, shaded according to their year of construction."
+
+  - name       : mansholt
+    title      : Agricutural land use in the Netherlands
+    url        : https://code.waag.org/mansholt/
+    description: "Interactive map, made for an installation on an exhibition on Sicco Mansholt, European Agricultural policy and its influence on land use."
+
+  - title      : City Dashboard
+    url        : http://citydashboard.waag.org
+    description: "Gives a view of the pulse of the city by showing all real-time data streams."
+
+  - title      : Now
+    url        : http://citysdk.waag.org/now/
+    description: "This simple web app offers Public Transport departure times in your immediate vicinity (real-time where available). The web app works in Amsterdam, Helsinki Manchester, Tampere (Fi)."
 
   - title      : Parking Widget Amsterdam
     url        : http://parkeerwidget.yume.nl/widget/
@@ -47,10 +61,6 @@ apps:
     url        : https://github.com/jonathanrcarter/divv-amsterdam-parkingapi
     description: "Source code on GitHub for Parking API."
 
-  - title      : Now
-    url        : http://citysdk.waag.org/now/
-    description: "This simple web app offers Public Transport departure times in your immediate vicinity (real-time where available). The web app works in Amsterdam, Helsinki Manchester, Tampere (Fi)."
-
   - title      : City Navigator
     url        : http://dev.hsl.fi/navigator-proto/
     description: "HSL Navigator is a fully open-source service based solely on open data."
@@ -59,18 +69,10 @@ apps:
     url        : http://bomenapp.nl/
     description: "Trees in Dutch Cities (Amsterdam, The Hague, Utrecht a.o.), for iOS and Android."
 
-  - title      : City Dashboard
-    url        : http://citydashboard.waag.org
-    description: "Gives a view of the pulse of the city by showing all real-time data streams."
-
   - title      : Open Data Globe
     url        : http://citysdk.waag.org/visualisation/
     description: "The dynamics of European cities are made visible in the Open Data Globe, based on available data
   sets in CitySDK."
-
-  - title      : Agricutural land use (crops) in the Netherlands
-    url        : https://waagsociety.github.io/mansholt/
-    description: "Map made for an exhibition on Sicco Mansholt, European Agricultural policy and its influence on land use."
 
   - title      : User Generated data
     url        : http://www.verbeterdebuurt.nl/
@@ -81,7 +83,7 @@ apps:
     description: "Penalty Radar shows speeds on Dutch highways, and calculates the fines that could have been collected by police."
 
 examples    :
-  - url  : admr.nl.amsterdam/nodes?osm::tourism=museum
+  - url  : objects?osm::tourism=museum&in=admr.nl.amsterdam
     title: OpenStreetMap museums in Amsterdam
 
   - url  : admr.nl.amsterdam/nodes?layer=artsholland

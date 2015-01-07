@@ -75,7 +75,7 @@ code#objectdata {
   padding-right: 10px;
 }
 
-#map-url-input {
+#urls {
   position: relative;
   top: -21px;
   padding: 5px;
@@ -107,7 +107,7 @@ code#objectdata .number {
   opacity: 0.5;
 }
 
-#map-url-input table {
+#urls table {
   background-color: white;
   border-color: #C0C0C0 #D9D9D9 #D9D9D9;
   border-radius: 1px 1px 1px 1px;
@@ -118,26 +118,26 @@ code#objectdata .number {
   position: relative;
 }
 
-#map-url-input table td {
+#urls table td {
   padding: 0px;
   border-bottom: 1px dotted #DDDDDD;
   font-size: 0.9em;
   text-align: left;
 }
 
-#map-url-input table td.endpoint {
+#urls table td.endpoint {
   color: #888;
   padding-left: 2px;
   display: block;
   padding-right: 4px !important;
 }
 
-#map-url-input td #url {
+#urls td #url {
   border: medium none;
 }
 
-#map-url-input td #url,
-#map-url-input td .url {
+#urls td #url,
+#urls td .url {
   position: relative;
   left: -3px;
   outline: none;
@@ -145,29 +145,29 @@ code#objectdata .number {
   font-size: 100% !important;
 }
 
-#map-url-input #url:focus {
+#urls #url:focus {
   outline: none;
 }
 
-#map-url-input table {
+#urls table {
   border-collapse: collapse;
   width: 100%;
 }
 
-#map-url-input table td.minimize {
+#urls table td.minimize {
   white-space: nowrap;
 	width: 1%;
 }
 
-#map-url-input table td.fill {
+#urls table td.fill {
   width: 99%;
 }
 
-#map-url-input table td.fill input{
+#urls table td.fill input{
   width: 99%;
 }
 
-#map-url-input table tr td:first-child {
+#urls table tr td:first-child {
   padding-left: 5px;
 }
 
@@ -200,8 +200,8 @@ tr.example td {
 	height: 18px;
 }
 
-button.button_up,
-button.button_down {
+button.button-up,
+button.button-down {
   width: 16px;
   height: 16px;
   display: block;
@@ -209,10 +209,10 @@ button.button_down {
   text-decoration: none;
 }
 
-button.button_down {
-  background: white url('{{ site.baseurl }}/img/button_down.png') no-repeat scroll center 5px;
+button.button-down {
+  background: white url('{{ site.baseurl }}/img/button-down.png') no-repeat scroll center 5px;
 }
 
-button.button_up {
-  background: white url('{{ site.baseurl }}/img/button_up.png') no-repeat scroll center 5px;
+button.button-up {
+  background: white url('{{ site.baseurl }}/img/button-up.png') no-repeat scroll center 5px;
 }

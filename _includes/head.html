@@ -1,28 +1,16 @@
-<head>
-  <meta charset="utf-8">
-  {% if page.title %}
-  <title>{{ page.title }} | {{ site.data.endpoint.title }}</title>
-  {% else %}
-  <title>{{ site.data.endpoint.title }} {{ map }}</title>
-  {% endif %}
-  <meta name="description" content="CitySDK LD API">
-  <meta name="author" content="Waag Society">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <link rel="stylesheet" href="{{ site.baseurl }}/css/normalize.css">
-  <link rel="stylesheet" href="{{ site.baseurl }}/css/skeleton.css">
-  <link rel="stylesheet" href="{{ site.baseurl }}/css/style.css">
-  <link rel="icon" type="image/png" href="{{ site.baseurl }}/images/icon.png" />
-  {% if page.d3 %}
-  <script src="{{ site.baseurl }}/js/d3.v3.min.js" charset="utf-8"></script>
-  {% endif %}
-  {% if page.layout == "map" %}
-  <script src="{{ site.baseurl }}/js/highlight.min.js"></script>
-  <script src="{{ site.baseurl }}/js/leaflet.js"></script>
-  <link rel="stylesheet" href="{{ site.baseurl }}/css/leaflet.css" />
-  <link rel="stylesheet" href="{{ site.baseurl }}/css/map.css">
-  <script src="{{ site.baseurl }}/js/spin.min.js"></script>
-  {% endif %}
-  {% if page.layout == "swagger" %}
-    {% include swagger.html %}
-  {% endif %}
-</head>
+<meta charset="utf-8">
+{% if page.title %}
+<title>{{ page.title }} | {{ site.data.endpoint.title }}</title>
+{% else %}
+<title>{{ site.data.endpoint.title }} {{ map }}</title>
+{% endif %}
+<meta name="description" content="CitySDK LD API">
+<meta name="author" content="Waag Society">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="{{ site.baseurl }}/css/normalize.css">
+<link rel="stylesheet" href="{{ site.baseurl }}/css/skeleton.css">
+<link rel="stylesheet" href="{{ site.baseurl }}/css/style.css">
+<link rel="icon" type="image/png" href="{{ site.baseurl }}/images/icon.png" />
+{% if page.d3 %}
+<script src="{{ site.baseurl }}/js/d3.v3.min.js" charset="utf-8"></script>
+{% endif %}

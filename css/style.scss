@@ -1,13 +1,11 @@
 ---
 ---
 
-// http://coolors.co/313715-d16014-939f5c-bbce8a-e2f9b8
-
-$color1: #313715;
-$color2: #d16014;
-$color3: #939f5c;
-$color4: #bbce8a;
-$color5: #e2f9b8;
+$color1: {{ site.data.style.color1 }};
+$color2: {{ site.data.style.color2 }};
+$color3: {{ site.data.style.color3 }};
+$color4: {{ site.data.style.color4 }};
+$color5: {{ site.data.style.color5 }};
 
 a {
   color: $color2;
@@ -122,4 +120,33 @@ ul.apps li a {
   background-color: white;
   color: black;
   font-size: 1rem;
+}
+
+#layers {
+  list-style-type: none;
+}
+
+#layers h4 {
+  text-align: center;
+}
+
+#layers h4 pre {
+  display: inline;
+}
+
+#layers h4:before,
+#layers h4:after {
+  content: url('{{ site.baseurl }}/images/bullet.png');
+}
+
+#layers table {
+  width: 100%;
+}
+
+#layers table tr td:first-child {
+  width: 150px;
+}
+
+#layers td {
+  border-bottom: none;
 }

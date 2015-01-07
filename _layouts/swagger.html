@@ -1,3 +1,7 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% include head.html %}
   <link href='css/highlight.default.css' media='screen' rel='stylesheet' type='text/css'/>
   <link href='css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
   <script type="text/javascript" src="lib/shred.bundle.js"></script>
@@ -14,7 +18,7 @@
   <script type="text/javascript">
     $(function () {
       window.swaggerUi = new SwaggerUi({
-      url: "http://test-api.citysdk.waag.org/swagger_doc",
+      url: "http://api.citysdk.waag.org/swagger",
       dom_id: "swagger-ui-container",
       supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
       onComplete: function(swaggerApi, swaggerUi){
@@ -36,13 +40,26 @@
       }
     })
     window.swaggerUi.load();
-    
-    // window.setTimeout(function() {    
+
+    // window.setTimeout(function() {
     //   Docs.expandEndpointListForResource('');
     //   Docs.collapseOperationsForResource('');
     // }, 100)
-    
-    
+
+
   });
 
   </script>
+</head>
+<body>
+  {% include header.html %}
+  <section>
+  <div class="container">
+    <div class="row">
+      {{ content }}
+    </div>
+  </div>
+  </section>
+  {% include footer.html %}
+</body>
+</html>

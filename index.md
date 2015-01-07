@@ -1,11 +1,17 @@
 ---
 ---
 
+API, real-time data city services open data
+GeoJSON and JSON-LD
+
 A list of available data in this endpoint can be seen via [data]({{ site.baseurl }}/data) and the [map viewer]({{ site.baseurl }}/map).
 
 <ul class="apps">
-{% for app in site.data.endpoint.apps limit: 5 %}
-<li style="background-image: url({{ site.baseurl }}/apps/{{ app.name }}.png)">
+<li style="background-image: url({{ site.baseurl }}/apps/map.jpg)">
+  <a href="{{ site.baseurl}}/map#{{ site.data.endpoint.examples[0].url }}">Explore available data sets</a>
+</li>
+{% for app in site.data.endpoint.apps limit: 4 %}
+<li style="background-image: url({{ site.baseurl }}/apps/{{ app.name }}.jpg)">
   <a href="{{ site.baseurl}}/apps#{{ app.name }}">{{ app.title }}</a>
 </li>
 {% endfor %}
