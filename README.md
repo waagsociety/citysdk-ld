@@ -23,7 +23,7 @@ The site is built inside the `_site` directory, and can either be served from th
 To use Jekyll's built-in web server to run and test the website locally, run the following command:
 
 ```bash
-jekyll serve --watch --baseurl ''
+jekyll serve --baseurl ''
 ```
 
 The website will be available at [http://localhost:4000/](http://localhost:4000/).

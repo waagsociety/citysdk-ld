@@ -1,19 +1,28 @@
+---
+---
+
 /* http://coolors.co/313715-d16014-939f5c-bbce8a-e2f9b8 */
 
-<<<<<<< HEAD
 $color1: {{ site.data.style.color1 }};
 $color2: {{ site.data.style.color2 }};
 $color3: {{ site.data.style.color3 }};
 $color4: {{ site.data.style.color4 }};
 $color5: {{ site.data.style.color5 }};
-=======
+
+$font-color: #3f4444;
+$background-color: #f9f9f9;
+
 $brand-color: #2da09a;
 $link-color: #d16014;
 $tiny-margin: 0.5rem;
 $standard-margin: 1rem;
 $big-margin: 1.5rem;
 $bigger-margin: 2rem;
->>>>>>> 24cce34535512fcfd55da071cca68a8a49e244d8
+
+body {
+  color: $font-color;
+  background-color: $background-color;
+}
 
 a {
   color: $link-color;
@@ -122,9 +131,9 @@ ul.apps li a {
   bottom: 10px;
   left: 10px;
   padding: 8px;
-  background-color: white;
-  color: black;
-  font-size: 1rem;
+  background-color: $background-color;
+  color: $font-color;
+  text-decoration: none;
 }
 
 #layers {
@@ -132,17 +141,19 @@ ul.apps li a {
 }
 
 #layers h4 {
+  margin-top: 7rem;
   text-align: center;
+  border-bottom: 3px solid $brand-color;
 }
 
 #layers h4 pre {
   display: inline;
 }
 
-#layers h4:before,
-#layers h4:after {
-  content: url('{{ site.baseurl }}/images/bullet.png');
-}
+//#layers h4:before,
+//#layers h4:after {
+//  content: url('{{ site.baseurl }}/images/bullet.png');
+//}
 
 #layers table {
   width: 100%;
@@ -168,7 +179,7 @@ ul.apps li a {
 }
 
 .animated.hinge {
-  animation-duration: 2s;
+  animation-duration: 1s;
 }
 
 .hidden {

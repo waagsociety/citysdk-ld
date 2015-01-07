@@ -11,16 +11,15 @@
   </div>
   </section>
   {% include footer.html %}
-	
-	
+
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script src="{{ site.baseurl }}/js/viewportchecker.js"></script>
 	<script>
-	jQuery(document).ready(function() {
-		jQuery('.mainContent p, .mainContent h2, .mainContent ul, .mainContent li').addClass("hidden").viewportChecker({
-			classToAdd: 'visible animated fadeIn'
-		 });	
-	});
+  jQuery(document).ready(function() {
+    jQuery('.mainContent p, .mainContent h2, .mainContent ul, .mainContent li').addClass("hidden").viewportChecker({
+      classToAdd: 'visible animated fadeIn'
+     });
+  });
 	</script>
 </body>
 </html>
