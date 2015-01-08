@@ -1,0 +1,14 @@
+- name: about
+  title: About
+
+- name: map
+  title: Map
+
+- name: docs
+  title: Docs
+
+- name: apps
+  title: Apps
+
+- name: data
+  title: Data

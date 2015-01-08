@@ -15,11 +15,17 @@
         </div>
         <div class="eight columns">
           <ul>
-            <li><a href="{{ site.baseurl }}/about">About</a></li>
-            <li><a href="{{ site.baseurl }}/map">Map</a></li>
-            <li><a href="{{ site.baseurl }}/docs">Docs</a></li>
-            <li><a href="{{ site.baseurl }}/apps">Apps</a></li>
-            <li><a href="{{ site.baseurl }}/data">Data</a></li>
+            {% for item in site.data.menu %}
+            <li>
+              {% assign url = page.url | replace_first:'/','' | split:"/" | first %}
+              {% if item.name == url %}
+              <a class="menu-item current" href="{{ site.baseurl }}/{{ item.name }}">
+              {% else %}
+              <a class="menu-item" href="{{ site.baseurl }}/{{ item.name }}">
+              {% endif %}
+                {{item.title}}</a>
+            </li>
+            {% endfor %}
             <li><a id="github" href="https://github.com/waagsociety/citysdk-ld">
               <span class="octocat"></span>GitHub
             </a></li>

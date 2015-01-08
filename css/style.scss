@@ -60,8 +60,12 @@ header a:visited {
   color: $brand-color;
 }
 
-header a:hover {
-  text-decoration: underline;
+header a.menu-item:hover,
+header a.menu-item.current {
+  border-bottom-width: 3px;
+  border-bottom-color: $brand-color;
+  border-bottom-style: solid;
+  //text-decoration: underline;
   color: $brand-color;
 }
 
@@ -141,6 +145,9 @@ ul.apps li a {
   list-style-type: none;
 }
 
+#layers li:first-child h4 {
+  margin-top: 3rem;
+}
 #layers h4 {
   margin-top: 7rem;
   text-align: center;
@@ -151,17 +158,16 @@ ul.apps li a {
   display: inline;
 }
 
-//#layers h4:before,
-//#layers h4:after {
-//  content: url('{{ site.baseurl }}/images/bullet.png');
-//}
-
 #layers table {
   width: 100%;
 }
 
 #layers table tr td:first-child {
-  width: 150px;
+  width: 155px;
+}
+
+#layers td > code:first-child {
+  margin-left: -0.5rem;
 }
 
 #layers td {
@@ -173,14 +179,18 @@ ul.apps li a {
 .animated {
   animation-duration: 1s;
   animation-fill-mode: both;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
 }
 
 .animated.infinite {
   animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
 }
 
 .animated.hinge {
-  animation-duration: 1s;
+  animation-duration: 2s;
+  -webkit-animation-duration: 2s;
 }
 
 .hidden {
@@ -202,4 +212,5 @@ ul.apps li a {
 
 .fadeIn {
   animation-name: fadeIn;
+  -webkit-animation-name: fadeIn;
 }
