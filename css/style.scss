@@ -3,12 +3,6 @@
 
 /* http://coolors.co/313715-d16014-939f5c-bbce8a-e2f9b8 */
 
-$color1: {{ site.data.style.color1 }};
-$color2: {{ site.data.style.color2 }};
-$color3: {{ site.data.style.color3 }};
-$color4: {{ site.data.style.color4 }};
-$color5: {{ site.data.style.color5 }};
-
 $font-color: #3f4444;
 $background-color: #f9f9f9;
 
@@ -26,10 +20,10 @@ body {
 
 a {
   color: $link-color;
-	transition: color 0.5s ease-in-out;
 }
 
 a:hover {
+  transition: color 0.5s ease-in-out;
   color: rgba($link-color, .75);
 }
 
@@ -38,11 +32,9 @@ a:active, a:focus {
   -moz-outline-style:none;
 }
 
-.mainNav{
-	margin-bottom: $big-margin;
-}
 nav {
   margin-top: $big-margin;
+	margin-bottom: $big-margin;
   font-weight: 500;
 }
 
@@ -65,7 +57,6 @@ header a.menu-item.current {
   border-bottom-width: 3px;
   border-bottom-color: $brand-color;
   border-bottom-style: solid;
-  //text-decoration: underline;
   color: $brand-color;
 }
 
@@ -89,9 +80,11 @@ header ul li {
   padding: 7px 14px;
 }
 
+#logo:hover,
 #github:hover {
   text-decoration: none;
   opacity: 0.8;
+  transition: opacity 0.5s ease-in-out;
 }
 
 footer {

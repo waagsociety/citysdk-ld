@@ -1,5 +1,5 @@
 <header>
-  <nav class="mainNav">
+  <nav>
     <div class="container">
       {% if page.layout == "map" %}
       <div class="row no-bottom-margin">
@@ -7,11 +7,13 @@
       <div class="row">
       {% endif %}
         <div class="four columns">
+          <a href="{{ site.baseurl }}/" id="logo">
           {% if page.layout == "map" %}
-          <a href="{{ site.baseurl }}/"><img id="logo-wide" src="{{ site.baseurl }}/images/logo-wide-new.svg"></a>
+          <img id="logo-wide" src="{{ site.baseurl }}/images/logo-wide.svg">
           {% else %}
-          <a href="{{ site.baseurl }}/"><img src="{{ site.baseurl }}/images/logo_new.svg"></a>
+          <img src="{{ site.baseurl }}/images/logo.svg">
           {% endif %}
+          </a>
         </div>
         <div class="eight columns">
           <ul>
