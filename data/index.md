@@ -3,10 +3,9 @@ title: Data
 d3: true
 ---
 
-The following data is currently available via this CitySDK LD API instance. In the API,  This page
+In the CitySDK Linked Data API, data sets are called `layers`. Each layer can contain `objects`, and each `object` contains, per `layer`, key/value `data`. In the API, _real-world objects_ like buildings, bus stops and municipalities are represented by `objects`, which can contain `data` on one or more `layers`. This way, multiple data sets can tell something about one single `object`. The data model and concepts are explained in detail on the [About page]({{ site.baseurl}}/about), and in the project's [wiki]({{ site.data.endpoint.wiki }}).
 
-[`/layers`]({{ site.data.endpoint.endpoint }}/layers)
-
+The following `layers` are currently available via this CitySDK LD API instance. You can also view the results as JSON-LD using the [`/layers`]({{ site.data.endpoint.endpoint }}/layers?per_page=100) API.
 
 <ul id="layers"></ul>
 <script>
@@ -34,15 +33,17 @@ The following data is currently available via this CitySDK LD API instance. In t
 
       tr = table.append("tr")
       tr.append("td").html('Data:');
-      tr.append("td")
-          .append("a").attr('href', function(d) {
-            var sample_url = 'layers/' + d.properties.name + '/objects?per_page=25';
-            if (d.sample_url) {
-              sample_url = d.sample_url;
-            }
-            return '{{ site.baseurl }}/map#' + sample_url;
-          })
-          .html('View on map');
+      tr.append("td").each(function(d) {
+        d3.select(this)
+        .append("a").attr('href', function(d) {
+          var sample_url = 'layers/' + d.properties.name + '/objects?per_page=25';
+          if (d.sample_url) {
+            sample_url = d.sample_url;
+          }
+          return '{{ site.baseurl }}/map#' + sample_url;
+        })
+        .html('View on map');
+      });
 
       tr = table.append("tr")
       tr.append("td").html('Category:');
