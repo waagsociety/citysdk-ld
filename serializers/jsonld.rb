@@ -193,7 +193,7 @@ module CitySDKLD
           # Add LD prefixes
         endpoint_data = CitySDKLD.get_endpoint_data(@query)
         {
-          :@base => endpoint_data[:url],
+          :@base => endpoint_data[:base_uri] + endpoint_data[:endpoint_code],
           :@vocab => endpoint_data[:base_uri],
           cdk: endpoint_data[:base_uri]
         }.merge(CitySDKLD::PREFIXES).merge(context)
