@@ -1,15 +1,22 @@
 ---
 ---
 
+$font-color: {{ site.data.style.font-color }};
+$background-color: {{ site.data.style.background-color }};
+$background-color-transparant: {{ site.data.style.background-color-transparant }};
+$brand-color: {{ site.data.style.brand-color }};
+$link-color: {{ site.data.style.link-color }};
+
 #map-container  {
   left: 0;
   right: 0;
   bottom: 0;
   position: absolute;
-  top: 100px;
+  top: 143px;
+  min-height: 300px;
 
-  border-top-color: #d0dbe1; /*#CE2027;*/
-  border-top-width: 2px;
+  border-top-color: $brand-color;
+  border-top-width: 1px;
   border-top-style: solid;
 }
 
@@ -25,15 +32,12 @@
 }
 
 #floatbox {
+  background: $background-color;
   box-shadow: 0px 0px 15px rgba(50,50,50,0.1);
-  border-color: #d0dbe1; /*rgba(206, 32, 39, 0.4); #CE2027;*/
+  border-color: rgba(50, 50, 50, 0.4);
   border-width: 1px;
   border-style: solid;
-
-  background: white;
-
   display: block;
-  /*overflow: auto;*/
   position: absolute;
   right: 20px;
   top: 20px;
@@ -44,105 +48,118 @@
 }
 
 code#objectdata {
-  background: white;
-
+  position: absolute;
+  background: $background-color;
   top: 0;
-  bottom: 0px;
+  bottom: 0;
   left: 0;
   right: 0;
-
-  position: absolute;
-
 	overflow-x: hidden;
 	overflow-y: auto;
-
   white-space: pre-wrap;
-
-  padding: 0.8em;
+  border: none;
   line-height: 1em;
-  color: black;
-
-  border-bottom-color: #d0dbe1; /*#CE2027;*/
-  border-bottom-width: 2px;
-  border-bottom-style: solid;
-
+  border-radius: 0;
+  margin: 0;
+  font-size: 60%;
 }
 
+code#objectdata ol {
+  margin-bottom: 0;
+};
 
 
-#urlinp {
-  float: right;
-  padding-right: 10px;
+#data-links-container {
+  background-color: $background-color-transparant;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  border-color: rgba(50, 50, 50, 0.4);
+  border-width: 1px;
+  border-top-style: solid;
 }
 
-#urls {
-  position: relative;
-  top: -21px;
-  padding: 5px;
-  line-height: 1.4;
+#data-links {
+  font-size: 60%;
+  line-height: 1em;
 }
 
+code#objectdata,
+#data-links {
+  padding: 0.9em;
+}
 
 pre code .attribute,
 code#objectdata .attribute {
-  color: #444;
+  color: $font-color;
 }
 
 pre code .literal,
 code#objectdata .literal {
-  color: #5ABA47;
+  color: $brand-color;
 }
 
 pre code .string,
 code#objectdata .string {
-  color: #CE2027;
+  color: $brand-color;
 }
 
 pre code .number,
 code#objectdata .number {
-  color: #488BC9;
+  color: $brand-color;
 }
 
 .leaflet-container .leaflet-control-attribution {
   opacity: 0.5;
 }
 
-#urls table {
-  background-color: white;
-  border-color: #C0C0C0 #D9D9D9 #D9D9D9;
-  border-radius: 1px 1px 1px 1px;
-  border-right: 1px solid #D9D9D9;
-  border-style: solid;
-  border-width: 1px;
-  z-index: 14;
+#urls {
+  z-index: 999;
+  background: none repeat scroll 0 0 #fff;
+  border: 1px solid #d1d1d1;
+  border-radius: 4px;
+  box-shadow: none;
+  padding: 6px 10px;
   position: relative;
+  top: -30px;
+  padding: 5px;
+}
+
+#urls table {
+  margin-bottom: 0;
+}
+
+#urls input {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  height: auto;
+  padding: 0;
+  margin-bottom: 0;
+  line-height: inherit;
+}
+
+#urls:focus {
+  outline: 1px solid #33c3f0;
 }
 
 #urls table td {
   padding: 0px;
-  border-bottom: 1px dotted #DDDDDD;
-  font-size: 0.9em;
+  border-bottom: none;
+  font-size: 0.8em;
   text-align: left;
 }
 
 #urls table td.endpoint {
-  color: #888;
+  opacity: 0.5;
   padding-left: 2px;
-  display: block;
-  padding-right: 4px !important;
-}
-
-#urls td #url {
-  border: medium none;
+  padding-right: 4px;
 }
 
 #urls td #url,
 #urls td .url {
   position: relative;
-  left: -3px;
-  outline: none;
-  font-family: 'Ubuntu', sans-serif !important;
-  font-size: 100% !important;
+  left: -4px;
 }
 
 #urls #url:focus {
@@ -171,11 +188,15 @@ code#objectdata .number {
   padding-left: 5px;
 }
 
-tr.dropdown:hover {
-  background-color: rgba(206, 32, 39, 0.1);/* #CE2027;*/
+#dropdown {
+  overflow-x: hidden;
 }
 
-tr.dropdown td {
+table.dropdown tr:hover {
+  background-color: $background-color;
+}
+
+table.dropdown tr td {
   padding-top: 2px;
   padding-bottom: 2px;
   cursor: hand;
@@ -187,32 +208,41 @@ button {
   cursor: pointer;
 }
 
-tr.last_history {
-    border-bottom: 1px solid #d0dbe1; /*#CE2027;*/
+#urls-history tr:last-child {
+  border-bottom: 2px dashed #d0dbe1;
 }
 
 tr.example td {
   color: #555;
 }
 
-#busy {
-	width: 18px;
-	height: 18px;
+#spinner, #show-dropdown {
+  position: absolute;
+  top: 0;
 }
 
-button.button-up,
-button.button-down {
-  width: 16px;
-  height: 16px;
+#spinner {
+  right: 40px;
+  top: 5px;
+	width: 30px;
+	height: 30px;
+}
+
+#show-dropdown {
+  right: 10px;
+  width: 30px;
+  height: 41px;
   display: block;
-  border: none;
-  text-decoration: none;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  background-image: url({{ site.baseurl }}/images/dropdown.svg);
 }
 
-button.button-down {
-  background: white url('{{ site.baseurl }}/img/button-down.png') no-repeat scroll center 5px;
-}
-
-button.button-up {
-  background: white url('{{ site.baseurl }}/img/button-up.png') no-repeat scroll center 5px;
+#show-dropdown.button-up {
+	-webkit-transform: rotate(180deg);
+	   -moz-transform: rotate(180deg);
+	    -ms-transform: rotate(180deg);
+	     -o-transform: rotate(180deg);
+	        transform: rotate(180deg);
 }

@@ -1,0 +1,4 @@
+---
+layout:
+---
+{{ site.data.endpoint.examples | jsonify }}
