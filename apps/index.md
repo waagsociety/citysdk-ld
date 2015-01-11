@@ -4,10 +4,11 @@ title: Apps
 
 Ontwikkelaars makkelijk apps maken met de api, data stad dit dat.
 
-<ul class="apps">
+<div id="apps">
 {% for app in site.data.endpoint.apps %}
-<li style="background-image: url({{ site.baseurl }}/apps/{{ app.name }}.png)">
-  <a href="{{ site.baseurl}}/apps#{{ app.name }}">{{ app.title }}</a>
-</li>
+<h5 id="{{ app.name }}">{{ app.title }}</h5>
+<img src="{{ site.baseurl }}/apps/{{ app.name }}.jpg" />
+<p>{{ app.description }}</p>
+<p><a href="{{ app.url }}">{{ app.url }}</a></p>
 {% endfor %}
-</ul>
+</div>

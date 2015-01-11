@@ -3,8 +3,6 @@ layout: default
 title: Documentation
 ---
 
-#Documentation
-
 This unified REST API gives access to data from different sources available on a per-object basis. The JSON and RDF API is written in Ruby + Sinatra. Data is stored in a PostgreSQL/PostGIS database. Documentation and source code can all be found on GitHub and there’s also a Ruby API gem.
 
 **This website contains endpoint specific information only**, mainly regarding the datasets available here. All general documentation on the API can be found on the wiki at the corresponding [GitHub Wiki]({{ site.data.endpoint.wiki }}).

@@ -1,17 +1,19 @@
 ---
 ---
 
-/* http://coolors.co/313715-d16014-939f5c-bbce8a-e2f9b8 */
+$font-color: {{ site.data.style.font-color }};
+$background-color: {{ site.data.style.background-color }};
+$brand-color: {{ site.data.style.brand-color }};
+$link-color: {{ site.data.style.link-color }};
 
-$font-color: #3f4444;
-$background-color: #f9f9f9;
-
-$brand-color: #2da09a;
-$link-color: #d16014;
 $tiny-margin: 0.5rem;
 $standard-margin: 1rem;
 $big-margin: 1.5rem;
 $bigger-margin: 2rem;
+
+.hidden {
+  display: none;
+}
 
 body {
   color: $font-color;
@@ -70,7 +72,7 @@ header ul {
 
 header ul li {
   display: inline;
-  margin: 0 7px;
+  margin-left: 7px;
 }
 
 #github {
@@ -124,7 +126,13 @@ ul.apps li {
   position: relative;
 }
 
-ul.apps li a {
+ul.apps li a.image-link {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+ul.apps li a.text-link {
   position: absolute;
   bottom: 10px;
   left: 10px;
@@ -141,6 +149,7 @@ ul.apps li a {
 #layers li:first-child h4 {
   margin-top: 3rem;
 }
+
 #layers h4 {
   margin-top: 7rem;
   text-align: center;
@@ -186,7 +195,7 @@ ul.apps li a {
   -webkit-animation-duration: 2s;
 }
 
-.hidden {
+.transparant {
   opacity: 0;
 }
 

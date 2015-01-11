@@ -8,12 +8,15 @@ A list of available data in this endpoint can be seen via [data]({{ site.baseurl
 
 <ul class="apps">
 <li style="background-image: url({{ site.baseurl }}/apps/map.jpg)">
-  <a href="{{ site.baseurl}}/map#{{ site.data.endpoint.examples[0].url }}">Explore available data sets</a>
+  <a class="image-link" href="{{ site.baseurl}}/map#{{ site.data.endpoint.examples[0].url }}"></a>
+  <a class="text-link" href="{{ site.baseurl}}/map#{{ site.data.endpoint.examples[0].url }}">Explore available data sets</a>
 </li>
 {% for app in site.data.endpoint.apps limit: 4 %}
 <li style="background-image: url({{ site.baseurl }}/apps/{{ app.name }}.jpg)">
-  <a href="{{ site.baseurl}}/apps#{{ app.name }}">{{ app.title }}</a>
+  <a class="image-link" href="{{ site.baseurl}}/apps#{{ app.name }}"></a>
+  <a class="text-link" href="{{ site.baseurl}}/apps#{{ app.name }}">{{ app.title }}</a>
 </li>
+</a>
 {% endfor %}
 </ul>
 

@@ -14,9 +14,6 @@ hier de stad!
 Would your city like to open up its data and services to a big European developer community by joining CitySDK? Get in touch with the [owners]({{ site.data.endpoint.email }}) of this endpoint or the project management of CitySDK at [Forum Virium Helsinki](http://www.citysdk.eu/partners/forum-virium/).
 
 
-
-
-
 # Endpoints in other cities
 
 * [Amsterdam (NL)](http://dev.citysdk.waag.org)
@@ -28,7 +25,7 @@ Would your city like to open up its data and services to a big European develope
 
 
 
-## Endpoints other CitySDK API's
+## Endpoints other CitySDK APIs
 
 * [Helsinki Participation Endpoint](http://dev.hel.fi/apis/issuereporting)
 * [Province of Rome Participation](http://nodeshot.readthedocs.org/en/latest/topics/open311.html)
