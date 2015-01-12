@@ -142,7 +142,7 @@ Examples:
     d3.select("#data-link-json-ld")
         .attr("href", "{{ site.data.endpoint.data-links.json-ld }}{{ site.data.endpoint.endpoint }}" + url);
     d3.select("#data-link-geojson")
-        .attr("href", "{{ site.data.endpoint.data-links.geojson }}{{ site.data.endpoint.endpoint }}" + url);
+        .attr("href", "{{ site.data.endpoint.data-links.geojson }}{{ site.data.endpoint.endpoint }}" + encodeURIComponent(url));
 
     var historyUrl = url;
 
