@@ -49,7 +49,7 @@ module CitySDKLD
             :@context => @layers.values[0][:context],
             :@id => "#{endpoint_data[:base_uri] + endpoint_data[:endpoint_code]}/objects/#{@query[:params][:cdk_id]}/layers/#{@query[:params][:layer]}",
             :@type => [
-              "#{endpoint_data[:base_uri]}#{endpoint_data[:endpoint_code]}/LayerData",
+              "#{endpoint_data[:base_uri]}LayerData",
               @layers.values[0][:rdf_type]
             ]
           }.merge @result
