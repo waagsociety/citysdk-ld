@@ -4,7 +4,7 @@
 <body>
   {% include header.html %}
   <section>
-  <div class="container mainContent">
+  <div class="container">
     <div class="row">
       {{ content }}
     </div>
@@ -17,7 +17,7 @@
 	<script src="{{ site.baseurl }}/js/viewportchecker.min.js"></script>
 	<script>
   jQuery(document).ready(function() {
-    jQuery('.mainContent p, .mainContent h2, .mainContent h3, .mainContent h4, .mainContent ul, .mainContent li').addClass("transparant").viewportChecker({
+    jQuery('.container p, .container h2, .container h3, .container h4, .container ul, .container li').addClass("transparant").viewportChecker({
       classToAdd: 'visible animated fadeIn'
      });
   });
