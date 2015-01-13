@@ -37,6 +37,8 @@ module CitySDKLD
 
       def serialize(object, env)
         if (env['PATH_INFO'] =~ /^\/ngsi|swagger/)
+          env['api.endpoint'].header 'Content-Type', 'application/json; charset=utf-8'
+          env['api.endpoint'].header 'Access-Control-Allow-Origin', '*'
           object.to_json
         else
           if object.class == Hash
