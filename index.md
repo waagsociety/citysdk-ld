@@ -1,12 +1,11 @@
 ---
 ---
 
-API, real-time data city services open data
-GeoJSON and JSON-LD
+###A real-time city data services API 
 
+Making data services easier to implement, data easier to distribute and find and applications easier to build. 
 A list of available data in this endpoint can be seen via [data]({{ site.baseurl }}/data) and the [map viewer]({{ site.baseurl }}/map).
 
-## Data examples
 
 <ul id="apps">
 <li>
@@ -22,7 +21,7 @@ A list of available data in this endpoint can be seen via [data]({{ site.baseurl
 {% endfor %}
 </ul>
 
-## Project CitySDK
+### Project CitySDK
 
 CitySDK is creating a toolkit for the development of digital services within cities. With open and interoperable digital service interfaces, CitySDK enables a more efficient utilisation of the expertise and know-how of developer communities.
 

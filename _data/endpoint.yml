@@ -40,25 +40,25 @@ apps:
     url        : https://code.waag.org/mansholt/
     description: "Interactive map, made for an installation on an exhibition on Sicco Mansholt, European Agricultural policy and its influence on land use."
 
-  - name       : city-dashboard
-    title      : City Dashboard
-    url        : http://citydashboard.waag.org
-    description: "Gives a view of the pulse of the city by showing all real-time data streams."
-
-  - name       : now
-    title      : Now
-    url        : http://citysdk.waag.org/now/
-    description: "This simple web app offers Public Transport departure times in your immediate vicinity (real-time where available). The web app works in Amsterdam, Helsinki Manchester, Tampere (Fi)."
-
-  - name       : parking-widget
-    title      : Parking Widget Amsterdam
-    url        : http://parkeerwidget.yume.nl/widget/
-    description: "This widget gives travellers to Amsterdam insight in the associated travel time and costs for the last mile to destination for different parking options in the city."
-
-  - name       : parking-api
-    title      : Parking API Amsterdam
-    url        : http://divvapi.parkshark.nl/
-    description: "This API will return costs and recommendations for visiting any destination in Amsterdam."
+  # - name       : city-dashboard
+  #   title      : City Dashboard
+  #   url        : http://citydashboard.waag.org
+  #   description: "Gives a view of the pulse of the city by showing all real-time data streams."
+  #
+  # - name       : now
+  #   title      : Now
+  #   url        : http://citysdk.waag.org/now/
+  #   description: "This simple web app offers Public Transport departure times in your immediate vicinity (real-time where available). The web app works in Amsterdam, Helsinki Manchester, Tampere (Fi)."
+  #
+  # - name       : parking-widget
+  #   title      : Parking Widget Amsterdam
+  #   url        : http://parkeerwidget.yume.nl/widget/
+  #   description: "This widget gives travellers to Amsterdam insight in the associated travel time and costs for the last mile to destination for different parking options in the city."
+  #
+  # - name       : parking-api
+  #   title      : Parking API Amsterdam
+  #   url        : http://divvapi.parkshark.nl/
+  #   description: "This API will return costs and recommendations for visiting any destination in Amsterdam."
 
   # - title      : Source Code for Parking API Amsterdam
   #   url        : https://github.com/jonathanrcarter/divv-amsterdam-parkingapi
