@@ -6,15 +6,17 @@ GeoJSON and JSON-LD
 
 A list of available data in this endpoint can be seen via [data]({{ site.baseurl }}/data) and the [map viewer]({{ site.baseurl }}/map).
 
-<ul class="apps">
-<li style="background-image: url({{ site.baseurl }}/images/apps/map.jpg)">
-  <a class="image-link" href="{{ site.baseurl}}/map#{{ site.data.endpoint.examples[0].url }}"></a>
-  <a class="text-link" href="{{ site.baseurl}}/map#{{ site.data.endpoint.examples[0].url }}">Explore available data sets</a>
+## Data examples
+
+<ul id="apps">
+<li>
+  <h4>Explore available data sets</h4>
+  <a class="image-link" href="{{ site.baseurl}}/map#{{ site.data.endpoint.examples[0].url }}" style="background-image: url({{ site.baseurl }}/images/apps/map.jpg)"></a>
 </li>
 {% for app in site.data.endpoint.apps limit: 4 %}
-<li style="background-image: url({{ site.baseurl }}/apps/{{ app.name }}.jpg)">
-  <a class="image-link" href="{{ site.baseurl}}/apps#{{ app.name }}"></a>
-  <a class="text-link" href="{{ site.baseurl}}/apps#{{ app.name }}">{{ app.title }}</a>
+<li>
+  <h4>{{ app.title }}</h4>
+  <a class="image-link" href="{{ site.baseurl}}/apps#{{ app.name }}" style="background-image: url({{ site.baseurl }}/images/apps/{{ app.name }}.jpg)"></a>
 </li>
 </a>
 {% endfor %}
