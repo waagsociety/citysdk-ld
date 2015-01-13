@@ -7,9 +7,8 @@ This unified REST API gives access to data from different sources available on a
 
 **This website contains endpoint specific information only**, mainly regarding the datasets available here. All general documentation on the API can be found on the wiki at the corresponding [GitHub Wiki]({{ site.data.endpoint.wiki }}).
 
-Here's the very, very preliminary swagger documentation for **Version 1** of the api.
-This version is currently **only** installed at Waag Society's **test server**.
-[swagger]({{ site.baseurl }}/swagger)
+There is preliminary  documentation for Version 1.0 of the api in swagger. 
+Please check this [here]({{ site.baseurl }}/swagger).
 
 
 ## Datasets in this endpoint

@@ -9,7 +9,6 @@ iframe,
 h1,
 h2,
 h3,
-h4,
 h5,
 h6,
 p,
@@ -125,16 +124,19 @@ table {
 }
 .swagger-ui-wrap {
   line-height: 1;
-  font-family: "Droid Sans", sans-serif;
+/*  font-family: "Droid Sans", sans-serif;*/
   max-width: 960px;
   margin-left: auto;
   margin-right: auto;
 }
+
 .swagger-ui-wrap b,
 .swagger-ui-wrap strong {
-  font-family: "Droid Sans", sans-serif;
-  font-weight: bold;
+/*  font-family: "Droid Sans", sans-serif;*/
+/*  font-weight: bold;*/
 }
+
+
 .swagger-ui-wrap q,
 .swagger-ui-wrap blockquote {
   quotes: none;
@@ -247,7 +249,7 @@ table {
   display: block;
 }
 .swagger-ui-wrap pre {
-  font-family: "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;
+/*  font-family: "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;*/
   background-color: #fcf6db;
   border: 1px solid #e5e0c6;
   padding: 10px;
@@ -274,7 +276,7 @@ table {
 }
 .swagger-ui-wrap .info_title {
   padding-bottom: 10px;
-  font-weight: bold;
+/*  font-weight: bold;*/
   font-size: 25px;
 }
 .swagger-ui-wrap p.big,
@@ -327,7 +329,7 @@ table {
   width: 100%;
 }
 .swagger-ui-wrap .model-signature {
-  font-family: "Droid Sans", sans-serif;
+/*  font-family: "Droid Sans", sans-serif;*/
   font-size: 1em;
   line-height: 1.5em;
 }
@@ -381,7 +383,7 @@ table {
   font-style: italic;
 }
 .swagger-ui-wrap .model-signature .description .strong {
-  font-weight: bold;
+/*  font-weight: bold;*/
   color: #000;
   font-size: .9em;
 }
@@ -391,11 +393,11 @@ table {
   margin-left: 1em;
 }
 .swagger-ui-wrap .model-signature .description .stronger {
-  font-weight: bold;
+/*  font-weight: bold;*/
   color: #000;
 }
 .swagger-ui-wrap .model-signature .propName {
-  font-weight: bold;
+/*  font-weight: bold;*/
 }
 .swagger-ui-wrap .model-signature .signature-container {
   clear: both;
@@ -407,13 +409,13 @@ table {
 }
 .swagger-ui-wrap .markdown p code,
 .swagger-ui-wrap .markdown li code {
-  font-family: "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;
+/*  font-family: "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;*/
   background-color: #f0f0f0;
   color: black;
   padding: 1px 3px;
 }
 .swagger-ui-wrap .required {
-  font-weight: bold;
+/*  font-weight: bold;*/
 }
 .swagger-ui-wrap input.parameter {
   width: 300px;
@@ -424,8 +426,8 @@ table {
   font-size: 1.5em;
   line-height: 1.3em;
   padding: 10px 0 10px 0;
-  font-family: "Droid Sans", sans-serif;
-  font-weight: bold;
+/*  font-family: "Droid Sans", sans-serif;*/
+/*  font-weight: bold;*/
 }
 .swagger-ui-wrap .heading_with_menu {
   float: none;
@@ -469,14 +471,14 @@ table {
 .swagger-ui-wrap th,
 .swagger-ui-wrap td {
   text-align: left;
-  font-weight: normal;
+/*  font-weight: normal;*/
   vertical-align: middle;
 }
 .swagger-ui-wrap .code {
-  font-family: "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;
+/*  font-family: "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;*/
 }
 .swagger-ui-wrap form.formtastic fieldset.inputs ol li.text textarea {
-  font-family: "Droid Sans", sans-serif;
+/*  font-family: "Droid Sans", sans-serif;*/
   height: 250px;
   padding: 4px;
   display: block;
@@ -541,7 +543,7 @@ table {
   color: #666666;
 }
 .swagger-ui-wrap .markdown pre {
-  font-family: "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;
+/*  font-family: "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;*/
   background-color: #fcf6db;
   border: 1px solid #e5e0c6;
   padding: 10px;
@@ -554,7 +556,7 @@ table {
   margin: 20px 0 25px 0 !important;
 }
 .swagger-ui-wrap ul#resources {
-  font-family: "Droid Sans", sans-serif;
+/*  font-family: "Droid Sans", sans-serif;*/
   font-size: 0.9em;
 }
 .swagger-ui-wrap ul#resources li.resource {
@@ -627,8 +629,8 @@ table {
   display: block;
   clear: none;
   float: left;
-  font-family: "Droid Sans", sans-serif;
-  font-weight: bold;
+/*  font-family: "Droid Sans", sans-serif;*/
+/*  font-weight: bold;*/
 }
 .swagger-ui-wrap ul#resources li.resource div.heading h2 a {
   color: #999999;
@@ -759,7 +761,7 @@ table {
   outline-color: #cc0000;
 }
 .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.content div.response div.block pre {
-  font-family: "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;
+/*  font-family: "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;*/
   padding: 10px;
   font-size: 0.9em;
   max-height: 400px;
@@ -960,7 +962,7 @@ table {
   padding: 10px 0;
   font-size: 0.8em;
   border-top: 1px solid #dddddd;
-  font-family: "Droid Sans", sans-serif;
+/*  font-family: "Droid Sans", sans-serif;*/
   color: #999999;
   font-style: italic;
 }
@@ -975,7 +977,7 @@ table {
 }
 .swagger-ui-wrap .markdown ol,
 .swagger-ui-wrap .markdown ul {
-  font-family: "Droid Sans", sans-serif;
+/*  font-family: "Droid Sans", sans-serif;*/
   margin: 5px 0 10px;
   padding: 0 0 0 18px;
   list-style-type: disc;
@@ -1032,7 +1034,7 @@ table {
 }
 #header a#logo {
   font-size: 1.5em;
-  font-weight: bold;
+/*  font-weight: bold;*/
   text-decoration: none;
   background: transparent url(../images/logo_small.png) no-repeat left center;
   padding: 20px 0 20px 40px;
@@ -1058,7 +1060,7 @@ table {
 #header form#api_selector .input a#explore {
   display: block;
   text-decoration: none;
-  font-weight: bold;
+/*  font-weight: bold;*/
   padding: 6px 8px;
   font-size: 0.9em;
   color: white;
