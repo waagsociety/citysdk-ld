@@ -2,16 +2,18 @@
 title: About
 ---
 
-korte intro, en misschien gebouwenkaart etc
+The CitySDK Linked Data API is developed as part of the European [CitySDK](http://www.citysdk.eu/) project.
+It provides for a unified and direct access to (open) data, with an interface allowing for writing data as well. 
+As such it is an enabler for the 'read-write city' where, conceivably, we don't only read the state of city element, but can also alter that state. 
 
+It is designed to work closely with other open source projects as OpenTripPlanner, OpenTripPlanner Analyst, Open311, GTFS, and OpenStreetMap. 
+Based on objects linked to a geometry, the API provides for a linked data (JSON-LD) view of the added data; one query about one object provides results from multiple datasets, annotated using semantic web technologies.
 
-hier de stad!
-
-
+<!-- Hier een diagram van de werking.. -->
 
 ## How to join?
 
-Would your city like to open up its data and services to a big European developer community by joining CitySDK? Get in touch with the [owners]({{ site.data.endpoint.email }}) of this endpoint or the project management of CitySDK at [Forum Virium Helsinki](http://www.citysdk.eu/partners/forum-virium/).
+Would your city like to open up its data and services to a big European developer community by joining CitySDK? Get in touch with the [owners](mailto:{{ site.data.endpoint.email }}) of this endpoint or the project management of CitySDK at [Forum Virium Helsinki](http://www.citysdk.eu/partners/forum-virium/).
 
 
 # Endpoints in other cities
@@ -42,22 +44,20 @@ It is a web service offering unified and direct access to open data from governm
 
 #### What does the CitySDK Linked Data API do?
 
-The Linked Data API makes data applicable in five steps:
+The Linked Data API makes data available in five steps:
 
-1. It collects data or web services from a myriad of sources;
+1. It collects data or web services from different sources;
 2. It describes the data;
-3. It links the data to reference datasets (e.g. from Cadastre or OSM);
+3. It links the data to reference datasets when applicable (e.g. from Cadastre or OSM);
 4. It offers the data as a unified service to other applications (API);
 5. It allows those applications to annotate and enrich the data.
 
-Independent of file format, refresh rate or granularity open data is easily accessible for commercial use, research and software developers. Thanks to the unique, open design the API can be linked to all national and international systems and is interoperable with European standards.
+Independent of file format, refresh rate or granularity open data is easily accessible for commercial use, research and software developers. 
 
 #### Which datasets are available in this API?
 
 Via the menu link [Data]({{ site.baseurl }}/data) you can access a list with all datasets, with a direct link to a sample query in JSON and a map view.
 
-
-## Who maintains the CitySDK LD codebase?
 
 #### Can you add dataset X?
 
@@ -72,14 +72,13 @@ Yes, probably. Datasets need to be open and have a geolocation. You can send an 
 
 This endpoint is hosted and maintained by [{{ site.data.endpoint.organization }}]({{ site.data.endpoint.homepage }}).
 
-This endpoint is hosted and maintained by [{{ site.data.endpoint.organization }}]({{ site.data.endpoint.homepage }}).
-
 Contact us via [e-mail](mailto:{{ site.data.endpoint.email}}).
 
 For more information on the project and the partner cities, visit the [project website](http://www.citysdk.eu).
 
 #### What are the terms & conditions?
-This service is considered a useful prototype, offered with a ‘best effort SLA’ and a fair-use policy. A sustainable-hosted instance of the API is currently in preparation.
+This service is available, for now, with a ‘best effort SLA’ and a fair-use policy. A sustainable-hosted instance of the API is 
+in preparation.
 
 #### Other questions
 
