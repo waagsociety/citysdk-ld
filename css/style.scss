@@ -1,6 +1,82 @@
 ---
 ---
 
+/* Fonts
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-Light.ttf");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-LightItalic.ttf");
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-Regular.ttf");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-Italic.ttf");
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-Semibold.ttf");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-SemiboldItalic.ttf");
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-Bold.ttf");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-BoldItalic.ttf");
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-ExtraBold.ttf");
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-ExtraBoldItalic.ttf");
+  font-weight: 800;
+  font-style: italic;
+}
+
+/* Style
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+
 $font-color: {{ site.data.style.font-color }};
 $background-color: {{ site.data.style.background-color }};
 $brand-color: {{ site.data.style.brand-color }};
@@ -18,6 +94,7 @@ $bigger-margin: 2rem;
 body {
   color: $font-color;
   background-color: $background-color;
+  font-family: "Open Sans", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 a {

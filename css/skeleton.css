@@ -10,7 +10,6 @@
 
 /* Table of contents
 ––––––––––––––––––––––––––––––––––––––––––––––––––
-- Fonts
 - Grid
 - Base Styles
 - Typography
@@ -25,79 +24,6 @@
 - Clearing
 - Media Queries
 */
-
-/* Fonts
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-
-@font-face {
-  font-family: 'Open Sans';
-  src: url("./fonts/Light/OpenSans-Light.ttf");
-  font-weight: 300;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Open Sans';
-  src: url("./fonts/LightItalic/OpenSans-LightItalic.ttf");
-  font-weight: 300;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: 'Open Sans';
-  src: url("./fonts/Regular/OpenSans-Regular.ttf");
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Open Sans';
-  src: url("./fonts/Italic/OpenSans-Italic.ttf");
-  font-weight: normal;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: 'Open Sans';
-  src: url("./fonts/Semibold/OpenSans-Semibold.ttf");
-  font-weight: 600;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Open Sans';
-  src: url("./fonts/SemiboldItalic/OpenSans-SemiboldItalic.ttf");
-  font-weight: 600;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: 'Open Sans';
-  src: url("./fonts/Bold/OpenSans-Bold.ttf");
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Open Sans';
-  src: url("./fonts/BoldItalic/OpenSans-BoldItalic.ttf");
-  font-weight: bold;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: 'Open Sans';
-  src: url("./fonts/ExtraBold/OpenSans-ExtraBold.ttf");
-  font-weight: 800;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Open Sans';
-  src: url("./fonts/ExtraBoldItalic/OpenSans-ExtraBoldItalic.ttf");
-  font-weight: 800;
-  font-style: italic;
-}
 
 /* Grid
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -177,7 +103,6 @@ body {
   font-size: 1.5em; /* currently ems cause chrome bug misinterpreting rems on body element */
   line-height: 1.6;
   font-weight: 400;
-  font-family: "OpenSans", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* Typography
