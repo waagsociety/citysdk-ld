@@ -2,7 +2,7 @@
 title: Apps
 ---
 
-Ontwikkelaars makkelijk apps maken met de api, data stad dit dat.
+The following apps and website use the CitySDK LD API. Please have a look at the [available data sets]({{ site.baseurl}}/data) and [API documentation]({{ site.baseurl }}/docs) if you want to use API data in your own app or website.
 
 <div id="apps">
 {% for app in site.data.endpoint.apps %}
