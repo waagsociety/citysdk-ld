@@ -77,7 +77,7 @@ Contact us via [e-mail](mailto:{{ site.data.endpoint.email}}).
 For more information on the project and the partner cities, visit the [project website](http://www.citysdk.eu).
 
 #### What are the terms & conditions?
-This service is available, for now, with a ‘best effort SLA’ and a fair-use policy. A sustainable-hosted instance of the API is 
+This service is available, for now, with a ‘best effort SLA’ and a fair-use policy. A sustainably hosted instance of the API is 
 in preparation.
 
 #### Other questions
