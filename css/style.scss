@@ -91,6 +91,11 @@ $bigger-margin: 2rem;
   display: none;
 }
 
+ul {
+	list-style: inside square;
+}
+
+
 body {
   color: $font-color;
   background-color: $background-color;
@@ -152,7 +157,7 @@ header ul li {
   margin-left: 7px;
 }
 
-#github {
+nav #github {
   background-color: $brand-color;
   color: white;
   border-radius: 5px;
@@ -160,7 +165,7 @@ header ul li {
 }
 
 #logo:hover,
-#github:hover {
+nav #github:hover {
   text-decoration: none;
   opacity: 0.8;
   transition: opacity 0.5s ease-in-out;
@@ -177,10 +182,6 @@ footer {
 footer a,
 footer a:hover {
   color: white;
-}
-
-footer ul {
-	list-style: square;
 }
 
 .octocat {
