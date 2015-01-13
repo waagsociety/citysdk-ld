@@ -8,19 +8,17 @@ A list of available data in this endpoint can be seen via [data]({{ site.baseurl
 
 ## Data examples
 
-<ul id="apps">
-<li>
+<div id="apps">
+
   <h4>Explore available data sets</h4>
-  <a class="image-link" href="{{ site.baseurl}}/map#{{ site.data.endpoint.examples[0].url }}" style="background-image: url({{ site.baseurl }}/images/apps/map.jpg)"></a>
-</li>
-{% for app in site.data.endpoint.apps limit: 4 %}
-<li>
+  <a class="wide-image-link" href="{{ site.baseurl}}/map#{{ site.data.endpoint.examples[0].url }}" style="background-image: url({{ site.baseurl }}/images/apps/map-wide.jpg)"></a>
+
+  {% for app in site.data.endpoint.apps limit: 4 %}
   <h4>{{ app.title }}</h4>
-  <a class="image-link" href="{{ site.baseurl}}/apps#{{ app.name }}" style="background-image: url({{ site.baseurl }}/images/apps/{{ app.name }}.jpg)"></a>
-</li>
-</a>
-{% endfor %}
-</ul>
+  <a class="wide-image-link" href="{{ site.baseurl}}/apps#{{ app.name }}" style="background-image: url({{ site.baseurl }}/images/apps/{{ app.name }}-wide.jpg)"></a>
+  {% endfor %}
+
+</div>
 
 ## Project CitySDK
 

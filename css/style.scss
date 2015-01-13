@@ -193,17 +193,24 @@ footer ul {
   margin-right: 10px;
 }
 
-ul#apps  {
-  list-style-type: none;
-}
-
-
-ul#apps li a.image-link {
+a.high-image-link,
+a.wide-image-link {
   display: block;
   width: 100%;
-  height: 231px;
   background-position: center center;
   background-size: cover;
+}
+
+a.wide-image-link {
+  height: 231px;
+}
+
+a.high-image-link {
+  height: 400px;
+}
+
+#apps ul {
+  list-style: inside none square;
 }
 
 #layers {
