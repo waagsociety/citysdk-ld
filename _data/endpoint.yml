@@ -31,7 +31,7 @@ datasets    :
 
 apps:
   - name       : buildings
-    title      : Buildings in the Netherlands by year of construction
+    title      : "All 9,866,539 buildings in the Netherlands"
     url        : http://code.waag.org/buildings/
     description: "Map showing all 9,866,539 buildings in the Netherlands, shaded according to their year of construction."
 
