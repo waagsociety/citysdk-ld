@@ -1,5 +1,4 @@
 title       : CitySDK Linked Data API
-#endpoint    : http://localhost:9292/
 endpoint    : http://api.citysdk.waag.org/
 github      : https://github.com/waagsociety/citysdk-ld
 wiki		    : https://github.com/waagsociety/citysdk-ld/wiki
