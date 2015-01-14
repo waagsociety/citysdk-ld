@@ -16,7 +16,7 @@
 	<script src="{{ site.baseurl }}/js/viewportchecker.min.js"></script>
 	<script>
   jQuery(document).ready(function() {
-    jQuery('.mainContent *').addClass("transparant").viewportChecker({
+    jQuery('.mainContent p, .mainContent h1, .mainContent h2, .mainContent h3, .mainContent h4, .mainContent ul, .mainContent a').addClass("transparant").viewportChecker({
       classToAdd: 'visible animated fadeIn'
      });
   });
