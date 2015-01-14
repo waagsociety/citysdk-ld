@@ -1,18 +1,20 @@
+title       : CitySDK Linked Data API
 endpoint    : http://api.citysdk.waag.org/
 github      : https://github.com/waagsociety/citysdk-ld
-wiki		: https://github.com/waagsociety/citysdk-ld/wiki
+wiki		    : https://github.com/waagsociety/citysdk-ld/wiki
 organization: Waag Society
 homepage    : http://waag.org/en
 email       : citysdk@waag.org
-cms         : http://cms.citysdk.waag.org/
-title       : Amsterdam
-location    : The Netherlands
+location    : Amsterdam, The Netherlands
+data-links  :
+  json-ld : "http://json-ld.org/playground/index.html#startTab=tab-normalized&json-ld="
+  geojson : "http://geojson.io/#data=data:text/x-url,"
 map         :
   zoom    : 10
   geometry:
     lat: 52.35
     lon: 5.39
-tiles       : "http://tiles.citysdk.waag.org/v2/citysdk/{z}/{x}/{y}.png"
+tiles       : http://otile2.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png
 
 datasets    :
   - url  : http://gtfs.ovapi.nl/
@@ -22,124 +24,76 @@ datasets    :
     title: Amsterdam infrastructure and transportation data
 
   - url  : http://www.kadaster.nl/bag
-    title: Dutch addresses and buildings
+    title: Dutch address, postcode and building data
 
   - url  : http://download.geofabrik.de/europe/netherlands.html
     title: OpenStreetMap
 
-appgallery:
-  - title      : Parking Widget Amsterdam
-    url        : http://parkeerwidget.yume.nl/widget/
-    icon       : pwid.png
-    description: "This widget gives travellers to Amsterdam insight in the associated travel time and costs for the last mile to destination for different parking options in the city."
+apps:
+  - name       : buildings
+    title      : "All 9,866,539 buildings in the Netherlands"
+    url        : http://code.waag.org/buildings/
+    description: "Map showing all 9,866,539 buildings in the Netherlands, shaded according to their year of construction."
 
-  - title      : Parking API Amsterdam
-    url        : http://divvapi.parkshark.nl/
-    icon       : papi.png
-    description: "This API will return costs and recommendations for visiting any destination in Amsterdam."
+  - name       : mansholt
+    title      : Agricutural land use in the Netherlands
+    url        : https://code.waag.org/mansholt/
+    description: "Interactive map, made for an installation on an exhibition on Sicco Mansholt, European Agricultural policy and its influence on land use."
 
-  - title      : Source Code for Parking API Amsterdam
-    url        : https://github.com/jonathanrcarter/divv-amsterdam-parkingapi
-    icon       : papi.png
-    description: "Source code on GitHub for Parking API."
+  # - name       : city-dashboard
+  #   title      : City Dashboard
+  #   url        : http://citydashboard.waag.org
+  #   description: "Gives a view of the pulse of the city by showing all real-time data streams."
+  #
+  # - name       : now
+  #   title      : Now
+  #   url        : http://citysdk.waag.org/now/
+  #   description: "This simple web app offers Public Transport departure times in your immediate vicinity (real-time where available). The web app works in Amsterdam, Helsinki Manchester, Tampere (Fi)."
+  #
+  # - name       : parking-widget
+  #   title      : Parking Widget Amsterdam
+  #   url        : http://parkeerwidget.yume.nl/widget/
+  #   description: "This widget gives travellers to Amsterdam insight in the associated travel time and costs for the last mile to destination for different parking options in the city."
+  #
+  # - name       : parking-api
+  #   title      : Parking API Amsterdam
+  #   url        : http://divvapi.parkshark.nl/
+  #   description: "This API will return costs and recommendations for visiting any destination in Amsterdam."
 
-  - title      : Now
-    url        : http://citysdk.waag.org/now/
-    icon       : now.png
-    description: "This simple web app offers Public Transport departure times in your immediate vicinity (real-time where available). The web app works in Amsterdam, Helsinki Manchester, Tampere (Fi)."
-
-  - title      : City Navigator
-    url        : http://dev.hsl.fi/navigator-proto/
-    icon       : hel.png
-    description: "HSL Navigator is a fully open-source service based solely on open data."
-
-  - title      : Tree Spotter (iOS, Android)
-    url        : http://bomenapp.nl/
-    icon       : tre.png
-    description: "Trees in Dutch Cities (Amsterdam, The Hague, Utrecht a.o.), for iOS and Android."
-
-  - title      : City Dashboard
-    url        : http://citydashboard.waag.org
-    icon       : cit.png
-    description: "Gives a view of the pulse of the city by showing all real-time data streams."
-
-  - title      : Open Data Globe
-    url        : http://citysdk.waag.org/visualisation/
-    icon       : ope.png
-    description: "The dynamics of European cities are made visible in the Open Data Globe, based on available data
-  sets in CitySDK."
-
-  - title      : Buildings in the Netherlands by year of construction
-    url        : http://citysdk.waag.org/buildings/
-    icon       : bui.png
-    description: "A map showing all 9,866,539 buildings in the Netherlands, shaded according to year of construction."
-
-  - title      : Agricutural land use (crops) in the Netherlands
-    url        : https://waagsociety.github.io/mansholt/
-    icon       : agr.png
-    description: "Map made for an exhibition on Sicco Mansholt, European Agricultural policy and its influence on land use."
-
-  - title      : User Generated data
-    url        : http://www.verbeterdebuurt.nl/
-    icon       : use.png
-    description: "Apps like Verbeter de Buurt and <a href='http://www.buurtvitaal.nl/'>Buurt Vitaal</a> generate data for this endpoint by collecting citizen reports and publicizing these via an Open311 interface."
-
-  - title      : Penalty Radar
-    url        : http://boeteradar.2coolmonkeys.nl/
-    icon       : papi.png
-    description: "Penalty Radar shows speeds on Dutch highways, and calculates the fines that could have been collected by police."
+  # - title      : Source Code for Parking API Amsterdam
+  #   url        : https://github.com/jonathanrcarter/divv-amsterdam-parkingapi
+  #   description: "Source code on GitHub for Parking API."
+  #
+  # - title      : City Navigator
+  #   url        : http://dev.hsl.fi/navigator-proto/
+  #   description: "HSL Navigator is a fully open-source service based solely on open data."
+  #
+  # - title      : Tree Spotter (iOS, Android)
+  #   url        : http://bomenapp.nl/
+  #   description: "Trees in Dutch Cities (Amsterdam, The Hague, Utrecht a.o.), for iOS and Android."
+  #
+  # - title      : Open Data Globe
+  #   url        : http://citysdk.waag.org/visualisation/
+  #   description: "The dynamics of European cities are made visible in the Open Data Globe, based on available data
+  # sets in CitySDK."
+  #
+  # - title      : User Generated data
+  #   url        : http://www.verbeterdebuurt.nl/
+  #   description: "Apps like Verbeter de Buurt and <a href='http://www.buurtvitaal.nl/'>Buurt Vitaal</a> generate data for this endpoint by collecting citizen reports and publicizing these via an Open311 interface."
+  #
+  # - title      : Penalty Radar
+  #   url        : http://boeteradar.2coolmonkeys.nl/
+  #   description: "Penalty Radar shows speeds on Dutch highways, and calculates the fines that could have been collected by police."
 
 examples    :
-  - url  : admr.nl.amsterdam/nodes?osm::tourism=museum
-    title: OpenStreetMap museums in Amsterdam
+  - url  : objects?osm::tourism=museum&in=admr.nl.boxtel
+    title: OpenStreetMap museums in Boxtel
 
-  - url  : admr.nl.amsterdam/nodes?layer=artsholland
-    title: Cultural events in Amsterdam for the next two weeks
+  - url  : layers/bag.pand/objects
+    title: Buildings in the Netherlands
 
-  - url  : nodes?311.amsterdam::status=open
-    title: Open311 service requests in Amsterdam
+  - url  : objects/admr.nl.amsterdam
+    title: Municipality of Amsterdam
 
-  - url  : nodes?layer=rws.nap
-    title: Waterlevels in millimeters above the Amsterdam Ordnance Datum
-
-  - url  : nodes?per_page=250&layer=ns&bbox=53.579461,4.487915,52.069377,7.146606
-    title: NS stations in the upper half of the Netherlands
-
-  - url  : admr.nl.zwolle/regions?admr::admn_level=4&layer=cbs&per_page=50
-    title: Statistical data of all neighbourhoods in Zwolle
-
-  - url  : admr.nl.groningen/regions?admr::admn_level=4&layer=rain
-    title: Rain forecast per neighbourhood in Groningen
-
-  - url  : admr.nl.woerden/ptstops?layer=gtfs
-    title: Public transport stops in Woerden
-
-  - url  : gtfs.stop.15331/select/ptlines
-    title: Public transport lines that call at Leidseplein, Amsterdam
-
-  - url  : routes?layer=divv.traffic&per_page=200
-    title: Real time traffic flow on main roads in Amsterdam
-
-  - url  : r326516/select/nodes?osm::railway=tram_stop|halt&data_op=or
-    title: Tram stops on Utrecht-IJsselstein tram route
-
-  - url  : nodes?2cm.hmp::wegnummer=N200&per_page=300
-    title: Highway location markers along the N200
-
-  - url  : nodes?layer=divv.parking.buildings
-    title: Public parking in Amsterdam
-
-  - url  : admr.nl.amsterdam_stadsdeel_oost_oostelijk_havengebied/nodes?layer=bag.ligplaatsen
-    title: Houseboat locations in Stadsdeel Oost
-
-  - url  : nodes?layer=bag.panden&lat=52.0936&lon=4.3451&per_page=100
-    title: Buildings from near the Dutch Royal Palace
-
-  - url  : admr.nl.alkmaar/nodes?layer=rce.rijksmonumenten
-    title: Cultural heritage sites in Alkmaar
-
-  - url  : nodes?layer=rce.rijksmonumenten,amsterdam.hotels,bag.vbo
-    title: Hotels in Amsterdam that are also a cultural heritage site
-
-  - url  : admr.nl.eindhoven/nodes?layer=nl.risicokaart.*
-    title: Objects from the Risicokaart in the city of Eindhoven
+  - url  : layers/gtfs.routes/objects?in=admr.nl.amsterdam
+    title: Public transport routes in Amsterdam

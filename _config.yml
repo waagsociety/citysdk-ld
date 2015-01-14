@@ -2,6 +2,13 @@ markdown: kramdown
 baseurl: /citysdk-ld
 exclude: ['Capfile', 'config', 'REVISION', 'README.md']
 
+defaults:
+  -
+    scope:
+      path: "" # an empty string here means all files in the project
+    values:
+      layout: default
+
 prose:
   ignore:
     - .gitignore
@@ -12,25 +19,3 @@ prose:
     - /js
     - /css
     - /layouts
-
-  metadata:
-    "":
-      - name: "layout"
-        field:
-          element: "text"
-          value: ""
-          label: "Page layout"
-          help: "Choose one from home (home only), default (2 columns), single (1 column), map (viewer only)"
-      - name: "title"
-        field:
-          element: "text"
-          value: ""
-          help: "Add a page title (to be shown in a browser tab)"
-          label: "Page title"
-      - name: "mainmenu"
-        field:
-          label: "Main menu entry"
-          help: "Add the name of a main menu item. If the page is displayed, this main menu item is selected in the menu bar"
-          element: "text"
-          value: ""
-    _includes:

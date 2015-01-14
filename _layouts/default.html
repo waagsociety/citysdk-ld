@@ -1,12 +1,27 @@
-{% include header.html %}
-<div class="col_7" >
-{{content}}
-</div>
-<div class=" col_1"></div>
-<div class=" col_4  gridsmaller">
-{% capture info_content %}
-{% include info.md %}
-{% endcapture %}
-{{ info_content | markdownify }}
-</div>
-{% include footer.html %}
+<!DOCTYPE html>
+<html lang="en">
+{% include head.html %}
+<body>
+  {% include header.html %}
+  <section>
+  <div class="container">
+    <div class="row">
+      {{ content }}
+    </div>
+  </div>
+  </section>
+  {% include footer.html %}
+
+  {% if false %}
+	<script src="{{ site.baseurl }}/js/jquery.min.js"></script>
+	<script src="{{ site.baseurl }}/js/viewportchecker.min.js"></script>
+	<script>
+  jQuery(document).ready(function() {
+    jQuery('.container p, .container h2, .container h3, .container h4, .container ul, .container li').addClass("transparant").viewportChecker({
+      classToAdd: 'visible animated fadeIn'
+     });
+  });
+	</script>
+  {% endif %}
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="{{ site.baseurl }}/css/normalize.css">
+    <link rel="stylesheet" href="{{ site.baseurl }}/css/skeleton.css">
+    <link rel="stylesheet" href="{{ site.baseurl }}/css/style.css">
+		<title>{{ page.title }}</title>
+	</head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <h2><a href="{{ page.url }}">{{ page.title }}</a></h2>
+      </div>
+    </div>
+    <script>
+      window.location = '{{ page.redirect }}';
+    </script>
+  </body>
+</html>

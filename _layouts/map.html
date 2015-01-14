@@ -1,7 +1,17 @@
-{% include header.html %}
-  {{content}}
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% include head.html %}
+  <script src="{{ site.baseurl }}/js/highlight.min.js"></script>
+  <script src="{{ site.baseurl }}/js/leaflet.js"></script>
+  <link rel="stylesheet" href="{{ site.baseurl }}/css/leaflet.css" />
+  <link rel="stylesheet" href="{{ site.baseurl }}/css/map.css">
+  <script src="{{ site.baseurl }}/js/spin.min.js"></script>
+</head>
+<body>
+  {% include header.html %}
+  <section>
+    {{ content }}
+  </section>
+ </body>
 </html>
-
-
-

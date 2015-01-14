@@ -5,3 +5,4 @@ config.json
 log
 tmp/restart.txt
 config.production.json
+*.codekit

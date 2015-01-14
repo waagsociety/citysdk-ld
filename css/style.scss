@@ -1,0 +1,293 @@
+---
+---
+
+/* Fonts
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-Light.ttf");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-LightItalic.ttf");
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-Regular.ttf");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-Italic.ttf");
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-Semibold.ttf");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-SemiboldItalic.ttf");
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-Bold.ttf");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-BoldItalic.ttf");
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-ExtraBold.ttf");
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url("{{ site.baseurl }}/fonts/OpenSans-ExtraBoldItalic.ttf");
+  font-weight: 800;
+  font-style: italic;
+}
+
+/* Style
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+$font-color: {{ site.data.style.font-color }};
+$background-color: {{ site.data.style.background-color }};
+$brand-color: {{ site.data.style.brand-color }};
+$link-color: {{ site.data.style.link-color }};
+
+$tiny-margin: 0.5rem;
+$standard-margin: 1rem;
+$big-margin: 1.5rem;
+$bigger-margin: 2rem;
+
+.hidden {
+  display: none;
+}
+
+ul {
+	list-style: inside square;
+}
+
+
+body {
+  color: $font-color;
+  background-color: $background-color;
+  font-family: "Open Sans", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: $link-color;
+}
+
+a:hover {
+  transition: color 0.5s ease-in-out;
+  color: rgba($link-color, .75);
+}
+
+a:active, a:focus {
+  outline-style: none;
+  -moz-outline-style:none;
+}
+
+nav {
+  margin-top: $big-margin;
+	margin-bottom: $big-margin;
+  font-weight: 500;
+}
+
+.row.no-bottom-margin {
+  margin-bottom: $standard-margin;
+}
+
+#logo-wide {
+  margin-top: 11px;
+}
+
+header a,
+header a:visited {
+  text-decoration: none;
+  color: $brand-color;
+}
+
+header a.menu-item:hover,
+header a.menu-item.current {
+  border-bottom-width: 3px;
+  border-bottom-color: $brand-color;
+  border-bottom-style: solid;
+  color: $brand-color;
+}
+
+header ul {
+  margin: 2px 0 0;
+  padding: 0;
+  font-size: 1.5rem;
+  list-style-type: none;
+  float: right;
+}
+
+header ul li {
+  display: inline;
+  margin-left: 7px;
+}
+
+nav #github {
+  background-color: $brand-color;
+  color: white;
+  border-radius: 5px;
+  padding: 7px 14px;
+}
+
+#logo:hover,
+nav #github:hover {
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 0.5s ease-in-out;
+}
+
+footer {
+  padding-top: 40px;
+  background-color: $brand-color;
+  color: white;
+  font-weight: 200;
+  font-size: 18px;
+}
+
+footer a,
+footer a:hover {
+  color: white;
+}
+
+.octocat {
+  display: inline-block;
+  position: relative;
+  top: -1px;
+  width: 16px;
+  height: 16px;
+  background-image: url('{{ site.baseurl }}/images/octocat.svg');
+  margin-right: 10px;
+}
+
+a.high-image-link,
+a.wide-image-link {
+  display: block;
+  width: 100%;
+  background-position: center center;
+  background-size: cover;
+}
+
+a.wide-image-link {
+  height: 231px;
+}
+
+a.high-image-link {
+  height: 400px;
+}
+
+#apps ul {
+  list-style-type: square;
+}
+
+#layers {
+  list-style-type: none;
+}
+
+#layers li:first-child h4 {
+  margin-top: 3rem;
+}
+
+#apps h4,
+#layers h4 {
+  border-bottom: 3px solid $brand-color;
+}
+
+#layers h4 {
+  margin-top: 7rem;
+}
+
+#layers h4 pre {
+  display: inline;
+}
+
+#layers table {
+  width: 100%;
+}
+
+#layers table tr td:first-child {
+  width: 155px;
+}
+
+#layers td > code:first-child {
+  margin-left: -0.5rem;
+}
+
+#layers td {
+  border-bottom: none;
+}
+
+/* ANIMATION */
+
+.animated {
+  animation-duration: 1s;
+  animation-fill-mode: both;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+}
+
+.animated.infinite {
+  animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
+}
+
+.animated.hinge {
+  animation-duration: 2s;
+  -webkit-animation-duration: 2s;
+}
+
+.transparant {
+  opacity: 0;
+}
+
+.visible {
+  opacity: 1;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.fadeIn {
+  animation-name: fadeIn;
+  -webkit-animation-name: fadeIn;
+}

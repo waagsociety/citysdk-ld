@@ -1,0 +1,248 @@
+---
+---
+
+$font-color: {{ site.data.style.font-color }};
+$background-color: {{ site.data.style.background-color }};
+$background-color-transparant: {{ site.data.style.background-color-transparant }};
+$brand-color: {{ site.data.style.brand-color }};
+$link-color: {{ site.data.style.link-color }};
+
+#map-container  {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  top: 143px;
+  min-height: 300px;
+
+  border-top-color: $brand-color;
+  border-top-width: 1px;
+  border-top-style: solid;
+}
+
+//@media all and (max-width: 768px) {
+//  #output {
+//    top: 295px;
+//  }
+//}
+
+#map {
+	height: 100%;
+	width: 100%;
+}
+
+#floatbox {
+  background: $background-color;
+  box-shadow: 0px 0px 15px rgba(50,50,50,0.1);
+  border-color: rgba(50, 50, 50, 0.4);
+  border-width: 1px;
+  border-style: solid;
+  display: block;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  bottom: 20px;
+  width: 450px;
+  opacity: 0.93;
+  z-index: 10;
+}
+
+code#objectdata {
+  position: absolute;
+  background: $background-color;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+	overflow-x: hidden;
+	overflow-y: auto;
+  white-space: pre-wrap;
+  border: none;
+  line-height: 1em;
+  border-radius: 0;
+  margin: 0;
+  font-size: 60%;
+}
+
+code#objectdata ol {
+  margin-bottom: 0;
+};
+
+
+#data-links-container {
+  background-color: $background-color-transparant;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  border-color: rgba(50, 50, 50, 0.4);
+  border-width: 1px;
+  border-top-style: solid;
+}
+
+#data-links {
+  font-size: 60%;
+  line-height: 1em;
+}
+
+code#objectdata,
+#data-links {
+  padding: 0.9em;
+}
+
+pre code .attribute,
+code#objectdata .attribute {
+  color: $font-color;
+}
+
+pre code .literal,
+code#objectdata .literal {
+  color: $brand-color;
+}
+
+pre code .string,
+code#objectdata .string {
+  color: $brand-color;
+}
+
+pre code .number,
+code#objectdata .number {
+  color: $brand-color;
+}
+
+.leaflet-container .leaflet-control-attribution {
+  opacity: 0.5;
+}
+
+#urls {
+  z-index: 999;
+  background: none repeat scroll 0 0 #fff;
+  border: 1px solid #d1d1d1;
+  border-radius: 4px;
+  box-shadow: none;
+  padding: 6px 10px;
+  position: relative;
+  top: -30px;
+  padding: 5px;
+}
+
+#urls table {
+  margin-bottom: 0;
+}
+
+#urls input {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  height: auto;
+  padding: 0;
+  margin-bottom: 0;
+  line-height: inherit;
+}
+
+#urls:focus {
+  outline: 1px solid #33c3f0;
+}
+
+#urls table td {
+  padding: 0px;
+  border-bottom: none;
+  font-size: 0.8em;
+  text-align: left;
+}
+
+#urls table td.endpoint {
+  opacity: 0.5;
+  padding-left: 2px;
+  padding-right: 4px;
+}
+
+#urls td #url,
+#urls td .url {
+  position: relative;
+  left: -4px;
+}
+
+#urls #url:focus {
+  outline: none;
+}
+
+#urls table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#urls table td.minimize {
+  white-space: nowrap;
+	width: 1%;
+}
+
+#urls table td.fill {
+  width: 99%;
+}
+
+#urls table td.fill input{
+  width: 99%;
+}
+
+#urls table tr td:first-child {
+  padding-left: 5px;
+}
+
+#dropdown {
+  overflow-x: hidden;
+}
+
+table.dropdown tr:hover {
+  background-color: $background-color;
+}
+
+table.dropdown tr td {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  cursor: hand;
+  cursor: pointer;
+}
+
+button {
+  cursor: hand;
+  cursor: pointer;
+}
+
+#urls-history tr:last-child {
+  border-bottom: 2px dashed #d0dbe1;
+}
+
+tr.example td {
+  color: #555;
+}
+
+#spinner, #show-dropdown {
+  position: absolute;
+  top: 0;
+}
+
+#spinner {
+  right: 40px;
+  top: 5px;
+	width: 30px;
+	height: 30px;
+}
+
+#show-dropdown {
+  right: 10px;
+  width: 30px;
+  height: 41px;
+  display: block;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  background-image: url({{ site.baseurl }}/images/dropdown.svg);
+}
+
+#show-dropdown.button-up {
+	-webkit-transform: rotate(180deg);
+	   -moz-transform: rotate(180deg);
+	    -ms-transform: rotate(180deg);
+	     -o-transform: rotate(180deg);
+	        transform: rotate(180deg);
+}

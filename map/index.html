@@ -1,0 +1,371 @@
+---
+title: Map
+layout: map
+d3: true
+---
+<div class="container">
+  <div id="urls">
+    <table id="urls-input">
+      <tr>
+        <td class="minimize endpoint">
+          {{ site.data.endpoint.endpoint }}
+        </td>
+        <td class="fill">
+          <input id="url" type="text" />
+        </td>
+      </tr>
+    </table>
+    <div id="dropdown">
+      <table id="urls-history" class="dropdown hidden">
+      </table>
+      <table id="urls-examples" class="dropdown hidden">
+      </table>
+    </div>
+    <div id="spinner"></div>
+    <a id="show-dropdown" class="button-down"></a>
+  </div>
+</div>
+
+<div id="map-container">
+  <div id="map"></div>
+  <div id="floatbox">
+    <code id="objectdata">Enter a CitySDK LD URL to fetch API data.
+
+Examples:
+      <ol>{% for example in site.data.endpoint.examples | limit:4 %}<li><a href="#{{example.url}}">{{example.title}}</a></li>{% endfor %}</ol>More examples in drop-down menu.
+    </code>
+    <div id="data-links-container">
+      <div id="data-links">
+        View data in <a id="data-link-api" href="#">API</a>, in <a id="data-link-json-ld" href="#">JSON-LD Playground</a>, or on <a id="data-link-geojson" href="#">geojson.io</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  var endpoint  = "{{ site.data.endpoint.endpoint }}",
+      tileUrl = "{{ site.data.endpoint.tiles }}",
+      latLng = [{{ site.data.endpoint.map.geometry.lat }}, {{ site.data.endpoint.map.geometry.lon }}],
+      zoom = {{ site.data.endpoint.map.zoom }},
+      brandColor = '{{ site.data.style.brand-color }}';
+
+  hljs.initHighlightingOnLoad();
+
+  var spinnerOpts = {
+    lines: 9,             // The number of lines to draw
+    length: 4,            // The length of each line
+    width: 3,             // The line thickness
+    radius: 5,            // The radius of the inner circle
+    corners: 1,           // Corner roundness (0..1)
+    rotate: 0,            // The rotation offset
+    direction: 1,         // 1: clockwise, -1: counterclockwise
+    color: brandColor,    // #rgb or #rrggbb
+    speed: 1,             // Rounds per second
+    trail: 60,            // Afterglow percentage
+    shadow: false,        // Whether to render a shadow
+    hwaccel: false,       // Whether to use hardware acceleration
+    className: 'spinner', // The CSS class to assign to the spinner
+    zIndex: 2e9,          // The z-index (defaults to 2000000000)
+    left: 0,
+    top: 3
+  };
+
+  var spinner = new Spinner(spinnerOpts)
+
+  var map = L.map('map');
+
+  var disableHashChange = false,
+      urlHistory = [],
+      currentURL = "";
+
+  // ================================================================================
+  // Leaflet map initialization
+  // ================================================================================
+
+  var osmAttrib = 'Map data © OpenStreetMap contributors';
+
+  // Base maps ===============
+
+  var tileLayer = new L.TileLayer(tileUrl, {
+    minZoom: 4, maxZoom: 18,
+    opacity: 1,
+    attribution: osmAttrib
+  }).addTo(map);
+
+  map.setView(latLng, zoom);
+
+  var lineStyle = {
+    color: brandColor,
+    weight: 3,
+    opacity: 0.90
+  };
+
+  var pointStyle = {
+    radius: 5,
+    fillColor: brandColor,
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.9
+  };
+
+  function onFeatureClick(e) {
+    feature = e.target.feature;
+    setObjectData(feature.properties);
+  }
+
+  function onEachFeature(feature, layer) {
+    layer.on('click', onFeatureClick);
+  }
+
+  var cdkLayer = new L.geoJson(null, {
+    style: lineStyle,
+    onEachFeature: onEachFeature,
+    pointToLayer: function (feature, latlng) {
+      return L.circleMarker(latlng, pointStyle);
+    }
+  }).addTo(map);
+
+  // ================================================================================
+  // CitySDK API data
+  // ================================================================================
+
+  function getData(url, isExample) {
+    hideDropdown();
+
+    if (!url) {
+      return;
+    }
+
+    d3.select("#url").property("value", url);
+
+    d3.select("#data-link-api")
+        .attr("href", "{{ site.data.endpoint.endpoint }}" + url);
+    d3.select("#data-link-json-ld")
+        .attr("href", "{{ site.data.endpoint.data-links.json-ld }}{{ site.data.endpoint.endpoint }}" + url);
+    d3.select("#data-link-geojson")
+        .attr("href", "{{ site.data.endpoint.data-links.geojson }}{{ site.data.endpoint.endpoint }}" + encodeURIComponent(url));
+
+    var historyUrl = url;
+
+    disableHashChange = true;
+    window.location.hash = url;
+
+    spinner.spin(document.getElementById("spinner"))
+
+    var http = 'http://',
+        https = 'https://';
+
+    if (url.substring(0, http.length) !== http && url.substring(0, https.length) !== https) {
+      url = endpoint + url;
+    }
+
+    if( url.indexOf("per_page") == -1 ) {
+      url += (url.split('?')[1] ? '&':'?') + 'per_page=50';
+    }
+
+    cdkLayer.clearLayers();
+
+    d3.json(url, function(error, data) {
+
+      if (error) {
+        try {
+          formatResult(JSON.parse(error.response));
+        } catch(e) {
+          d3.select('#objectdata').html(error.response);
+          hljs.highlightBlock(document.getElementById('objectdata'));
+        }
+      }
+
+      if (data != undefined) {
+        formatResult(data);
+      }
+
+      // If data is returned, and contains GeoJSON features
+      // add to map!
+      if (data && data.features && data.features.length > 0) {
+        // If URL is not an default example, add URL to urlHistory
+        if (!isExample) {
+          addHistory(historyUrl);
+          setDropdownHistory();
+        }
+
+        cdkLayer.addData({
+          type: "FeatureCollection",
+          features: data.features.filter(function(feature) {
+            return feature.geometry && feature.geometry.coordinates;
+          })
+        });
+
+        // We want to fit all the data on the map.
+        // Normally, map.fitBounds(cdkLayer.getBounds())
+        // would do. But the floatbox is obscuring part
+        // of the map.
+        // We must calculate the bounds of the data
+        // and resize the width to include floatbox width
+
+        var dataBounds = cdkLayer.getBounds(),
+            southWest = dataBounds.getSouthWest(),
+            northEast = dataBounds.getNorthEast();
+
+        // TODO: Dit is dus NIET goed. Ik moet hier nog 'ns even goed over na gaan denken. Nu naar bed. Daag!
+
+        var m = document.getElementById('map'),
+            f = document.getElementById('floatbox'),
+            lngScale = m.clientWidth / (m.clientWidth - (f.clientWidth + 30));
+
+        map.fitBounds([
+          [southWest.lat, southWest.lng],
+          [northEast.lat, (northEast.lng - southWest.lng) * lngScale + southWest.lng]
+        ]);
+      }
+
+      spinner.stop();
+    });
+  }
+
+  d3.select("#url").on('keyup', function() {
+    if(d3.event.keyCode == 13){
+      var url = d3.select("#url").property('value');
+      getData(url, false);
+    }
+  });
+
+  function formatResult(result) {
+    setObjectData(result);
+  }
+
+  function setObjectData(json) {
+    // In output window, replace geometries with "…"
+    var jsonStr = JSON.stringify(json, undefined, 2).replace(/"geometry":\s*{(.|\n)*?}/mg, '"geometry": "…"');
+    d3.select('#objectdata').html(jsonStr);
+    hljs.highlightBlock(document.getElementById('objectdata'));
+  }
+
+  // ================================================================================
+  // Load #hash url on page load
+  // ================================================================================
+
+  window.onhashchange = function() {
+    if (!disableHashChange) {
+      var hash = window.location.hash;
+      if (hash.length > 1) {
+        var url = hash.substring(1);
+        if (url.substring(0, endpoint.length) === endpoint) {
+          d3.select("#url").property('val', url.substring(endpoint.length + 1));
+        } else {
+          d3.select("#url").property('val', url);
+        }
+        getData(url, false);
+      }
+    }
+    disableHashChange = false;
+  }
+
+  window.onresize = function() {
+    d3.select("#dropdown").style("max-height", (window.innerHeight - 150) + "px");
+  }
+
+  // Call functions on page load:
+  window.onhashchange();
+  window.onresize();
+  document.getElementById("url").focus();
+
+  // ================================================================================
+  // Combobox functions
+  // ================================================================================
+
+  d3.select('td.endpoint').on('click', function() {
+    document.getElementById("url").focus();
+  });
+
+  d3.select("#show-dropdown").on('click', function() {
+    var n = d3.selectAll("#urls table.dropdown.hidden")[0].length;
+    if (n > 0) {
+      showDropdown();
+    } else {
+      hideDropdown();
+    }
+  });
+
+  function dropdownClick() {
+    var datum = d3.select(this).datum();
+    hideDropdown();
+    d3.select("#url").property("value", datum.url);
+    getData(datum.url, datum.example);
+  };
+
+  document.onmouseup = function(e) {
+    if (e.target.id !== "show-dropdown") {
+      hideDropdown();
+    }
+  };
+
+  function showDropdown() {
+    d3.selectAll(".dropdown").classed("hidden", false);
+    setButtonType("#show-dropdown", "up");
+  }
+
+  function hideDropdown() {
+    d3.selectAll(".dropdown").classed("hidden", true);
+    setButtonType("#show-dropdown", "down");
+  }
+
+  function addDropdownExamples() {
+    d3.json("examples.json", function(examples) {
+      d3.select('#urls-examples').selectAll('tr')
+          .data(examples.map(function(e) { e.example = true; return e; })).enter()
+        .append('tr')
+        .append('td')
+          .html(function(d) { return d.title; })
+          .on("click", dropdownClick);
+    });
+  }
+
+  function addHistory(url) {
+    var index = urlHistory.indexOf(url);
+    if (index >= 0) {
+      urlHistory.splice(index, 1);
+    }
+    urlHistory.push(url);
+    if (urlHistory.length > 10) {
+      urlHistory.shift();
+    }
+  }
+
+  function setDropdownHistory() {
+    d3.select("#urls-history").selectAll("tr").remove();
+
+    reversedUrlHistory = urlHistory.concat([]).reverse().slice(1);
+
+    var rows = d3.select("#urls-history").selectAll("tr")
+        .data(reversedUrlHistory.map(function(u) { return {url: u, example: false}; }), function(d) { return d.url; });
+
+    rows.enter()
+      .append("tr")
+      .append("td")
+        .html(function(d) {
+          var http = 'http://',
+              https = 'https://';
+
+          if (d.url.substring(0, http.length) !== http && d.url.substring(0, https.length) !== https) {
+            return endpoint + d.url;
+          }
+
+          return d.url;
+        })
+        .on("click", dropdownClick);
+
+    rows.exit().remove();
+  }
+
+  function setButtonType(selector, type) {
+    if (type === "up") {
+      d3.select(selector).classed("button-down", false);
+      d3.select(selector).classed("button-up", true);
+    } else { // type === "down"
+      d3.select(selector).classed("button-up", false);
+      d3.select(selector).classed("button-down", true);
+    }
+  }
+
+  addDropdownExamples();
+</script>

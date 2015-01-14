@@ -1,45 +1,39 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <title>{{ page.title }} | CitySDK Linked Data API</title>
-    <meta charset="utf-8">
-    <meta name="viewport"content="width=device-width,initial-scale=1">
-    <link href="{{ site.baseurl }}/img/favicon.ico" rel="shortcut icon" type=image/x-icon>
-	  <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/css/kickstart.css" media="all" />
-    <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/css/style.css" media="all" />
-    <script src="{{ site.baseurl }}/js/jquery-1.9.1.min.js"></script>
-    <script src="{{ site.baseurl }}/js/jquery-migrate-1.2.1.min.js"></script>
-    <script type="text/javascript" src="{{ site.baseurl }}/js/kickstart.js"></script>
-
-    {% if page.d3 %}
-    <script src="{{ site.baseurl }}/js/d3.min.js"></script>
-    {% endif %}
-
-    {% if page.layout == "map" %}
-    <script src="{{ site.baseurl }}/js/highlight.min.js"></script>
-    <script src="{{ site.baseurl }}/js/leaflet.js"></script>
-    <!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-    <link rel="stylesheet" href="{{ site.baseurl }}/css/leaflet.css" />
-    <link rel="stylesheet" href="{{ site.baseurl }}/css/map.css">
-
-    <script src="{{ site.baseurl }}/js/spin.min.js"></script>
-    {% endif %}
-    {% if page.layout == "swagger" %}
-      {% include swagger.html %}    
-    {% endif %}
-
-	  <link href="//fonts.googleapis.com/css?family=Ubuntu:300italic,300,400italic,400,500italic,500,700italic,700" rel="stylesheet" type="text/css">
-
-  </head>
-  <body>
-  	<div class="grid gridhome">
-  		<div class="col_12 ">
-  			<div class="rhnav">
-  				<div class="col_12">
-  					<div class="col_8">
-  						<a href="{{ site.baseurl }}/"><img src="{{ site.baseurl }}/img/citysdk.png" class="imgextramarge" ></a>
-  					</div>
-  				</div>
-          {% include menu.html %}
-  			</div>
-  			<hr/>
+<header>
+  <nav>
+    <div class="container">
+      {% if page.layout == "map" %}
+      <div class="row no-bottom-margin">
+      {% else %}
+      <div class="row">
+      {% endif %}
+        <div class="four columns">
+          <a href="{{ site.baseurl }}/" id="logo">
+          {% if page.layout == "map" %}
+          <img id="logo-wide" src="{{ site.baseurl }}/images/logo-wide.svg">
+          {% else %}
+          <img src="{{ site.baseurl }}/images/logo.svg">
+          {% endif %}
+          </a>
+        </div>
+        <div class="eight columns">
+          <ul>
+            {% for item in site.data.menu %}
+            <li>
+              {% assign url = page.url | replace_first:'/','' | split:"/" | first %}
+              {% if item.name == url %}
+              <a class="menu-item current" href="{{ site.baseurl }}/{{ item.name }}">
+              {% else %}
+              <a class="menu-item" href="{{ site.baseurl }}/{{ item.name }}">
+              {% endif %}
+                {{item.title}}</a>
+            </li>
+            {% endfor %}
+            <li><a id="github" href="https://github.com/waagsociety/citysdk-ld">
+              <span class="octocat"></span>GitHub
+            </a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
