@@ -12,7 +12,7 @@ $link-color: {{ site.data.style.link-color }};
   right: 0;
   bottom: 0;
   position: absolute;
-  top: 143px;
+  top: 126px;
   min-height: 300px;
 
   border-top-color: $brand-color;
@@ -61,13 +61,12 @@ code#objectdata {
   line-height: 1em;
   border-radius: 0;
   margin: 0;
-  font-size: 60%;
+  font-size: 1rem;
 }
 
 code#objectdata ol {
   margin-bottom: 0;
 };
-
 
 #data-links-container {
   background-color: $background-color-transparant;
@@ -80,7 +79,7 @@ code#objectdata ol {
 }
 
 #data-links {
-  font-size: 57%;
+  font-size: 14px;
   line-height: 1.2em;
 }
 
