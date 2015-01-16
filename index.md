@@ -11,7 +11,7 @@ This website contains information about the CitySDK Linked Data API and the [dat
 
 <div id="apps">
   <h4>Explore available data sets</h4>
-  <a class="wide-image-link" href="{{ site.baseurl}}/map#{{ site.data.endpoint.examples[0].url }}" style="background-image: url({{ site.baseurl }}/images/apps/map-wide.jpg)"></a>
+  <a class="wide-image-link" href="{{ site.baseurl}}/map" style="background-image: url({{ site.baseurl }}/images/apps/map-wide.jpg)"></a>
   {% for app in site.data.endpoint.apps limit: 0 %}
   <h4>{{ app.title }}</h4>
   <a class="wide-image-link" href="{{ site.baseurl}}/apps#{{ app.name }}" style="background-image: url({{ site.baseurl }}/images/apps/{{ app.name }}-wide.jpg)"></a>
