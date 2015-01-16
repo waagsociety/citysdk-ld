@@ -8,7 +8,7 @@ This website contains **endpoint specific information only**, mainly regarding t
 
 ## GitHub
 
-[GitHub repository]({{ site.data.endpoint.github }}) working repository for CitySDK LD API v1.0. 
+[GitHub]({{ site.data.endpoint.github }}): working repository for CitySDK LD API v1.0. 
 
 [Wiki]({{ site.data.endpoint.wiki }}): documentation on using the API, adding data, installing your own endpoint.
 
