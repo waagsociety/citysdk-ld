@@ -50,7 +50,7 @@ apps:
     url        : http://divvapi.parkshark.nl/
     description: "This API will return costs and recommendations for visiting any destination in Amsterdam."
 
-  - name       : parking-api-code
+  - name       : parking-api-github
     title      : Source Code for Parking API Amsterdam
     url        : https://github.com/jonathanrcarter/divv-amsterdam-parkingapi
     description: "Source code on GitHub for Parking API."

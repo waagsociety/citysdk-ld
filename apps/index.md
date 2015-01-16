@@ -13,7 +13,7 @@ The following apps and websites are build on top of the CitySDK LD API. Please h
       <p><ul><li><a href="{{ app.url }}">{{ app.url }}</a></li></ul></p>
     </div>
     <div class="six columns">
-      <a class="high-image-link" href="{{ app.url }}" style="background-image: url({{ site.baseurl }}/images/apps/{{ app.name }}-high.jpg)"></a>
+      <a class="high-image-link" href="{{ app.url }}" style="background-image: url({{ site.baseurl }}/images/apps/{{ app.name }}.jpg)"></a>
     </div>
   </div>
 {% endfor %}
