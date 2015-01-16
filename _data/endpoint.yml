@@ -65,10 +65,10 @@ apps:
     url        : http://bomenapp.nl/
     description: "Trees in Dutch Cities (Amsterdam, The Hague, Utrecht a.o.), for iOS and Android."
 
-  - name       : user-open311
-    title      : User Generated data
+  - name       : verbeter-de-buurt
+    title      : Verbeter de Buurt
     url        : http://www.verbeterdebuurt.nl/
-    description:  "Apps like Verbeter de Buurt and <a href='http://www.buurtvitaal.nl/'>Buurt Vitaal</a> generate data forthis endpoint by collecting citizen reports and publicizing these via an Open311 interface."
+    description:  "Apps like Verbeter de Buurt and <a href='http://www.buurtvitaal.nl/'>Buurt Vitaal</a> generate data for the CitySDK LD API by collecting citizen reports and publicizing these via an Open311 interface."
 
   - name       : penalty-radar
     title      : Penalty Radar
