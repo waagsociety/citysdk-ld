@@ -13,29 +13,28 @@ Makes services easier to implement, data easier to distribute and applications e
 
 </div>
 
-<h2 id="how-to-join">How to join?</h2>
+## How to join?
 
-<p>Would your city like to open up its data and services to a big European developer community by joining CitySDK? Get in touch with the <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#099;&#105;&#116;&#121;&#115;&#100;&#107;&#064;&#119;&#097;&#097;&#103;&#046;&#111;&#114;&#103;">owners</a> of this endpoint or the project management of CitySDK at <a href="http://www.citysdk.eu/partners/forum-virium/">Forum Virium Helsinki</a>.</p>
+Would your city like to open up its data and services to a big European developer community by joining CitySDK? Get in touch with the [owners](mailto:{{ site.data.endpoint.email }}) of this endpoint or the project management of CitySDK at [Forum Virium Helsinki](http://www.citysdk.eu/partners/forum-virium/).
 
-<h1 id="endpoints-in-other-cities">Endpoints in other cities</h1>
 
-<ul>
-  <li><a href="http://dev.citysdk.waag.org">Amsterdam (NL)</a></li>
-  <li><a href="http://144.76.172.136/">Helsinki (FI)</a></li>
-  <li><a href="http://devcitysdk.ibb.gov.tr">Istanbul (TR)</a></li>
-  <li><a href="http://dev.citysdk.futureeverything.org/data">Manchester (UK)</a></li>
-  <li><a href="http://dev.citysdk-mobility.provincia.roma.it">Province of Rome (IT)</a></li>
-  <li><a href="http://dev.citysdk.waag.org">Lamia (GR)</a></li>
-</ul>
+# Endpoints in other cities
 
-<h2 id="endpoints-other-citysdk-apis">Endpoints other CitySDK APIs</h2>
+* [Amsterdam (NL)](http://dev.citysdk.waag.org)
+* [Helsinki (FI)](http://144.76.172.136/)
+* [Istanbul (TR)](http://devcitysdk.ibb.gov.tr)
+* [Manchester (UK)](http://dev.citysdk.futureeverything.org/data)
+* [Province of Rome (IT)](http://dev.citysdk-mobility.provincia.roma.it)
+* [Lamia (GR)](http://dev.citysdk.waag.org)
 
-<ul>
-  <li><a href="http://dev.hel.fi/apis/issuereporting">Helsinki Participation Endpoint</a></li>
-  <li><a href="http://nodeshot.readthedocs.org/en/latest/topics/open311.html">Province of Rome Participation</a></li>
-  <li><a href="https://participation.citysdk.lamia-city.gr/rest">Lamia Participation Endpoint</a></li>
-  <li><a href="http://citysdk.ist.utl.pt/index.html">CitySDK Tourism API’s</a></li>
-</ul>
+
+## Endpoints other CitySDK APIs
+
+* [Helsinki Participation Endpoint](http://dev.hel.fi/apis/issuereporting)
+* [Province of Rome Participation](http://nodeshot.readthedocs.org/en/latest/topics/open311.html)
+* [Lamia Participation Endpoint](https://participation.citysdk.lamia-city.gr/rest)
+* [CitySDK Tourism API's](http://citysdk.ist.utl.pt/index.html)
+
 
 ### Project CitySDK
 
