@@ -75,22 +75,20 @@ apps:
     url        : http://boeteradar.2coolmonkeys.nl/
     description: "Penalty Radar shows speeds on Dutch highways, and calculates the fines that could have been collected by police."
 
-
- # - name       : city-dashboard
- #   title      : City Dashboard
- #   url        : http://citydashboard.waag.org
- #   description: "Gives a view of the pulse of the city by showing all real-time data streams."
- #
- # - name       : now
- #   title      : Now
- #   url        : http://citysdk.waag.org/now/
- #   description: "This simple web app offers Public Transport departure times in your immediate vicinity (real-time where available). The web app works in Amsterdam, Helsinki Manchester, Tampere (Fi)."
-
- # - title      : Open Data Globe
- #   url        : http://citysdk.waag.org/visualisation/
- #   description: "The dynamics of European cities are made visible in the Open Data Globe, based on available data
- # sets in CitySDK."
- #
+  # - name       : city-dashboard
+  #   title      : City Dashboard
+  #   url        : http://citydashboard.waag.org
+  #   description: "The City Dashboard shows the heartbeat of Amsterdam, by showing real-time and aggregated data streams."
+  #
+  # - name       : now
+  #   title      : Now
+  #   url        : http://code.waag.org/now/
+  #   description: "A simple public transport demo, built on top of the GTFS data. Now finds the 4 closest public transport stops, and shows real-time departure time information about those stops."
+  #
+  # - name       : globe
+  #   title      : Open Data Globe
+  #   url        : http://citysdk.waag.org/visualisation/
+  #   description: "The dynamics of European cities are made visible in the Open Data Globe, based on datasets in the CitySDK LD API."
 
 examples    :
   - url  : layers/parking.garage/objects?per_page=25
