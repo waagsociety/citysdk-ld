@@ -60,15 +60,18 @@ apps:
    url        : http://divvapi.parkshark.nl/
    description: "This API will return costs and recommendations for visiting any destination in Amsterdam."
 
- - title      : Source Code for Parking API Amsterdam
+ - name       : parking-api-code
+   title      : Source Code for Parking API Amsterdam
    url        : https://github.com/jonathanrcarter/divv-amsterdam-parkingapi
    description: "Source code on GitHub for Parking API."
 
- - title      : City Navigator
+ - name       : city-navigator
+   title      : City Navigator
    url        : http://dev.hsl.fi/navigator-proto/
    description: "HSL Navigator is a fully open-source service based solely on open data."
 
- - title      : Tree Spotter (iOS, Android)
+ - name       : tree-spotter
+   title      : Tree Spotter (iOS, Android)
    url        : http://bomenapp.nl/
    description: "Trees in Dutch Cities (Amsterdam, The Hague, Utrecht a.o.), for iOS and Android."
 
@@ -78,11 +81,13 @@ apps:
   # sets in CitySDK."
   #
 
- - title      : User Generated data
+-  name       : user-open311
+   title      : User Generated data
    url        : http://www.verbeterdebuurt.nl/
    description: "Apps like Verbeter de Buurt and <a href='http://www.buurtvitaal.nl/'>Buurt Vitaal</a> generate data for this endpoint by collecting citizen reports and publicizing these via an Open311 interface."
 
- - title      : Penalty Radar
+ - name       : penalty-radar
+   title      : Penalty Radar
    url        : http://boeteradar.2coolmonkeys.nl/
    description: "Penalty Radar shows speeds on Dutch highways, and calculates the fines that could have been collected by police."
 
