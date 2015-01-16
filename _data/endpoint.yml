@@ -38,7 +38,7 @@ apps:
   - name       : mansholt
     title      : Agricutural land use in the Netherlands
     url        : https://code.waag.org/mansholt/
-    description: "Interactive map, made for an installation on an exhibition on Sicco Mansholt, European Agricultural policy and its influence on land use."
+    description: "Interactive map, made for an installation on an exhibition on Sicco Mansholt, European agricultural policy and its influence on land use."
 
   # - name       : city-dashboard
   #   title      : City Dashboard
