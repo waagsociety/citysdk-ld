@@ -1,11 +1,11 @@
 title       : CitySDK Linked Data API
+instance    : Amsterdam
 endpoint    : http://api.citysdk.waag.org/
 github      : https://github.com/waagsociety/citysdk-ld
 wiki		    : https://github.com/waagsociety/citysdk-ld/wiki
 organization: Waag Society
 homepage    : http://waag.org/en
 email       : citysdk@waag.org
-location    : Amsterdam, The Netherlands
 data-links  :
   json-ld : "http://json-ld.org/playground/index.html#startTab=tab-normalized&json-ld="
   geojson : "http://geojson.io/#data=data:text/x-url,"
