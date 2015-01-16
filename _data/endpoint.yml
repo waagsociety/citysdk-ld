@@ -61,9 +61,9 @@ apps:
     description: "HSL Navigator is a fully open-source service based solely on open data."
 
   - name       : tree-spotter
-    title      : Tree Spotter (iOS, Android)
+    title      : Tree Spotter
     url        : http://bomenapp.nl/
-    description: "Trees in Dutch Cities (Amsterdam, The Hague, Utrecht a.o.), for iOS and Android."
+    description: "Mobile app which shows details about trees in Dutch cities, for iOS and Android."
 
   - name       : verbeter-de-buurt
     title      : Verbeter de Buurt
