@@ -77,6 +77,7 @@ apps:
   #   description: "The dynamics of European cities are made visible in the Open Data Globe, based on available data
   # sets in CitySDK."
   #
+
  - title      : User Generated data
    url        : http://www.verbeterdebuurt.nl/
    description: "Apps like Verbeter de Buurt and <a href='http://www.buurtvitaal.nl/'>Buurt Vitaal</a> generate data for this endpoint by collecting citizen reports and publicizing these via an Open311 interface."
