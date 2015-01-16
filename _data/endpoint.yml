@@ -137,7 +137,7 @@ apps:
 
 examples    :
   - url  : layers/parking.garage/objects?per_page=25
-    title: Real-time capacity of parking garages in Amsterdam
+    title: Real-time parking capacity in Amsterdam
 
   - url  : layers/bag.pand/objects
     title: Buildings in the Netherlands
