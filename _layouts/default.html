@@ -12,7 +12,8 @@
   </section>
   {% include footer.html %}
 
-	<script src="{{ site.baseurl }}/js/jquery.min.js"></script>
+	{% if site.data.style.fade-in %}
+  <script src="{{ site.baseurl }}/js/jquery.min.js"></script>
 	<script src="{{ site.baseurl }}/js/viewportchecker.min.js"></script>
 	<script>
   jQuery(document).ready(function() {
@@ -21,6 +22,7 @@
      });
   });
 	</script>
+	{% endif %}
 
   <!-- Piwik -->
   <script type="text/javascript">

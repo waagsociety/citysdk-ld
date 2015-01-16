@@ -1,3 +1,5 @@
+fade-in:                      false
+
 font-color:                   "#3f4444"
 background-color:             "rgb(249, 249, 249)"
 background-color-transparant: "rgba(249, 249, 249, 0.8)"
