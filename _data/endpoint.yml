@@ -99,9 +99,6 @@ examples    :
   - url  : layers/bag.pand/objects
     title: Buildings in the Netherlands
 
-  - url  : objects/admr.nl.amsterdam
-    title: Municipality of Amsterdam
-
   - url  : layers/gtfs.routes/objects?in=admr.nl.amsterdam
     title: Public transport routes in Amsterdam
     
