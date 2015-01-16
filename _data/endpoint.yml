@@ -93,8 +93,8 @@ apps:
  #
 
 examples    :
-  - url  : objects?osm::tourism=museum&in=admr.nl.boxtel
-    title: OpenStreetMap museums in Boxtel
+  - url  : layers/parking.garage/objects?per_page=25
+    title: Real time capacity Amsterdam Parking Garages
 
   - url  : layers/bag.pand/objects
     title: Buildings in the Netherlands
@@ -104,3 +104,12 @@ examples    :
 
   - url  : layers/gtfs.routes/objects?in=admr.nl.amsterdam
     title: Public transport routes in Amsterdam
+    
+  - url  : layers/bag.ligplaats/objects?in=admr.nl.amsterdam
+    title: House boats in Amsterdam
+    
+  - url  : layers/cbs/objects?per_page=25&in=admr.nl.amsterdam
+    title: Dutch demographic and statistics
+
+  - url  : objects?osm::tourism=museum&in=admr.nl.leiden
+    title: OpenStreetMap museums in Leiden
