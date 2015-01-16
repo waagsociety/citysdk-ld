@@ -94,17 +94,17 @@ apps:
 
 examples    :
   - url  : layers/parking.garage/objects?per_page=25
-    title: Real time capacity Amsterdam Parking Garages
+    title: Real-time capacity of parking garages in Amsterdam
 
   - url  : layers/bag.pand/objects
     title: Buildings in the Netherlands
 
   - url  : layers/gtfs.routes/objects?in=admr.nl.amsterdam
     title: Public transport routes in Amsterdam
-    
+
   - url  : layers/bag.ligplaats/objects?in=admr.nl.amsterdam
     title: House boats in Amsterdam
-    
+
   - url  : layers/cbs/objects?per_page=25&in=admr.nl.amsterdam
     title: Dutch demographic and statistics
 
