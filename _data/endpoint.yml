@@ -74,6 +74,13 @@ endpoints:
     apis:
       - linked-data  : http://dev.citysdk.futureeverything.org/
 
+  - title: Lisbon
+    coordinates:
+      - 38.718
+      - -9.138
+    apis:
+      - tourism: http://tourism.citysdk.eu/
+
 apps:
   - name       : buildings
     title      : "All 9,866,539 buildings in the Netherlands"
