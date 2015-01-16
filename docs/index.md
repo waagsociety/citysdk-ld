@@ -3,7 +3,7 @@ layout: default
 title: Documentation
 ---
 
-This website contains endpoint specific information only, mainly regarding the datasets available here. All general documentation on the API can be found on the wiki at the corresponding [GitHub Wiki]({{ site.data.endpoint.wiki }}).
+This website contains **endpoint specific information only**, mainly regarding the datasets available here. All general documentation on the API can be found on the wiki at the corresponding [GitHub Wiki]({{ site.data.endpoint.wiki }}).
 
 
 ## GitHub
