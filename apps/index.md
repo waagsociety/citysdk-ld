@@ -2,7 +2,7 @@
 title: Apps
 ---
 
-The following apps and websites are built on top of the CitySDK LD API. Please have a look at the [available data sets]({{ site.baseurl}}/data) and [API documentation]({{ site.baseurl }}/docs) if you want to use API data in your own application.
+The following apps and websites are built on top of the CitySDK LD API. Have a look at the [available data sets]({{ site.baseurl}}/data) and [API documentation]({{ site.baseurl }}/docs) to see how to use API data in your own application.
 
 <div id="apps">
 {% for app in site.data.endpoint.apps %}
