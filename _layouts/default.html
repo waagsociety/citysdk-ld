@@ -3,7 +3,7 @@
 {% include head.html %}
 <body>
   {% include header.html %}
-  <section class="mainContent">
+  <section>
   <div class="container">
     <div class="row">
       {{ content }}
@@ -11,18 +11,17 @@
   </div>
   </section>
   {% include footer.html %}
-	
+
 	<script src="{{ site.baseurl }}/js/jquery.min.js"></script>
 	<script src="{{ site.baseurl }}/js/viewportchecker.min.js"></script>
 	<script>
   jQuery(document).ready(function() {
-    jQuery('.mainContent p, .mainContent h1, .mainContent h2, .mainContent h3, .mainContent h4, .mainContent ul,.mainContent li, .mainContent a, footer').addClass("transparant").viewportChecker({
+    jQuery('section p, section h1, section h2, section h3, section h4, section ul, section li, section a, footer').addClass("transparant").viewportChecker({
       classToAdd: 'visible animated fadeIn'
      });
   });
-	
 	</script>
-	
+
   <!-- Piwik -->
   <script type="text/javascript">
     var _paq = _paq || [];
