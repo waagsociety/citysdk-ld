@@ -3,7 +3,7 @@
 {% include head.html %}
 <body>
   {% include header.html %}
-  <section>
+  <section class="mainContent">
   <div class="container">
     <div class="row">
       {{ content }}
@@ -11,17 +11,33 @@
   </div>
   </section>
   {% include footer.html %}
-
-  {% if false %}
+	
 	<script src="{{ site.baseurl }}/js/jquery.min.js"></script>
 	<script src="{{ site.baseurl }}/js/viewportchecker.min.js"></script>
 	<script>
   jQuery(document).ready(function() {
-    jQuery('.container p, .container h2, .container h3, .container h4, .container ul, .container li').addClass("transparant").viewportChecker({
+    jQuery('.mainContent p, .mainContent h1, .mainContent h2, .mainContent h3, .mainContent h4, .mainContent ul,.mainContent li, .mainContent a, footer').addClass("transparant").viewportChecker({
       classToAdd: 'visible animated fadeIn'
      });
   });
+	
 	</script>
-  {% endif %}
+	
+  <!-- Piwik -->
+  <script type="text/javascript">
+    var _paq = _paq || [];
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function() {
+      var u="//194.145.201.185/";
+      _paq.push(['setTrackerUrl', u+'piwik.php']);
+      _paq.push(['setSiteId', 1]);
+      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+      g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+    })();
+  </script>
+  <noscript><p><img src="//194.145.201.185/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+  <!-- End Piwik Code -->
+
 </body>
 </html>

@@ -80,8 +80,16 @@ code#objectdata ol {
 }
 
 #data-links {
-  font-size: 60%;
-  line-height: 1em;
+  font-size: 57%;
+  line-height: 1.2em;
+}
+
+#data-links a{
+	background: $brand-color;
+	color: white;
+	text-decoration: none;
+	padding: 0.1em 0.5em;
+	border-radius: 6px;
 }
 
 code#objectdata,

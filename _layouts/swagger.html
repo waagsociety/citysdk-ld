@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% include head.html %}
+  <link href='css/highlight.default.css' media='screen' rel='stylesheet' type='text/css'/>
+  <link href='css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
+  <script type="text/javascript" src="lib/shred.bundle.js"></script>
+  <script src='lib/jquery-1.8.0.min.js' type='text/javascript'></script>
+  <script src='lib/jquery.slideto.min.js' type='text/javascript'></script>
+  <script src='lib/jquery.wiggle.min.js' type='text/javascript'></script>
+  <script src='lib/jquery.ba-bbq.min.js' type='text/javascript'></script>
+  <script src='lib/handlebars-1.0.0.js' type='text/javascript'></script>
+  <script src='lib/underscore-min.js' type='text/javascript'></script>
+  <script src='lib/backbone-min.js' type='text/javascript'></script>
+  <script src='lib/swagger.js' type='text/javascript'></script>
+  <script src='swagger-ui.js' type='text/javascript'></script>
+  <script src='lib/highlight.7.3.pack.js' type='text/javascript'></script>
+  <script type="text/javascript">
+    $(function () {
+      window.swaggerUi = new SwaggerUi({
+      url: "http://api.citysdk.waag.org/swagger",
+      dom_id: "swagger-ui-container",
+      supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
+      onComplete: function(swaggerApi, swaggerUi){
+        log("Loaded SwaggerUI")
+        $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
+      },
+      onFailure: function(data) {
+        log("Unable to Load SwaggerUI");
+      },
+      docExpansion: "none"
+    });
+
+    $('#input_apiKey').change(function() {
+      var key = $('#input_apiKey')[0].value;
+      log("key: " + key);
+      if(key && key.trim() != "") {
+        log("added key " + key);
+        window.authorizations.add("key", new ApiKeyAuthorization("api_key", key, "query"));
+      }
+    })
+    window.swaggerUi.load();
+
+    // window.setTimeout(function() {
+    //   Docs.expandEndpointListForResource('');
+    //   Docs.collapseOperationsForResource('');
+    // }, 100)
+
+
+  });
+
+  </script>
+</head>
+<body>
+  {% include header.html %}
+  <section>
+  <div class="container">
+    <div class="row">
+      {{ content }}
+    </div>
+  </div>
+  </section>
+  {% include footer.html %}
+  
+  <!-- Piwik -->
+  <script type="text/javascript">
+    var _paq = _paq || [];
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function() {
+      var u="//194.145.201.185/";
+      _paq.push(['setTrackerUrl', u+'piwik.php']);
+      _paq.push(['setSiteId', 1]);
+      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+      g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+    })();
+  </script>
+  <noscript><p><img src="//194.145.201.185/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+  <!-- End Piwik Code -->
+  
+</body>
+</html>
