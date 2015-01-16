@@ -29,6 +29,51 @@ datasets    :
   - url  : http://download.geofabrik.de/europe/netherlands.html
     title: OpenStreetMap
 
+
+endpoints:
+  - title: Amsterdam
+    coordinates:
+      - 52.367
+      - 4.915
+    apis:
+      - linked-data  : http://citysdk.waag.org
+
+  - title: Helsinki
+    coordinates:
+      - 60.1664
+      - 24.9436
+    apis:
+      - linked-data  : http://144.76.172.136/
+        participation: http://dev.hel.fi/apis/issuereporting
+
+  - title: Lamia
+    coordinates:
+      - 38.8956
+      - 22.4349
+    apis:
+      - participation: https://participation.citysdk.lamia-city.gr/rest
+
+  - title: Province of Rome
+    coordinates:
+      - 41.8932
+      - 12.4832
+    apis:
+      - linked-data  : http://dev.citysdk-mobility.provincia.roma.it
+
+  - title: Istanbul
+    coordinates:
+      - 41.0096
+      - 28.9670
+    apis:
+      - linked-data  : http://devcitysdk.ibb.gov.tr
+
+  - title: Manchester
+    coordinates:
+      - 53.47908
+      - -2.24455
+    apis:
+      - linked-data  : http://dev.citysdk.futureeverything.org/
+
 apps:
   - name       : buildings
     title      : "All 9,866,539 buildings in the Netherlands"
