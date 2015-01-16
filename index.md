@@ -3,19 +3,11 @@ leaflet: true
 d3: true
 ---
 
-The CitySDK Linked Data API is an API for a real-time city data.
+# CitySDK Linked Data API
 
-<!-- Makes services easier to implement, data easier to distribute and applications easier to build. A list of available data in this endpoint can be seen via [data]({{ site.baseurl }}/data) and the [map viewer]({{ site.baseurl }}/map).
+The CitySDK Linked Data API is an API for the distribution open city data. With the CitySDK LD API, a city has a simple-to-use interface to all its data — it makes data services easier to implement, data easier to distribute, and applications easier to build, and works for both real-time and static data sets.
 
-Open data API for easy access of
-
-One simple-to-use API for all your city's open data
-
-developers
-researchers
-jounalists -->
-
-This website contains information about the CitySDK Linked Data API in general, and show the [datasets available]({{ site.baseurl }}/data) in the __{{ site.data.endpoint.instance }} instance__ of the API, hosted by [{{ site.data.endpoint.organization }}]({{ site.data.endpoint.homepage }}). The CitySDK LD API is an [open source project]({{ site.data.endpoint.github }}), and __easy to install in any city__ — see the [docs]({{ site.baseurl }}/docs) to read how!
+This website contains information about the CitySDK Linked Data API in general, and the [datasets available]({{ site.baseurl }}/map) in the __{{ site.data.endpoint.instance }} instance__ of the API, hosted by [{{ site.data.endpoint.organization }}]({{ site.data.endpoint.homepage }}). The CitySDK LD API is an [open source project]({{ site.data.endpoint.github }}), and __easy to install in any city__, see the [docs]({{ site.baseurl }}/docs) to read how!
 
 <div id="apps">
   <h4>Explore available data sets</h4>
@@ -32,13 +24,13 @@ Would your city like to open up its data and services to a big European develope
 
 ## Project CitySDK
 
-THe CitySDK Linked Data API is part of CitySDK, a European Union project. CitySDK is a toolkit for the development of digital services within cities. With open and interoperable digital service interfaces, CitySDK enables a more efficient utilisation of the expertise and know-how of developer communities.
+The CitySDK Linked Data API is part of CitySDK, a European Union project. CitySDK is a toolkit for the development of digital services within cities. With open and interoperable digital service interfaces, CitySDK enables a more efficient utilisation of the expertise and know-how of developer communities.
 
 See the [CitySDK project website](http://www.citysdk.eu/) for a comprehensive overview of the complete CitySDK toolkit.
 
 #### CitySDK APIs in other cities
 
-The map below shows the European cities in which the CitySDK Linked Data API and the other CitySDK APIs are currently deployed.
+The map below shows the European cities in which the CitySDK Linked Data API and the other [CitySDK APIs](http://www.citysdk.eu/citysdk-toolkit/components-of-the-toolkit/) are currently deployed — click on a CitySDK city for details about the city's APIs.
 
 <div id="map">
 </div>
