@@ -1,7 +1,7 @@
 ---
 ---
 
-###A real-time city data services API (Amsterdam instance)
+###A real-time city data API (Amsterdam)
 
 Makes services easier to implement, data easier to distribute and applications easier to build. A list of available data in this endpoint can be seen via [data]({{ site.baseurl }}/data) and the [map viewer]({{ site.baseurl }}/map).
 
