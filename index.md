@@ -7,7 +7,7 @@ d3: true
 
 An API for the distribution and annotation of open data. With the CitySDK Linked Data API, a city has a simple-to-use interface to all its data — it makes city services easier to implement, data easier to distribute, and applications easier to build, and works for both real-time and static data sets.
 
-This website contains information about the CitySDK Linked Data API and the [datasets available]({{ site.baseurl }}/map) in the __{{ site.data.endpoint.instance }} instance__ of the API, hosted by [{{ site.data.endpoint.organization }}]({{ site.data.endpoint.homepage }}). The CitySDK LD API is an [open source project]({{ site.data.endpoint.github }}), and __easy to install in any city__, see the [docs]({{ site.baseurl }}/docs) to read how!
+This website contains information about the CitySDK Linked Data API and the [datasets available]({{ site.baseurl }}/map) in the __{{ site.data.endpoint.instance }} instance__ of the API, hosted by [{{ site.data.endpoint.organization }}]({{ site.data.endpoint.homepage }}). The CitySDK LD API is an [open source project]({{ site.data.endpoint.github }}), and __easy to install in any city__, read the [docs]({{ site.baseurl }}/docs) to see how!
 
 <div id="apps">
   <h4>Explore available data sets</h4>
