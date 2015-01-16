@@ -55,6 +55,7 @@ For more information on the project and the partner cities, visit the [project w
 This service is available, for now, with a ‘best effort SLA’ and a fair-use policy. A sustainably hosted instance of the API is 
 in preparation.
 
-#### Other questions
+#### Questions, contact
 
-Is your question missing? Send us an [e-mail](mailto:{{ site.data.endpoint.email }}).
+Questions or comments? Send us an [e-mail](mailto:{{ site.data.endpoint.email }}). For more information on the project and the partner cities, visit the [project website](http://www.citysdk.eu).
+
