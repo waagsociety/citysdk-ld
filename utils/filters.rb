@@ -280,7 +280,9 @@ module CitySDKLD
     def self.in(dataset, params, query)
       object = CDKObject.where(cdk_id: params[:in]).first
       if object
-        contains = Sequel.function(:ST_Contains, object.geom, :geom)
+        # :ST_Intersects should ne :ST_Contains but misses geometry that just nips out of the border
+        # :ST_Contains with buffer, or, easier, ST_Intersects delivers results you expect
+        contains = Sequel.function(:ST_Intersects, object.geom, :geom)
         dataset.where(contains)
       else
         query[:api].error!("Object not found: '#{params[:in]}'", 404)

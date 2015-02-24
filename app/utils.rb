@@ -104,7 +104,7 @@ module CitySDKLD
   def self.cdk_id_from_id(layer, id)
     cdk_id_from_name layer, id
   end
-
+  
   def self.cdk_id_from_name(layer, text)
     # Normalize text:
     #  downcase, strip,
@@ -114,13 +114,12 @@ module CitySDKLD
     #  Remove leading and trailing '.'
 
     n = text.to_s.downcase.strip
-      .to_ascii
       .gsub(/['"`]/, '')
       .gsub(/\W+/, '.')
       .gsub(/((\.$)|(^\.))/, '')
-
-    "#{layer}.#{n}"
+    "#{layer}.#{::I18n.transliterate(n)}"
   end
+  
 
   def self.generate_cdk_id_with_hash(layer, id)
     self.md5_base62(layer + "::" + id.to_s)

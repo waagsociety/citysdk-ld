@@ -47,7 +47,7 @@ module CitySDKLD
           endpoint_data = CitySDKLD.get_endpoint_data(@query)
           @result = {
             :@context => @layers.values[0][:context],
-            :@id => "#{endpoint_data[:url]}objects/#{@query[:params][:cdk_id]}/layers/#{@query[:params][:layer]}",
+            :@id => "#{endpoint_data[:base_uri] + endpoint_data[:endpoint_code]}/objects/#{@query[:params][:cdk_id]}/layers/#{@query[:params][:layer]}",
             :@type => [
               "#{endpoint_data[:base_uri]}LayerData",
               @layers.values[0][:rdf_type]
@@ -193,7 +193,7 @@ module CitySDKLD
           # Add LD prefixes
         endpoint_data = CitySDKLD.get_endpoint_data(@query)
         {
-          :@base => endpoint_data[:url],
+          :@base => endpoint_data[:base_uri] + endpoint_data[:endpoint_code] + "/",
           :@vocab => endpoint_data[:base_uri],
           cdk: endpoint_data[:base_uri]
         }.merge(CitySDKLD::PREFIXES).merge(context)
