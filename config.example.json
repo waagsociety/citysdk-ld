@@ -1,6 +1,7 @@
 {
   "endpoint": {
     "url": "http://localhost:9292/",
+    "base_uri": "http://rdf.citysdk.eu/",
     "endpoint_code": "ams",
     "title": "CitySDK LD API - Amsterdam",
     "description": "CitySDK LD API - Amsterdam, hosted by Waag Society",
@@ -10,7 +11,6 @@
     "location": "Amsterdam, The Netherlands",
     "github": "https://github.com/waagsociety/citysdk-ld",
     "wiki":	"https://github.com/waagsociety/citysdk-ld/wiki",
-    "base_uri": "http://rdf.waag.org/citysdk/",
     "geometry": {
       "type":"Point",
       "coordinates": [4.90032,52.37278]
