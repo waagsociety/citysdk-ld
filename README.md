@@ -4,7 +4,7 @@ The CitySDK Linked Data API offers unified and direct access to open transport, 
 
 In the CitySDK Linked Data API, data sets are called `layers`. Each layer can contain `objects`, and each `object` contains, per `layer`, key/value `data`. In the API, _real-world objects_ like buildings, bus stops and municipalities are represented by `objects`, which can contain `data` on one or more `layers`. This way, multiple data sets can tell something about one single `object`.
 
-The `master` branch of this repository contains the API — written using Ruby, [Grape](https://github.com/intridea/grape) and PostGIS — the [`gh-pages`](../../tree/gh-pages) branch contains the project's website.
+The [`master`](../../tree/master) branch of this repository contains the API — written using Ruby, [Grape](https://github.com/intridea/grape) and PostGIS — the [`gh-pages`](../../tree/gh-pages) branch contains the project's website.
 
 For more information about the CitySDK LD API, see the project's [website](http://citysdk.waag.org) or [wiki](../../wiki).
 
