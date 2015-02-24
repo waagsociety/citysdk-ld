@@ -171,7 +171,7 @@ module CitySDKLD
         context = CDKLayer.get_layer(layer_id)[:context] rescue {}
         data = {
           resource: @q[:resource],
-          data: context ? context : {},
+          data: context ? { :@context => context } : {},
           query: @q
         }
       when :owners
@@ -248,7 +248,7 @@ module CitySDKLD
         context = CDKLayer.get_layer(layer_id)[:context] rescue {}
         data = {
           resource: @q[:resource],
-          data: context ? context : {},
+          data: context ? {:@context => context} : {},
           query: @q
         }
       when :ngsi10

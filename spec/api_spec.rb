@@ -37,7 +37,6 @@ describe CitySDKLD::API do
       body_json(last_response).should == {error: "Operation requires administrative authorization"}
     end
 
-
     it "creates owner 'bert'" do
       header "CONTENT_TYPE", "application/json"
       header "X-Auth", $key_citysdk
@@ -304,21 +303,26 @@ describe CitySDKLD::API do
     # context:
     ######################################################################
 
-
     it "gets JSON-LD context of layer 'tom.achtbanen'" do
       data = read_test_data_json 'layer_tom.achtbanen.json'
       get "/layers/tom.achtbanen/context"
       status_should(last_response, 200)
       # "@vocab": null is always added by the API
       body_json(last_response).should == {
-        :@vocab => nil
-      }.merge(data[:context])
+        :@context => {
+          :@vocab => nil
+        }.merge(data[:context])
+      }
     end
 
     it "gets JSON-LD context of layer 'bert.dierenwinkels'" do
       get "/layers/bert.dierenwinkels/context"
       status_should(last_response, 200)
-      body_json(last_response).should == { :@vocab => nil }
+      body_json(last_response).should == {
+        :@context => {
+          :@vocab => nil
+        }
+      }
     end
 
     it "sets JSON-LD context of layer 'bert.dierenwinkels'" do
@@ -328,8 +332,10 @@ describe CitySDKLD::API do
       put "/layers/bert.dierenwinkels/context", data[:context].to_json
       status_should(last_response, 200)
       body_json(last_response).should == {
-        :@vocab => nil
-      }.merge(data[:context])
+        :@context => {
+          :@vocab => nil
+        }.merge(data[:context])
+      }
     end
 
     # TODO: this test still fails!
@@ -797,7 +803,7 @@ describe CitySDKLD::API do
     it "uses Accept header to get JSON-LD of /objects" do
       get "/objects", nil, {'HTTP_ACCEPT' => "application/ld+json"}
       status_should(last_response, 200)
-      last_response.header['Content-Type'].should == 'application/json'
+      last_response.header['Content-Type'].should == 'application/json; charset=utf-8'
       body_json(last_response).has_key?(:@context).should == true
     end
 

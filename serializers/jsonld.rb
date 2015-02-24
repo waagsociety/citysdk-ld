@@ -190,7 +190,7 @@ module CitySDKLD
       end
 
       def create_default_context(context)
-          # Add LD prefixes
+        # Add LD prefixes
         endpoint_data = CitySDKLD.get_endpoint_data(@query)
         {
           :@base => endpoint_data[:base_uri] + endpoint_data[:endpoint_code] + "/",
