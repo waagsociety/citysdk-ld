@@ -23,7 +23,8 @@ module GTFS_Import
       $EP_user = config[:owner][:name]
       $EP_pass = config[:owner][:password]
 
-      $DB_host = config[:db][:database]
+      $DB_host = config[:db][:host]
+      $DB_database = config[:db][:database]
       $DB_user = config[:db][:user]
       $DB_pass = config[:db][:password]
 
@@ -39,7 +40,7 @@ module GTFS_Import
   def self.connect
     begin
       get_config() if $DB_host.nil?
-      $postgres = PGconn.new('localhost', '5432', nil, nil, $DB_host, $DB_user, $DB_pass) if $postgres.nil?
+      $postgres = PGconn.new($DB_host, '5432', nil, nil, $DB_database, $DB_user, $DB_pass) if $postgres.nil?
       $api = API.new($EP_url) if $api.nil?
     rescue Exception => e
       $stderr.puts("Could not connect to database...\n#{e.message}")
