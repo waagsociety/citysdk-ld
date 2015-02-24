@@ -74,10 +74,10 @@ The map below shows the European cities in which the CitySDK Linked Data API and
       } else if (type === "tourism") {
         title = "Tourism API";
       }
-      apiList.push("<li><a href='" + feature.properties.apis[type] + "'>" + title + "</a></li>");
+      apiList.push("<a href='" + feature.properties.apis[type] + "'>" + title + "</a>");
     }
-    return feature.properties.title + ":"
-        + "<ul>" + apiList.join('') + "</ul>";
+    return feature.properties.title + ": "
+        + apiList.join(', ');
   }
 
   d3.json("{{ site.baseurl}}/map/endpoints.json", function(json) {
