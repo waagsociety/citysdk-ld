@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'capistrano', '~> 3.2.0'
-gem 'rack', '~> 1.5.2'
+gem 'rack', '~> 1.6.0'
 gem 'racksh'
 gem 'grape', '~> 0.7.0'
 gem 'grape-swagger'
