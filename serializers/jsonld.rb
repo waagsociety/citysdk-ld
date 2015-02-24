@@ -19,14 +19,13 @@ module CitySDKLD
           @result = {
             :@context => create_object_context
           }.merge @result
-
           jsonld_objects
+
         when :layers
           # geojson, result is JSON object with features array
           @result = {
             :@context => create_layer_context
           }.merge @result
-
           jsonld_layers
         when :owners
           # either single owner, or JSON object with owners array
@@ -125,27 +124,35 @@ module CitySDKLD
       end
 
       def jsonld_layers
-        @result[:features].map! do |feature|
-          feature[:properties] = {
-            :@id => "layers/#{feature[:properties][:name]}"
-          }.merge feature[:properties]
+        begin
 
-          feature[:properties][:fields].map! do |field|
-            "layers/#{feature[:properties][:name]}/fields/#{field}"
+          @result[:features].map! do |feature|
+            feature[:properties] = {
+              :@id => "layers/#{feature[:properties][:name]}"
+            }.merge feature[:properties]
+
+            feature[:properties][:fields].map! do |field|
+              "layers/#{feature[:properties][:name]}/fields/#{field}"
+            end
+
+            feature[:properties][:category] = "cdk:Category#{feature[:properties][:category].capitalize}"
+            feature[:properties][:owner] = "owners/#{feature[:properties][:owner]}"
+
+            if feature[:properties].has_key? :dependsOn
+              feature[:properties][:dependsOn] = "layers/#{feature[:properties][:dependsOn]}"
+            end
+
+            {
+              :@id => "layers/#{feature[:properties][:name]}",
+              :@type => ['Layer', 'dcat:Dataset']
+            }.merge feature
           end
 
-          feature[:properties][:category] = "cdk:Category#{feature[:properties][:category].capitalize}"
-          feature[:properties][:owner] = "owners/#{feature[:properties][:owner]}"
-
-          if feature[:properties].has_key? :dependsOn
-            feature[:properties][:dependsOn] = "layers/#{feature[:properties][:dependsOn]}"
-          end
-
-          {
-            :@id => "layers/#{feature[:properties][:name]}",
-            :@type => ['Layer', 'dcat:Dataset']
-          }.merge feature
+        rescue Exception => e
+          @query[:api].error!("Serialization error - #{e.message}", 500)
+          # TODO zoiets: { error: e; location: {file: __FILE__, line: __LINE__} }
         end
+
       end
 
       def jsonld_owners
