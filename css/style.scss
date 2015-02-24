@@ -157,7 +157,7 @@ header ul li {
   margin-left: 7px;
 }
 
-nav #github {
+nav #github-nav {
   background-color: $brand-color;
   color: white;
   border-radius: 5px;
@@ -165,7 +165,7 @@ nav #github {
 }
 
 #logo:hover,
-nav #github:hover {
+nav #github-nav:hover {
   text-decoration: none;
   opacity: 0.8;
   transition: opacity 0.5s ease-in-out;
