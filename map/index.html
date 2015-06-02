@@ -125,6 +125,15 @@ Examples:
     }
   }).addTo(map);
 
+  map.on('moveend', function() {
+    var decimals = 5;
+    var bbox = map.getBounds().toBBoxString().split(',').map(function(d) {
+      return parseFloat(d).toFixed(4);
+    });
+
+    console.log('bbox=' + [bbox[1], bbox[0], bbox[3], bbox[2]].join(','));
+  });
+
   // ================================================================================
   // CitySDK API data
   // ================================================================================
