@@ -49,6 +49,8 @@ Examples:
       zoom = {{ site.data.endpoint.map.zoom }},
       brandColor = '{{ site.data.style.brand-color }}';
 
+  var showAllData = true;
+
   hljs.initHighlightingOnLoad();
 
   var spinnerOpts = {
@@ -130,9 +132,22 @@ Examples:
     var bbox = map.getBounds().toBBoxString().split(',').map(function(d) {
       return parseFloat(d).toFixed(4);
     });
-
-    console.log('bbox=' + [bbox[1], bbox[0], bbox[3], bbox[2]].join(','));
+    
+    var bounds = "bbox=" + [bbox[1], bbox[0], bbox[3], bbox[2]].join(',')
+    
+    if(showAllData)
+      console.log();
+    else
+      setObjectData({"mapbounds":bounds})
+      
   });
+  
+  document.onkeyup = function(event) {
+    var d = 68;
+    if(event.keyCode==d) {
+      showAllData = !showAllData;
+    }
+  }
 
   // ================================================================================
   // CitySDK API data
@@ -240,7 +255,8 @@ Examples:
   });
 
   function formatResult(result) {
-    setObjectData(result);
+    if(showAllData) 
+      setObjectData(result);
   }
 
   function setObjectData(json) {
