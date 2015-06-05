@@ -1,0 +1,22 @@
+---
+layout:
+---
+{
+  "type": "FeatureCollection",
+  "features": [
+    {% for endpoint in site.data.endpoint.endpoints %}
+    {
+      "type": "Feature",
+      "properties": {
+        "title": "{{ endpoint.title }}",
+        "apis": {{ endpoint.apis[0] |jsonify }}
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [{{ endpoint.coordinates[1] }}, {{ endpoint.coordinates[0] }}]
+      }
+    }
+    {% if forloop.last == false %},{% endif %}
+    {% endfor %}
+  ]
+}
