@@ -88,7 +88,7 @@ apps:
     description: "Map showing all 9,866,539 buildings in the Netherlands, shaded according to their year of construction."
 
   - name       : mansholt
-    title      : Agricutural land use in the Netherlands
+    title      : Agricultural land use in the Netherlands
     url        : https://code.waag.org/mansholt/
     description: "Interactive map, made for an installation on an exhibition on Sicco Mansholt, European Agricultural policy and its influence on land use."
 
